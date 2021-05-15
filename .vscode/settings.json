@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "naiveconsole.h": "c",
+        "string.h": "c",
+        "stdlib.h": "c",
+        "stdint.h": "c",
+        "stdio.h": "c",
+        "moduleloader.h": "c",
+        "lib.h": "c",
+        "strings.h": "c"
+    }
+}
