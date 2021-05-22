@@ -1,10 +1,11 @@
 #Binary Files
-*.bin
-*.sys
+#*.bin
+#*.sys
 
 #The images
-*.img
-*.vmdk
+#*.img
+#*.qcow2
+#*.vmdk
 
 #Object files
 *.o
