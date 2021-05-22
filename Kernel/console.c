@@ -122,6 +122,9 @@ void printChar(char c){
 
 void printCharCol(char c, uint8_t foreColor, uint8_t backColor){
     char colorByte = backColor << 4 | foreColor;
+	if(scrPos >= SCR_BASE_ADDR + SCR_ROWS * SCR_COLS * 2){
+        scrollUp();
+    }
 	if(isSpecialChar(c)){
 		printSpecialChar(c, colorByte);
 	}
@@ -129,9 +132,6 @@ void printCharCol(char c, uint8_t foreColor, uint8_t backColor){
         *scrPos = c;
         *(scrPos+1) = colorByte;
         scrPos += 2;
-    }
-    if(scrPos >= SCR_BASE_ADDR + SCR_COLS * SCR_ROWS * 2){
-        scrollUp();
     }
 }
 

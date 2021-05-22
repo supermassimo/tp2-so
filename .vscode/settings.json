@@ -7,6 +7,10 @@
         "stdio.h": "c",
         "moduleloader.h": "c",
         "lib.h": "c",
-        "strings.h": "c"
+        "strings.h": "c",
+        "stdint-gcc.h": "c",
+        "syscall.h": "c",
+        "unistd.h": "c",
+        "unistd_64.h": "c"
     }
 }
