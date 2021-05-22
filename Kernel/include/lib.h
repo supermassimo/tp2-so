@@ -9,6 +9,5 @@ int numToStr(int value, char* target, uint8_t base);
 void numToStrSized(int value, char* target, uint8_t base, int length);
 
 char *cpuVendor(char *result);
-int pollKey();
 
 #endif
