@@ -1,14 +1,24 @@
 #include "../include/console.h"
 
-#define ZERO_EXCEPTION_ID 0
-
 static void zero_division();
+static void invalid_op();
 
 void exceptionDispatcher(int exception) {
-	if (exception == ZERO_EXCEPTION_ID)
-		zero_division();
+	switch (exception) {
+		case 0:
+			zero_division();
+			break;
+		case 1:
+			invalid_op();
+			break;
+	}
+	return;
 }
 
 static void zero_division() {
-	// TODO: Implement zero div handler
+	// Handler para manejar excepcíon
+}
+
+static void invalid_op() {
+	// Handler para manejar excepcíon
 }

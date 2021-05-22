@@ -1,25 +1,25 @@
 #include <time.h>
 #include <stdint.h>
 
-static void int_20();
-static void int_21();
+static void irqTimerTick();
+static void irqKeyboardRead();
 
 void irqDispatcher(uint64_t irq) {
 	switch (irq) {
 		case 0:
-			int_20();
+			irqTimerTick();
 			break;
 		case 1:
-			int_21();
+			irqKeyboardRead();
 			break;
 	}
 	return;
 }
 
-void int_20() {
+void irqTimerTick() {
 	timer_handler();
 }
 
-void int_21(){
+void irqKeyboardRead(){
 	keyboardIntHandler();
 }
