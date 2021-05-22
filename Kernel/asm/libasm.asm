@@ -1,5 +1,4 @@
 GLOBAL cpuVendor
-GLOBAL getRegistries
 
 section .text
 	
@@ -22,16 +21,6 @@ cpuVendor:
 	mov rax, rdi
 
 	pop rbx
-
-	mov rsp, rbp
-	pop rbp
-	ret
-
-getRegistries:
-	push rbp
-	mov rbp, rsp
-
-	
 
 	mov rsp, rbp
 	pop rbp

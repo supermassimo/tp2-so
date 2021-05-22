@@ -1,4 +1,6 @@
 #include <stdint.h>
+#include <registryStruct.h>
+#include <lib.h>
 
 void * memset(void * destination, int32_t c, uint64_t length)
 {
@@ -92,4 +94,25 @@ void numToStrSized(int value, char* target, uint8_t base, int length){
 		}
 		target[length] = 0;
 	}
+}
+
+void getRegistries (Registries* destination){
+	Registries regStruct;
+	regStruct.rax = getRAX();
+	regStruct.rbx = getRBX();
+	regStruct.rcx = getRCX();
+	regStruct.rdx = getRDX();
+	regStruct.rbp = getRBP();
+	regStruct.rdi = getRDI();
+	regStruct.rsi = getRSI();
+	regStruct.r8 = getR8();
+	regStruct.r9 = getR9();
+	regStruct.r10 = getR10();
+	regStruct.r11 = getR11();
+	regStruct.r12 = getR12();
+	regStruct.r13 = getR13();
+	regStruct.r14 = getR14();
+	regStruct.r15 = getR15();
+
+	destination = regStruct;
 }
