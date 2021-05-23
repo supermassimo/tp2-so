@@ -11,6 +11,8 @@
         "stdint-gcc.h": "c",
         "syscall.h": "c",
         "unistd.h": "c",
-        "unistd_64.h": "c"
+        "unistd_64.h": "c",
+        "console.h": "c",
+        "registrystruct.h": "c"
     }
 }

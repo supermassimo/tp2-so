@@ -1,5 +1,4 @@
 #include <stdint.h>
-#include <registryStruct.h>
 #include <lib.h>
 
 void * memset(void * destination, int32_t c, uint64_t length)
@@ -49,6 +48,13 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 	}
 
 	return destination;
+}
+
+// Fills target array with #count bytes of memory starting from startPos
+void getMemContent(char* startPos, char* target, unsigned count){
+	for(int i=0 ; i < count ; i++){
+		target[i] = startPos[i];
+	}
 }
 
 static int digitToStr(int num, int base){
@@ -114,5 +120,5 @@ void getRegistries (Registries* destination){
 	regStruct.r14 = getR14();
 	regStruct.r15 = getR15();
 
-	destination = regStruct;
+	destination = &regStruct;
 }

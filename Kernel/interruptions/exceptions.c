@@ -16,7 +16,7 @@ void exceptionDispatcher(int exception) {
 }
 
 static void zero_division() {
-	// Handler para manejar excepcíon
+	println("Zero div not allowed");
 }
 
 static void invalid_op() {
