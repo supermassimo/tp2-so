@@ -16,6 +16,8 @@ void println(char *string);
 void printlnCol(char *string, uint8_t foreColor, uint8_t backColor);
 void printChar(char character);
 void printCharCol(char character, uint8_t foreColor, uint8_t backColor);
+void printInt(int num, uint8_t base);
+void printIntCol(int num, uint8_t base, uint8_t foreColor, uint8_t backColor);
 void newLine();
 void clearScreen();
 

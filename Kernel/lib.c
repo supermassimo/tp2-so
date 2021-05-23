@@ -58,7 +58,7 @@ void getMemContent(char* startPos, char* target, unsigned count){
 }
 
 static int digitToStr(int num, int base){
-	return base > 10 ? num + 'A' : num + '0';
+	return base > 10 ? num - 10 + 'A' : num + '0';
 }
 
 // Transforms an integer to string and stores it on target. Returns final string length

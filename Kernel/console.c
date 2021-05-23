@@ -154,6 +154,16 @@ void println(char* msg){
 	printlnCol(msg, foreColor, backColor);
 }
 
+void printInt(int num, uint8_t base){
+	printIntCol(num, base, foreColor, backColor);
+}
+
+void printIntCol(int num, uint8_t base, uint8_t foreColor, uint8_t backColor){
+	char strNum[12];
+	numToStr(num, strNum, base);
+	printCol(strNum, foreColor, backColor);
+}
+
 void clearScreen(){
 	char* scr = SCR_BASE_ADDR;
 	for(int i=0 ; i < SCR_ROWS ; i++){
