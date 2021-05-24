@@ -16,9 +16,9 @@ void exceptionDispatcher(int exception) {
 }
 
 static void zero_division() {
-	println("Zero div not allowed");
+	println("ERROR: Cannot divide by zero");
 }
 
 static void invalid_op() {
-	// Handler para manejar excepcíon
+	println("ERROR: Invalid opcode");
 }
