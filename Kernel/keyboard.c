@@ -16,36 +16,68 @@ const int keyTable[] = {
 extern uint8_t pollKeyRaw();
 
 static int buffer[BUFFER_SIZE];
-static unsigned int current = -1;
+static unsigned int nextToStore = 0;
+static unsigned int currentToRead = 0;
 
 static int bufferIsFull(){
-    return current == BUFFER_SIZE - 1;
+    if(nextToStore == BUFFER_SIZE)
+        return 1;
+    return 0;
 }
 
 // Stores a key on the buffer
-static void storeKey(int key){
+static void storeKey(uint8_t keyCode){
     if(bufferIsFull())
-        current = -1;
-    buffer[++current] = keyTable[key];
+        nextToStore = 0;
+    buffer[nextToStore++] = keyTable[keyCode];
 }
 
+// Returns last stored key without removing it from buffer
+int peekLastKey(){
+    int last = nextToStore - 1;
+    if(last == -1)
+        last = BUFFER_SIZE - 1;
+    return buffer[last];
+}
+
+int getBufferSize(){
+    return BUFFER_SIZE;
+}
+
+// If there are keys on buffer, returns the first available. Else returns -1
 int getKey(){
-    return buffer[current];
+    if(currentToRead != nextToStore){
+        if(currentToRead == BUFFER_SIZE)
+            currentToRead = 0;
+        return buffer[currentToRead++];
+    }
+    return -1;
+}
+
+// Fills array sent with buffer content on string format (ends with '\0') 
+// and returns # of keys read from buffer
+int getBufferContent(unsigned char* target){
+    int i=0, aux;
+    while((aux = getKey()) != -1){
+        target[i++] = aux;
+    }
+    target[i] = 0;
+    return i;
 }
 
 // Reads the input
 // If there's a key, stores it on buffer and returns 1
 // If there's not a key, returns 0
 static int readKey(){
-    int keyCode = pollKeyRaw();
-    if(keyCode < 94){
+    uint8_t keyCode = pollKeyRaw();
+    if(keyCode < 128){
         storeKey(keyCode);
-        return 1;
-    }
-    return 0;
-}
+        return 1;  
+    } 
+    return 0;    
+}  
 
 void keyboardIntHandler(){
     if(readKey())
-        printChar(getKey());
+        printChar(peekLastKey());
 }

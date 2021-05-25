@@ -138,18 +138,28 @@ int main()
 
 	load_idt();
 
-	int segundos = 0;
-	char sec[12];
+	/* getBufferContent() test */
+	char buf[getBufferSize()];
 
 	while(1){
-		// if(seconds_elapsed() - segundos > 0){
-		// 	numToStr(segundos, sec, 10);
-		// 	print("Pasaron ");
-		// 	print(sec);
-		// 	println(" segundos");
-		// 	segundos++;
-		// }
+		if(peekLastKey() == '\n'){
+			getBufferContent(buf);
+			print(buf);
+		}
 	}
+
+	// int segundos = 0;
+	// char sec[12];
+
+	// while(1){
+	// 	if(seconds_elapsed() - segundos > 0){
+	// 		numToStr(segundos, sec, 10);
+	// 		print("Pasaron ");
+	// 		print(sec);
+	// 		println(" segundos");
+	// 		segundos++;
+	// 	}
+	// }
 
 	return 0;
 }
