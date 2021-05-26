@@ -3,6 +3,7 @@
 
 static void irqTimerTick();
 static void irqKeyboardRead();
+static void irqSysCall();
 
 void irqDispatcher(uint64_t irq) {
 	switch (irq) {
@@ -11,6 +12,9 @@ void irqDispatcher(uint64_t irq) {
 			break;
 		case 1:
 			irqKeyboardRead();
+			break;
+		case 6:
+			irqSysCall();
 			break;
 	}
 	return;
@@ -22,4 +26,8 @@ void irqTimerTick() {
 
 void irqKeyboardRead(){
 	keyboardIntHandler();
+}
+
+void irqSysCall(){
+	sysCallHandler();
 }

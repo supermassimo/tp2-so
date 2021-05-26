@@ -12,21 +12,21 @@ void getMemContent(char* startPos, char* target, unsigned count);
 
 char *cpuVendor(char *result);
 
-int64_t getRAX ();
-int64_t getRBX ();
-int64_t getRCX ();
-int64_t getRDX ();
-int64_t getRBP ();
-int64_t getRDI ();
-int64_t getRSI ();
-int64_t getR8 ();
-int64_t getR9 ();
-int64_t getR10 ();
-int64_t getR11 ();
-int64_t getR12 ();
-int64_t getR13 ();
-int64_t getR14 ();
-int64_t getR15 ();
+void* getRAX ();
+void* getRBX ();
+void* getRCX ();
+void* getRDX ();
+void* getRBP ();
+void* getRDI ();
+void* getRSI ();
+void* getR8 ();
+void* getR9 ();
+void* getR10 ();
+void* getR11 ();
+void* getR12 ();
+void* getR13 ();
+void* getR14 ();
+void* getR15 ();
 
 void getRegistries (Registries* destination);
 
