@@ -42,12 +42,6 @@ void setBackColor(uint8_t color){
 	fillScreen(getColorByte());
 }
 
-static uint64_t getNextTabStop(){
-	uint64_t current = scrPos - SCR_BASE_ADDR;
-	current /= 8;
-	return SCR_BASE_ADDR + 8 * (current+1);
-}
-
 // Returns the previous char address omitting 'empty' chars
 static uint64_t getPrevCharAddr(){
 	char* prevChar = scrPos;
@@ -60,7 +54,7 @@ static uint64_t getPrevCharAddr(){
 static int isSpecialChar(char c){
 	int res;
 	switch(c){
-		case '\n': case '\t': case '\b':
+		case '\n': case '\b':
 			res = 1;
 			break;
 		default:
@@ -75,14 +69,6 @@ static void printSpecialChar(char c, uint8_t colorByte){
 	switch(c){
 		case '\n':
 			newLine();
-			break;
-		case '\t':
-			finalPos = getNextTabStop();	// Obtengo la posición final de la tabulación
-			while(scrPos < finalPos){
-				*scrPos = 0;
-				*(scrPos+1) = colorByte;
-				scrPos += 2;
-			}
 			break;
 		case '\b':
 			if(scrPos-2 >= SCR_BASE_ADDR){			// Check if there are chars to delete

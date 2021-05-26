@@ -142,7 +142,7 @@ int main()
 	char buf[getBufferSize()];
 
 	while(1){
-		if(peekLastKey() == '\n'){
+		if(peekLastKey() == 's'){
 			getBufferContent(buf);
 			print(buf);
 		}

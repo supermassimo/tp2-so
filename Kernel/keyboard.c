@@ -3,7 +3,7 @@
 
 #define BUFFER_SIZE 256
 
-const int keyTable[] = {
+static const int keyTable[] = {
 	0, 27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\'', 168,			// 1:ESC
 	'\b', '\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '´', '+',		// 14:BACKSPACE
 	'\n', 0, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 164, '{', '|',		// 29:CTRL
@@ -20,16 +20,14 @@ static unsigned int nextToStore = 0;
 static unsigned int currentToRead = 0;
 
 static int bufferIsFull(){
-    if(nextToStore == BUFFER_SIZE)
-        return 1;
-    return 0;
+    return nextToStore == BUFFER_SIZE;
 }
 
 // Stores a key on the buffer
-static void storeKey(uint8_t keyCode){
+static void storeKey(int key){
     if(bufferIsFull())
         nextToStore = 0;
-    buffer[nextToStore++] = keyTable[keyCode];
+    buffer[nextToStore++] = key;
 }
 
 // Returns last stored key without removing it from buffer
@@ -65,19 +63,44 @@ int getBufferContent(unsigned char* target){
     return i;
 }
 
+// 0-31 and 127 are reserved ASCII control characters
+int isControlKey(unsigned char c){
+	return c < 32 || c == 127;
+}
+
+static void applyControlKey(unsigned char key){
+    switch(key){
+        case '\b':
+            if(nextToStore != currentToRead){
+                if(nextToStore == 0)
+                    nextToStore = BUFFER_SIZE;
+                nextToStore--;
+            }
+            break;
+        default:
+            break;
+    }
+}
+
 // Reads the input
-// If there's a key, stores it on buffer and returns 1
-// If there's not a key, returns 0
+// If there's a key, stores it on buffer/applies action on buffer and returns it
+// If there's not a key, returns -1
 static int readKey(){
+    int key = -1;
     uint8_t keyCode = pollKeyRaw();
+    // If it´s a MAKE, a key was pressed
     if(keyCode < 128){
-        storeKey(keyCode);
-        return 1;  
-    } 
-    return 0;    
-}  
+        key = keyTable[keyCode];
+        if(!isControlKey(key))
+            storeKey(key);
+        else
+            applyControlKey(key);
+    }
+    return key;
+}
 
 void keyboardIntHandler(){
-    if(readKey())
-        printChar(peekLastKey());
+    int key = readKey();
+    if(key != -1)
+        printChar(key);
 }
