@@ -1,7 +1,10 @@
 #include <keyboard.h>
 #include <console.h>
+#include <standard_in.h>
 
-#define BUFFER_SIZE 256
+static int keyboard_buffer[BUFFER_SIZE];
+static unsigned int nextToStore = 0;
+static unsigned int currentToRead = 0;
 
 static const int keyTable[] = {
 	0, 27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\'', 168,			// 1:ESC
@@ -15,52 +18,27 @@ static const int keyTable[] = {
 
 extern uint8_t pollKeyRaw();
 
-static int buffer[BUFFER_SIZE];
-static unsigned int nextToStore = 0;
-static unsigned int currentToRead = 0;
-
-static int bufferIsFull(){
+static int keyboardBufferIsFull(){
     return nextToStore == BUFFER_SIZE;
 }
 
-// Stores a key on the buffer
-static void storeKey(int key){
-    if(bufferIsFull())
+static int keyboardbufferIsEmpty(){
+    return nextToStore == 0;
+}
+
+// Stores a key on the keyboard buffer
+static void typeKey(int key){
+    if(keyboardBufferIsFull())
         nextToStore = 0;
-    buffer[nextToStore++] = key;
+    keyboard_buffer[nextToStore++] = key;
 }
 
-// Returns last stored key without removing it from buffer
-int peekLastKey(){
-    int last = nextToStore - 1;
-    if(last == -1)
-        last = BUFFER_SIZE - 1;
-    return buffer[last];
-}
-
-int getBufferSize(){
-    return BUFFER_SIZE;
-}
-
-// If there are keys on buffer, returns the first available. Else returns -1
-int getKey(){
-    if(currentToRead != nextToStore){
-        if(currentToRead == BUFFER_SIZE)
-            currentToRead = 0;
-        return buffer[currentToRead++];
+void deleteLast (){
+    if(nextToStore != currentToRead){
+        if(nextToStore == 0)
+            nextToStore = BUFFER_SIZE;
+        nextToStore--;
     }
-    return -1;
-}
-
-// Fills array sent with buffer content on string format (ends with '\0') 
-// and returns # of keys read from buffer
-int getBufferContent(unsigned char* target){
-    int i=0, aux;
-    while((aux = getKey()) != -1){
-        target[i++] = aux;
-    }
-    target[i] = 0;
-    return i;
 }
 
 // 0-31 and 127 are reserved ASCII control characters
@@ -71,11 +49,7 @@ int isControlKey(unsigned char c){
 static void applyControlKey(unsigned char key){
     switch(key){
         case '\b':
-            if(nextToStore != currentToRead){
-                if(nextToStore == 0)
-                    nextToStore = BUFFER_SIZE;
-                nextToStore--;
-            }
+            deleteLast();
             break;
         default:
             break;
@@ -92,7 +66,7 @@ static int readKey(){
     if(keyCode < 128){
         key = keyTable[keyCode];
         if(!isControlKey(key))
-            storeKey(key);
+            typeKey(key);
         else
             applyControlKey(key);
     }
@@ -103,4 +77,9 @@ void keyboardIntHandler(){
     int key = readKey();
     if(key != -1)
         printChar(key);
+    if (key == '\n' && !keyboardbufferIsEmpty()){
+        setBuffer(*keyboard_buffer, nextToStore);
+        nextToStore = 0;
+        currentToRead = 0;
+    }
 }

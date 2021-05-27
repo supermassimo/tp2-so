@@ -1,5 +1,6 @@
 #include <console.h>
 #include <lib.h>
+#include <commands.h>
 
 #define SCR_BASE_ADDR 	0xB8000
 #define SCR_ROWS 		25
