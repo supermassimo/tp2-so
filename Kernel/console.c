@@ -1,6 +1,6 @@
 #include <console.h>
 #include <lib.h>
-#include <commands.h>
+// #include <commands.h>
 
 #define SCR_BASE_ADDR 	0xB8000
 #define SCR_ROWS 		25
@@ -49,7 +49,7 @@ static uint64_t getPrevCharAddr(){
 	while(*prevChar == 0){
 		prevChar -= 2;
 	}
-	return prevChar;
+	return (uint64_t)prevChar;
 }
 
 static int isSpecialChar(char c){

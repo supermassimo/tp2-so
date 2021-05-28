@@ -139,12 +139,12 @@ int main()
 	load_idt();
 
 	/* getBufferContent() test */
-	char buf[getBufferSize()];
+	char buf[255];
 
 	while(1){
-		if(peekLastKey() == 's'){
-			getBufferContent(buf);
-			print(buf);
+		if(getLastPressedKey() == '\t'){
+			getBufferContent(buf, 255);
+		 	print(buf);
 		}
 	}
 

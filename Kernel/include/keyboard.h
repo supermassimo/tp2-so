@@ -1,7 +1,4 @@
 #include <stdint.h>
 
-int getBufferSize();
-int getKey();
-int getBufferContent(unsigned char *target);
-int peekLastKey();
+unsigned char getLastPressedKey();
 void keyboardIntHandler();

@@ -2,9 +2,10 @@
 #include <console.h>
 #include <standard_in.h>
 
-static int keyboard_buffer[BUFFER_SIZE];
+static unsigned char keyboard_buffer[BUFFER_SIZE];
 static unsigned int nextToStore = 0;
 static unsigned int currentToRead = 0;
+static unsigned char lastKey;               // Testing purposes. Delete when making final code
 
 static const int keyTable[] = {
 	0, 27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\'', 168,			// 1:ESC
@@ -23,7 +24,7 @@ static int keyboardBufferIsFull(){
 }
 
 static int keyboardbufferIsEmpty(){
-    return nextToStore == 0;
+    return currentToRead == nextToStore;
 }
 
 // Stores a key on the keyboard buffer
@@ -33,7 +34,7 @@ static void typeKey(int key){
     keyboard_buffer[nextToStore++] = key;
 }
 
-void deleteLast (){
+static void deleteLast (){
     if(nextToStore != currentToRead){
         if(nextToStore == 0)
             nextToStore = BUFFER_SIZE;
@@ -42,7 +43,7 @@ void deleteLast (){
 }
 
 // 0-31 and 127 are reserved ASCII control characters
-int isControlKey(unsigned char c){
+static int isControlKey(unsigned char c){
 	return c < 32 || c == 127;
 }
 
@@ -51,9 +52,18 @@ static void applyControlKey(unsigned char key){
         case '\b':
             deleteLast();
             break;
+        case '\n':
+            setInputBuffer(keyboard_buffer, currentToRead, nextToStore);
+            currentToRead = nextToStore;
+            break;
         default:
             break;
     }
+}
+
+// Testing purposes. Delete when making final code
+unsigned char getLastPressedKey(){
+    return lastKey;
 }
 
 // Reads the input
@@ -63,23 +73,20 @@ static int readKey(){
     int key = -1;
     uint8_t keyCode = pollKeyRaw();
     // If it´s a MAKE, a key was pressed
-    if(keyCode < 128){
+    if(keyCode < 94){
         key = keyTable[keyCode];
-        if(!isControlKey(key))
-            typeKey(key);
-        else
+        if(isControlKey(key))
             applyControlKey(key);
+        else
+            typeKey(key);
     }
     return key;
 }
 
 void keyboardIntHandler(){
     int key = readKey();
-    if(key != -1)
+    if(key != -1){
         printChar(key);
-    if (key == '\n' && !keyboardbufferIsEmpty()){
-        setBuffer(*keyboard_buffer, nextToStore);
-        nextToStore = 0;
-        currentToRead = 0;
+        lastKey = key;      // Testing purposes. Delete when making final code
     }
 }
