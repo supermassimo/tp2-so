@@ -17,8 +17,10 @@ void exceptionDispatcher(int exception) {
 
 static void zero_division() {
 	println("ERROR: Cannot divide by zero");
+	printRegistries();
 }
 
 static void invalid_op() {
 	println("ERROR: Invalid opcode");
+	printRegistries();
 }

@@ -123,74 +123,23 @@ void numToStrSized(size_t value, char* target, uint8_t base, int length){
 	}
 }
 
-
-// TODO: Move printRegistries() to userland if necessary
-void printRegistries(){
-	Registries regs;
-	getRegistries(&regs);
-	print("RAX: ");
-	printInt(regs.rax, 10);
-	newLine();
-	print("RBX: ");
-	printInt(regs.rbx, 10);
-	newLine();
-	print("RCX: ");
-	printInt(regs.rcx, 10);
-	newLine();
-	print("RDX: ");
-	printInt(regs.rdx, 10);
-	newLine();
-	print("RBP: ");
-	printInt(regs.rbp, 10);
-	newLine();
-	print("RDI: ");
-	printInt(regs.rdi, 10);
-	newLine();
-	print("RSI: ");
-	printInt(regs.rsi, 10);
-	newLine();
-	print("R8: ");
-	printInt(regs.r8, 10);
-	newLine();
-	print("R9: ");
-	printInt(regs.r9, 10);
-	newLine();
-	print("R10: ");
-	printInt(regs.r10, 10);
-	newLine();
-	print("R11: ");
-	printInt(regs.r11, 10);
-	newLine();
-	print("R12: ");
-	printInt(regs.r12, 10);
-	newLine();
-	print("R13: ");
-	printInt(regs.r13, 10);
-	newLine();
-	print("R14: ");
-	printInt(regs.r14, 10);
-	newLine();
-	print("R15: ");
-	printInt(regs.r15, 10);
-	newLine();
-}
-
-void getRegistries (Registries* destination){
-	destination -> rax = getRAX();
-	destination -> rbx = getRBX();
-	destination -> rcx = getRCX();
-	destination -> rdx = getRDX();
-	destination -> rbp = getRBP();
-	destination -> rdi = getRDI();
-	destination -> rsi = getRSI();
-	destination -> r8 = getR8();
-	destination -> r9 = getR9();
-	destination -> r10 = getR10();
-	destination -> r11 = getR11();
-	destination -> r12 = getR12();
-	destination -> r13 = getR13();
-	destination -> r14 = getR14();
-	destination -> r15 = getR15();
+void getRegistries (uint64_t* array, size_t array_size){
+	if (array_size < 15) return;
+	array[0] = getRAX();
+	array[1] = getRBX();
+	array[2] = getRCX();
+	array[3] = getRDX();
+	array[4] = getRBP();
+	array[5] = getRDI();
+	array[6] = getRSI();
+	array[7] = getR8();
+	array[8] = getR9();
+	array[9] = getR10();
+	array[10] = getR11();
+	array[11] = getR12();
+	array[12] = getR13();
+	array[13] = getR14();
+	array[14] = getR15();
 }
 
 static int hasFeature(uint32_t features, int feature){

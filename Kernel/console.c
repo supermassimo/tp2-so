@@ -171,3 +171,53 @@ void clearScreen(){
 	}
 	scrPos = SCR_BASE_ADDR;
 }
+
+void printRegistries(){
+	uint64_t* array = uint64_t[15];
+	getRegistries(array, 15);
+	print("RAX: ");
+	printInt(array[0], 10);
+	newLine();
+	print("RBX: ");
+	printInt(array[1], 10);
+	newLine();
+	print("RCX: ");
+	printInt(array[2], 10);
+	newLine();
+	print("RDX: ");
+	printInt(array[3], 10);
+	newLine();
+	print("RBP: ");
+	printInt(array[4], 10);
+	newLine();
+	print("RDI: ");
+	printInt(array[5], 10);
+	newLine();
+	print("RSI: ");
+	printInt(array[6], 10);
+	newLine();
+	print("R8: ");
+	printInt(array[7], 10);
+	newLine();
+	print("R9: ");
+	printInt(array[8], 10);
+	newLine();
+	print("R10: ");
+	printInt(array[9], 10);
+	newLine();
+	print("R11: ");
+	printInt(array[10], 10);
+	newLine();
+	print("R12: ");
+	printInt(array[11], 10);
+	newLine();
+	print("R13: ");
+	printInt(array[12], 10);
+	newLine();
+	print("R14: ");
+	printInt(array[13], 10);
+	newLine();
+	print("R15: ");
+	printInt(array[14], 10);
+	newLine();
+}

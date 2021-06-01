@@ -15,7 +15,9 @@ void sysCallHandler(){
     case 1:
         write(getRDI(), getRSI(), getRDX());
         break;
-
+    case 2:
+        writeRegistries();
+        break;
     default:
         //code invalido
         break;
@@ -39,4 +41,8 @@ void write(int output, const char* buffer, size_t buffer_size){
     default:
         break;
     }
+}
+
+void writeRegistries(){
+    printRegistries();
 }

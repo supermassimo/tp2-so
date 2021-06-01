@@ -22,5 +22,6 @@ void printIntCol(size_t num, uint8_t base, uint8_t foreColor, uint8_t backColor)
 void printErr(char *string);
 void newLine();
 void clearScreen();
+void printRegistries();
 
 #endif
