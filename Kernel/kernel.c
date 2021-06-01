@@ -146,7 +146,7 @@ int main()
 
 	while(1){
 		if((lastKey != getLastPressedKey()) && getLastPressedKey() == '\t'){
-			printRegistries();
+			printCpuFeatures();
 			//readInput(buf, 255);
 		 	//write(0, buf, 255);
 			//getMemContent(0xB8000, buf, 32);

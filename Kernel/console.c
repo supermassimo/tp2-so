@@ -146,12 +146,12 @@ void println(char* msg){
 	printlnCol(msg, foreColor, backColor);
 }
 
-void printInt(int num, uint8_t base){
+void printInt(size_t num, uint8_t base){
 	printIntCol(num, base, foreColor, backColor);
 }
 
-void printIntCol(int num, uint8_t base, uint8_t foreColor, uint8_t backColor){
-	char strNum[12];
+void printIntCol(size_t num, uint8_t base, uint8_t foreColor, uint8_t backColor){
+	char strNum[100];
 	numToStr(num, strNum, base);
 	printCol(strNum, foreColor, backColor);
 }

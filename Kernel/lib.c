@@ -1,5 +1,26 @@
 #include <lib.h>
 
+typedef enum cpuFeaturesEDX{
+	fpu, vme, de, pse, tsc, msr, pae, mce, cx8, apic,
+	sep=11, mtrr, pge, mca, cmov, pat, pse36, psn, clfsh,
+	ds=21, acpi, mmx, fxsr, sse, sse2, ss, htt, tm, ia64, pbe
+} cpuFeaturesEDX;
+
+typedef enum cpuFeaturesECX{
+	sse3, pclmulqdq, dtes64, monitor, dscpl, vmx, smx, est, 
+	tm2, ssse3, cnxtid, sdbg, fma, cx16, xtpr, pdcm,
+	pcid=17, dca, sse41, sse42, x2apic, movbe, popcnt, tscdeadline,
+	aes, xsave, osxsave, avx, f16c, rdrnd, hypervisor
+} cpuFeaturesECX;
+
+typedef enum cpuExtendedFeaturesEBX{
+	avx2=5
+} cpuExtendedFeaturesEBX;
+
+typedef enum cpuExtendedFeaturesECX{
+	vaes=9, vpclmulqdq=10
+} cpuExtendedFeaturesECX;
+
 void * memset(void * destination, int32_t c, uint64_t length)
 {
 	uint8_t chr = (uint8_t)c;
@@ -62,11 +83,11 @@ static int digitToStr(int num, int base){
 }
 
 // Transforms an integer to string and stores it on target. Returns final string length
-int numToStr(int value, char* target, uint8_t base){
+int numToStr(size_t value, char* target, uint8_t base){
 	int digit;
 	int sign = 1;		// 0 if negative, 1 if positive
 	int i = -1, j = 0;
-	char aux[12];
+	char aux[100];
 	if(value < 0){
 		sign = 0;
 		value *= -1;
@@ -88,7 +109,7 @@ int numToStr(int value, char* target, uint8_t base){
 }
 
 // Left-fills the number with zeros until required length is met
-void numToStrSized(int value, char* target, uint8_t base, int length){
+void numToStrSized(size_t value, char* target, uint8_t base, int length){
 	int currLen = numToStr(value, target, base);
 	int difference = length - currLen;
 	if(difference > 0){
@@ -102,6 +123,8 @@ void numToStrSized(int value, char* target, uint8_t base, int length){
 	}
 }
 
+
+// TODO: Move printRegistries() to userland if necessary
 void printRegistries(){
 	Registries regs;
 	getRegistries(&regs);
@@ -168,4 +191,56 @@ void getRegistries (Registries* destination){
 	destination -> r13 = getR13();
 	destination -> r14 = getR14();
 	destination -> r15 = getR15();
+}
+
+static int hasFeature(uint32_t features, int feature){
+	return (features >> feature) & 1;
+}
+
+void printCpuFeatures(){
+	char* auxMsg;
+	uint32_t featuresEDX = getCpuFeaturesEDXRaw();
+	uint32_t featuresECX = getCpuFeaturesECXRaw();
+	uint32_t extendedFeaturesEBX = getCpuExtendedFeaturesEBXRaw();
+	uint32_t extendedFeaturesECX = getCpuExtendedFeaturesECXRaw();
+	// TODO: Add cpuid support, mx support
+	print("sse_support: ");
+	auxMsg = (hasFeature(featuresEDX, sse))? "Yes" : "No";
+	println(auxMsg);
+	print("sse2_support: ");
+	auxMsg = (hasFeature(featuresEDX, sse2))? "Yes" : "No";
+	println(auxMsg);
+	print("sse3_support: ");
+	auxMsg = (hasFeature(featuresECX, sse3))? "Yes" : "No";
+	println(auxMsg);
+	print("sse41_support: ");
+	auxMsg = (hasFeature(featuresECX, sse41))? "Yes" : "No";
+	println(auxMsg);
+	print("sse42_support: ");
+	auxMsg = (hasFeature(featuresECX, sse42))? "Yes" : "No";
+	println(auxMsg);
+	print("aesni_support: ");
+	auxMsg = (hasFeature(featuresECX, aes))? "Yes" : "No";
+	println(auxMsg);
+	print("pclmulqdq_support: ");
+	auxMsg = (hasFeature(featuresECX, pclmulqdq))? "Yes" : "No";
+	println(auxMsg);
+	print("avx_support: ");
+	auxMsg = (hasFeature(featuresECX, avx))? "Yes" : "No";
+	println(auxMsg);
+	print("vaesni_support: ");
+	auxMsg = (hasFeature(extendedFeaturesECX, vaes))? "Yes" : "No";
+	println(auxMsg);
+	print("vpclmulqdq_support: ");
+	auxMsg = (hasFeature(extendedFeaturesECX, vpclmulqdq))? "Yes" : "No";
+	println(auxMsg);
+	print("f16c_support: ");
+	auxMsg = (hasFeature(featuresECX, f16c))? "Yes" : "No";
+	println(auxMsg);
+	print("fma_support: ");
+	auxMsg = (hasFeature(featuresECX, fma))? "Yes" : "No";
+	println(auxMsg);
+	print("avx2_support: ");
+	auxMsg = (hasFeature(extendedFeaturesEBX, avx2))? "Yes" : "No";
+	println(auxMsg);
 }
