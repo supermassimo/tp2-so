@@ -36,6 +36,6 @@ void* getR14 ();
 void* getR15 ();
 
 void printRegistries();
-void getRegistries (Registries* destination);
+void getRegistries (uint64_t* array, size_t array_size);
 
 #endif
