@@ -1,4 +1,4 @@
-/* sampleCodeModule.c */
+/* userModule.c */
 
 char * v = (char*)0xB8000 + 79 * 2;
 
