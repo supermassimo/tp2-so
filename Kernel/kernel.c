@@ -5,6 +5,7 @@
 #include <lib.h>
 #include <rtc.h>
 #include <console.h>
+#include <sysCalls.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -139,12 +140,18 @@ int main()
 	load_idt();
 
 	/* getBufferContent() test */
-	char buf[255];
+	uint8_t buf[255];
+
+	uint8_t lastKey = 0;
 
 	while(1){
-		if(getLastPressedKey() == '\t'){
-			getBufferContent(buf, 255);
-		 	print(buf);
+		if((lastKey != getLastPressedKey()) && getLastPressedKey() == '\t'){
+			printRegistries();
+			//readInput(buf, 255);
+		 	//write(0, buf, 255);
+			//getMemContent(0xB8000, buf, 32);
+			//write(1, buf, 255);
+			lastKey = getLastPressedKey();
 		}
 	}
 

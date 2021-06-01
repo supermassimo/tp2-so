@@ -1,4 +1,3 @@
-#include <stdint.h>
 #include <lib.h>
 
 void * memset(void * destination, int32_t c, uint64_t length)
@@ -51,9 +50,10 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 }
 
 // Fills target array with #count bytes of memory starting from startPos
-void getMemContent(char* startPos, char* target, unsigned count){
+void getMemContent(uint64_t startPos, uint8_t* target, size_t count){
+	int8_t *pos = startPos;
 	for(int i=0 ; i < count ; i++){
-		target[i] = startPos[i];
+		target[i] = pos[i];
 	}
 }
 
@@ -102,23 +102,70 @@ void numToStrSized(int value, char* target, uint8_t base, int length){
 	}
 }
 
-void getRegistries (Registries* destination){
-	Registries regStruct;
-	regStruct.rax = getRAX();
-	regStruct.rbx = getRBX();
-	regStruct.rcx = getRCX();
-	regStruct.rdx = getRDX();
-	regStruct.rbp = getRBP();
-	regStruct.rdi = getRDI();
-	regStruct.rsi = getRSI();
-	regStruct.r8 = getR8();
-	regStruct.r9 = getR9();
-	regStruct.r10 = getR10();
-	regStruct.r11 = getR11();
-	regStruct.r12 = getR12();
-	regStruct.r13 = getR13();
-	regStruct.r14 = getR14();
-	regStruct.r15 = getR15();
+void printRegistries(){
+	Registries regs;
+	getRegistries(&regs);
+	print("RAX: ");
+	printInt(regs.rax, 10);
+	newLine();
+	print("RBX: ");
+	printInt(regs.rbx, 10);
+	newLine();
+	print("RCX: ");
+	printInt(regs.rcx, 10);
+	newLine();
+	print("RDX: ");
+	printInt(regs.rdx, 10);
+	newLine();
+	print("RBP: ");
+	printInt(regs.rbp, 10);
+	newLine();
+	print("RDI: ");
+	printInt(regs.rdi, 10);
+	newLine();
+	print("RSI: ");
+	printInt(regs.rsi, 10);
+	newLine();
+	print("R8: ");
+	printInt(regs.r8, 10);
+	newLine();
+	print("R9: ");
+	printInt(regs.r9, 10);
+	newLine();
+	print("R10: ");
+	printInt(regs.r10, 10);
+	newLine();
+	print("R11: ");
+	printInt(regs.r11, 10);
+	newLine();
+	print("R12: ");
+	printInt(regs.r12, 10);
+	newLine();
+	print("R13: ");
+	printInt(regs.r13, 10);
+	newLine();
+	print("R14: ");
+	printInt(regs.r14, 10);
+	newLine();
+	print("R15: ");
+	printInt(regs.r15, 10);
+	newLine();
+}
 
-	destination = &regStruct;
+void getRegistries (Registries* destination){
+	destination -> rax = getRAX();
+	destination -> rbx = getRBX();
+	destination -> rcx = getRCX();
+	destination -> rdx = getRDX();
+	destination -> rbp = getRBP();
+	destination -> rdi = getRDI();
+	destination -> rsi = getRSI();
+	destination -> r8 = getR8();
+	destination -> r9 = getR9();
+	destination -> r10 = getR10();
+	destination -> r11 = getR11();
+	destination -> r12 = getR12();
+	destination -> r13 = getR13();
+	destination -> r14 = getR14();
+	destination -> r15 = getR15();
 }

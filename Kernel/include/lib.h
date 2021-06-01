@@ -2,13 +2,14 @@
 #define LIB_H
 
 #include <stdint.h>
+#include <stddef.h>
 #include <registryStruct.h>
 
 void * memset(void * destination, int32_t character, uint64_t length);
 void * memcpy(void * destination, const void * source, uint64_t length);
 int numToStr(int value, char* target, uint8_t base);
 void numToStrSized(int value, char* target, uint8_t base, int length);
-void getMemContent(char* startPos, char* target, unsigned count);
+void getMemContent(uint64_t startPos, uint8_t* target, size_t count);
 
 char *cpuVendor(char *result);
 
@@ -28,6 +29,7 @@ void* getR13 ();
 void* getR14 ();
 void* getR15 ();
 
+void printRegistries();
 void getRegistries (Registries* destination);
 
 #endif

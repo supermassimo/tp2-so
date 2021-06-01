@@ -9,6 +9,7 @@
 static char* scrPos = SCR_BASE_ADDR; 	// Current position on the screen
 static uint8_t foreColor = White;			// Default Forecolor
 static uint8_t backColor = Black;			// Default Backcolor
+static uint8_t errorColor = Red;
 
 static void fillScreen(uint8_t colorByte){
 	char* current = SCR_BASE_ADDR + 1;
@@ -41,6 +42,10 @@ void setForeColor(uint8_t color){
 void setBackColor(uint8_t color){
 	backColor = color;
 	fillScreen(getColorByte());
+}
+
+void setErrorColor(uint8_t color){
+	errorColor = color;
 }
 
 // Returns the previous char address omitting 'empty' chars
@@ -108,7 +113,7 @@ void printChar(char c){
 }
 
 void printCharCol(char c, uint8_t foreColor, uint8_t backColor){
-    char colorByte = backColor << 4 | foreColor;
+    char colorByte = getColorByteCustom(foreColor, backColor);
 	if(scrPos >= SCR_BASE_ADDR + SCR_ROWS * SCR_COLS * 2){
         scrollUp();
     }
@@ -149,6 +154,10 @@ void printIntCol(int num, uint8_t base, uint8_t foreColor, uint8_t backColor){
 	char strNum[12];
 	numToStr(num, strNum, base);
 	printCol(strNum, foreColor, backColor);
+}
+
+void printErr(char* msg){
+	printlnCol(msg, errorColor, backColor);
 }
 
 void clearScreen(){

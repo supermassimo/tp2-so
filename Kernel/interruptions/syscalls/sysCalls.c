@@ -2,8 +2,8 @@
 #include <console.h>
 #include <standard_in.h>
 
-static void readInput();
-static void write();
+void readInput();
+void write();
 
 void sysCallHandler(){
     int64_t code = getRAX();
@@ -31,10 +31,10 @@ void write(int output, const char* buffer, size_t buffer_size){
     switch (output)
     {
     case 0:
-        println("beep boop write standard out");
+        print(buffer);
         break;
     case 1:
-        println("beep boop write standard error");
+        printErr(buffer);
         break;
     default:
         break;
