@@ -173,7 +173,7 @@ void clearScreen(){
 }
 
 void printRegistries(){
-	uint64_t* array = uint64_t[15];
+	uint64_t array[15];
 	getRegistries(array, 15);
 	print("RAX: ");
 	printInt(array[0], 10);

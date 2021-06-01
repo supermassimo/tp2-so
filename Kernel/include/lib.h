@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include <registryStruct.h>
 #include <console.h>
 
 void * memset(void * destination, int32_t character, uint64_t length);
