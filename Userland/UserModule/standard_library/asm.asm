@@ -2,20 +2,22 @@ GLOBAL readInput
 GLOBAL write
 GLOBAL writeRegistries
 
-%macro syscallHandler 1
-	mov rax, %1 ; pasaje de parametro
-	int 0x69
-
-    ret
-%endmacro
-
 section .text
 
 readInput:
-    syscallHandler 0
+    mov rbx, 0 ; pasaje de parametro
+	int 69h
+
+    ret
 
 write:
-    syscallHandler 1
+    mov rbx, 1 ; pasaje de parametro
+	int 69h
 
-writeRegistries
-    syscallHandler 2
+    ret
+
+writeRegistries:
+    mov rbx, 2 ; pasaje de parametro
+	int 69h
+
+    ret

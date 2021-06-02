@@ -1,4 +1,4 @@
-#include "./include/stdio.h"
+#include "./include/mystdio.h"
 
 typedef unsigned char uint8_t;
 
@@ -8,6 +8,7 @@ extern void readInput(char* buffer, size_t buffer_size);
 static int digitToStr(int num, int base){
 	return base > 10 ? num - 10 + 'A' : num + '0';
 }
+
 // Transforms an integer to string and stores it on target. Returns final string length
 static int numToStr(size_t value, char* target, uint8_t base){
 	int digit;

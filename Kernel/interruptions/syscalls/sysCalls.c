@@ -6,9 +6,7 @@ void readInput(char* buffer, size_t buffer_size);
 void write(int output, const char* buffer, size_t buffer_size);
 
 void sysCallDispatcher(){
-    uint64_t code = (uint64_t)getRAX();
-    printInt(code, 10);
-    switch (code) {
+    switch((int)getRBX()){
         case 0:
             readInput(getRDI(), getRSI());
             break;

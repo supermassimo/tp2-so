@@ -1,5 +1,5 @@
-#ifndef STDIO_H_
-#define STDIO_H_
+#ifndef MYSTDIO_H_
+#define MYSTDIO_H_
 
 #include <stddef.h>
 #include <stdint.h>
