@@ -34,7 +34,7 @@ static int numToStr(size_t value, char* target, uint8_t base){
 	return j;
 }
 
-void print(const char* string, size_t string_size){
+void printf(const char* string, size_t string_size){
     write(0, string, string_size);
 }
 
@@ -48,6 +48,6 @@ void printInt (int num, size_t string_size, uint8_t base){
     write (0, final_string, string_size);
 }
 
-void scan (char* string, size_t string_size){
+void scanf (char* string, size_t string_size){
     readInput (string, string_size);
 }

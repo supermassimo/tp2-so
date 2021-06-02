@@ -8,7 +8,7 @@ static int var2 = 0;
 
 
 int main() {
-	print("beep boop printing from userland", 33);
+	printf("beep boop printing from userland", 33);
 	//All the following code may be removed 
 	// *v = 'X';
 	// *(v+1) = 0x74;
