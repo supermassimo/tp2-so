@@ -14,10 +14,14 @@ GLOBAL _irq04Handler
 GLOBAL _irq05Handler
 
 GLOBAL _exception0Handler
-GLOBAL _exception1Handler
+GLOBAL _exception6Handler
+
+GLOBAL _sysCallHandler
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
+
+EXTERN sysCallDispatcher
 
 SECTION .text
 
@@ -83,6 +87,12 @@ SECTION .text
 	iretq
 %endmacro
 
+_sysCallHandler:
+	pushState
+	call sysCallDispatcher
+	
+	popState
+	iretq
 
 _hlt:
 	sti
@@ -145,8 +155,8 @@ _exception0Handler:
 	exceptionHandler 0
 
 ;Invalid Operation Code
-_exception1Handler:
-	exceptionHandler 1
+_exception6Handler:
+	exceptionHandler 6
 
 haltcpu:
 	cli

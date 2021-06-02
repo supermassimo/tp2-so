@@ -117,27 +117,30 @@ int main()
 	// 	printChar(pollKey());
 	// }
 	// return 0;
-	// ncPrint("[Kernel Main]");
-	// ncNewline();
-	// ncPrint("  Sample code module at 0x");
-	// ncPrintHex((uint64_t)sampleCodeModuleAddress);
-	// ncNewline();
-	// ncPrint("  Calling the sample code module returned: ");
-	// ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
-	// ncNewline();
-	// ncNewline();
 
-	// ncPrint("  Sample data module at 0x");
-	// ncPrintHex((uint64_t)sampleDataModuleAddress);
-	// ncNewline();
-	// ncPrint("  Sample data module contents: ");
-	// ncPrint((char*)sampleDataModuleAddress);
-	// ncNewline();
+	ncPrint("[Kernel Main]");
+	ncNewline();
+	ncPrint("  Sample code module at 0x");
+	ncPrintHex((uint64_t)sampleCodeModuleAddress);
+	ncNewline();
+	ncPrint("  Calling the sample code module returned: ");
+	ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
+	ncNewline();
+	ncNewline();
 
-	// ncPrint("[Finished]");
+	ncPrint("  Sample data module at 0x");
+	ncPrintHex((uint64_t)sampleDataModuleAddress);
+	ncNewline();
+	ncPrint("  Sample data module contents: ");
+	ncPrint((char*)sampleDataModuleAddress);
+	ncNewline();
+
+	ncPrint("[Finished]");
 	clearScreen();
 
 	load_idt();
+
+	((EntryPoint)sampleCodeModuleAddress)();
 
 	/* getBufferContent() test */
 	uint8_t buf[255];

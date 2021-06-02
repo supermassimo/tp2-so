@@ -8,7 +8,7 @@ void exceptionDispatcher(int exception) {
 		case 0:
 			zero_division();
 			break;
-		case 1:
+		case 6:
 			invalid_op();
 			break;
 	}

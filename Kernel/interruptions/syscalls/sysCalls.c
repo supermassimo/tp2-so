@@ -2,27 +2,26 @@
 #include <console.h>
 #include <standard_in.h>
 
-void readInput();
-void write();
+void readInput(char* buffer, size_t buffer_size);
+void write(int output, const char* buffer, size_t buffer_size);
 
-void sysCallHandler(){
-    int64_t code = getRAX();
-    
+void sysCallDispatcher(){
+    uint64_t code = (uint64_t)getRAX();
+    printInt(code, 10);
     switch (code) {
-    case 0:
-        readInput(getRDI(), getRSI());
-        break;
-    case 1:
-        write(getRDI(), getRSI(), getRDX());
-        break;
-    case 2:
-        writeRegistries();
-        break;
-    default:
-        //code invalido
-        break;
+        case 0:
+            readInput(getRDI(), getRSI());
+            break;
+        case 1:
+            write(getRDI(), getRSI(), getRDX());
+            break;
+        case 2:
+            writeRegistries();
+            break;
+        default:
+            //code invalido
+            break;
     }
-
 }
 
 void readInput(char* buffer, size_t buffer_size){
@@ -32,14 +31,14 @@ void readInput(char* buffer, size_t buffer_size){
 void write(int output, const char* buffer, size_t buffer_size){
     switch (output)
     {
-    case 0:
-        print(buffer);
-        break;
-    case 1:
-        printErr(buffer);
-        break;
-    default:
-        break;
+        case 0:
+            print(buffer);
+            break;
+        case 1:
+            printErr(buffer);
+            break;
+        default:
+            break;
     }
 }
 

@@ -18,7 +18,9 @@ void _irq04Handler(void);
 void _irq05Handler(void);
 
 void _exception0Handler(void);
-void _exception1Handler(void);
+void _exception6Handler(void);
+
+void _sysCallHandler();
 
 void _cli(void);
 

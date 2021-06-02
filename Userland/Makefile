@@ -14,5 +14,4 @@ clean:
 	cd UserModule; make clean
 	rm -rf *.bin
 
-
 .PHONY: userModule all clean
