@@ -44,7 +44,7 @@ static void printmemHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmo
         printErr("Too many arguments for command printmem");
         return;
     }
-    size_t memPos = strToNumPos(params[0]);
+    char *memPos = strToNumPos(params[0]);
     printInt(memPos, 10000, 10);
     printf("\n");
     writeMemContent(memPos, 32);

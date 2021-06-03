@@ -71,7 +71,7 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 }
 
 // Fills target array with #count bytes of memory starting from startPos
-void getMemContent(uint64_t startPos, uint8_t* target, size_t count){
+void getMemContent(char* startPos, uint8_t* target, size_t count){
 	int8_t *pos = startPos;
 	for(int i=0 ; i < count ; i++){
 		target[i] = pos[i];
@@ -87,11 +87,11 @@ size_t strlen(char *string){
 }
 
 static int digitToStr(int num, int base){
-	return base > 10 ? num - 10 + 'A' : num + '0';
+	return base > 10 && num > 9 ? num - 10 + 'A' : num + '0';
 }
 
 // Transforms an integer to string and stores it on target. Returns final string length
-int numToStr(size_t value, char* target, uint8_t base){
+int numToStr(size_t value, char* target, size_t base){
 	int digit;
 	int sign = 1;		// 0 if negative, 1 if positive
 	int i = -1, j = 0;
@@ -117,7 +117,7 @@ int numToStr(size_t value, char* target, uint8_t base){
 }
 
 // Left-fills the number with zeros until required length is met
-void numToStrSized(size_t value, char* target, uint8_t base, int length){
+void numToStrSized(size_t value, char* target, size_t base, size_t length){
 	int currLen = numToStr(value, target, base);
 	int difference = length - currLen;
 	if(difference > 0){

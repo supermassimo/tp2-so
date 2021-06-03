@@ -1,4 +1,5 @@
 #include "include/mystdlib.h"
+#include "include/mystdio.h"
 
 int strcmp(char* s1, char* s2){
     int c, i=-1;
@@ -17,9 +18,10 @@ size_t strlen(char *string){
     return c;
 }
 
+// Concatenates all the strings sent and returns output string length
 size_t concatStrings(char** strings, size_t stringAmount, char* output){
-     size_t outputIdx=0, strIdx=0, i=0;
-     while(strIdx < stringAmount){
+    size_t outputIdx=0, strIdx=0, i=0;
+    while(strIdx < stringAmount){
         if(strings[strIdx][i] == 0){
             if(strIdx < stringAmount - 1)
                 output[outputIdx++] = ' ';
@@ -32,8 +34,8 @@ size_t concatStrings(char** strings, size_t stringAmount, char* output){
             output[outputIdx] = strings[strIdx][i++];
             outputIdx++;
         }
-     }
-     return outputIdx;
+    }
+    return outputIdx;
 }
 
 static int digitToStr(int num, int base){
@@ -74,13 +76,13 @@ size_t strToNumPos(char* string){
         return 0;
     }
     while(i < length){
+        num *= 10;
         digit = string[i] - 48;
         if(digit < 0 || digit > 9){
             printErr("String sent is not a number");
             break;
         }
         num += digit;
-        num *= 10;
         i++;
     }
     return num;

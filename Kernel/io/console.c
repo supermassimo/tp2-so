@@ -6,6 +6,8 @@
 #define SCR_ROWS 		25
 #define SCR_COLS 		80
 
+#define MAX_NUM_LENGTH 255					// For printing numbers purposes
+
 static char* scrPos = SCR_BASE_ADDR; 	// Current position on the screen
 static uint8_t foreColor = White;			// Default Forecolor
 static uint8_t backColor = Black;			// Default Backcolor
@@ -146,12 +148,12 @@ void println(char* msg){
 	printlnCol(msg, foreColor, backColor);
 }
 
-void printInt(size_t num, uint8_t base){
+void printInt(size_t num, size_t base){
 	printIntCol(num, base, foreColor, backColor);
 }
 
-void printIntCol(size_t num, uint8_t base, uint8_t foreColor, uint8_t backColor){
-	char strNum[100];
+void printIntCol(size_t num, size_t base, uint8_t foreColor, uint8_t backColor){
+	char strNum[MAX_NUM_LENGTH];
 	numToStr(num, strNum, base);
 	printCol(strNum, foreColor, backColor);
 }
@@ -227,12 +229,12 @@ void printMemContent(char* startPos, size_t amount){
 	getMemContent(startPos, memContent, amount);
 	for(int i=0 ; i < amount ; i++){
 		print("BYTE ");
-		printInt(amount+i, 16);
+		printInt(startPos+i, 16);
 		print(": ");
-		printInt(memContent, 16);
-		if(i % 4)
-			print('    ');
-		else
+		printInt(memContent[i], 16);
+		if((i+1)%4 == 0)
 			newLine();
+		else
+			print("    ");
 	}
 }
