@@ -78,6 +78,14 @@ void getMemContent(uint64_t startPos, uint8_t* target, size_t count){
 	}
 }
 
+size_t strlen(char *string){
+    size_t c;
+    for(size_t i=0 ; string[i] != 0 ; i++){
+        c++;
+    }
+    return c;
+}
+
 static int digitToStr(int num, int base){
 	return base > 10 ? num - 10 + 'A' : num + '0';
 }

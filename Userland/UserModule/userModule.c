@@ -1,5 +1,6 @@
 /* userModule.c */
 #include "./standard_library/include/mystdio.h"
+#include "./standard_library/include/commands.h"
 
 // char * v = (char*)0xB8000 + 79 * 2;
 
@@ -8,11 +9,12 @@
 
 int main() {
 	char input[255];
-	writeRegistries();
+	// writeRegistries();
 	// printf("beep boop printing from userland", 33);
 	while(1){
-	 	scanf(input, 10);
-		printf(input, 10);
+	 	scanf(input, 255);
+		if(input[0] == 'e' && input[1] == 'c' && input[2] == 'h' && input[3] == 'o')
+		 	commandHandler(input);
 	};
 	//All the following code may be removed 
 	// *v = 'X';

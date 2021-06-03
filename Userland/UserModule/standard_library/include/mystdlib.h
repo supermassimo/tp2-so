@@ -1,2 +1,5 @@
+#include <stddef.h>
+
 int strcmp(char* s1, char* s2);
-int strlen(char *string);
+size_t strlen(char *string);
+void concatStrings(char** strings, size_t stringAmount, char* output);

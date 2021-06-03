@@ -4,7 +4,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-void printf (const char* string, size_t string_size);
+void printErr(const char* string);
+void printf (const char* string);
 void printInt (int num, size_t string_size, uint8_t base);
 void scanf (char* string, size_t string_size);
 

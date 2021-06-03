@@ -4,6 +4,7 @@
 
 void readInput(char* buffer, size_t buffer_size);
 void write(int output, const char* buffer, size_t buffer_size);
+void writeRegistries();
 
 void sysCallDispatcher(){
     switch((int)getRBX()){

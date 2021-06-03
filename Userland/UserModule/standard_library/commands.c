@@ -1,6 +1,8 @@
 #include "./include/mystdio.h"
+#include "./include/mystdlib.h"
 
-#define COMMAND_AMOUNT 2
+#define MAX_COMMAND_AMOUNT 10
+#define MAX_COMMAND_LENGTH 200
 
 extern void writeRegistries();
 
@@ -9,11 +11,24 @@ typedef struct commandStruct{
     void* handler;
 } commandStruct;
 
-static void echoHandler(char* string){
-    printf(string, strlen(string));
+const size_t commandAmount = 2;
+
+static void echoHandler(char params[][MAX_COMMAND_LENGTH], size_t paramAmoumt){
+    if(paramAmoumt < 1){
+        printErr("Missing parameter for command echo");
+        return;
+    }
+    // size_t finalLength = 0;
+    // for(int i=0 ; i < paramAmoumt ; i++){
+    //    finalLength += strlen(params[i]) + 1;
+    // }
+    // printInt(finalLength, 10, 10);
+    // char output[finalLength];
+    // concatStrings(params, paramAmoumt, output);
+    printf(params[0]);
 }
 
-static void inforegHandler(){
+static void inforegHandler(char params[][MAX_COMMAND_LENGTH] , size_t paramAmoumt){
     writeRegistries();
 }
 
@@ -22,31 +37,44 @@ static commandStruct commands[] = {
     {"inforeg", &inforegHandler}
 };
 
-static void getCommandAndParams(char* command, char** params, char* nameWithParams){
-    int i=0;
-    for(i=0 ; nameWithParams[i] != ' ' && nameWithParams[i] != 0 ; i++){
-        command[i] = nameWithParams[i];
+static int getCommandAndParams(char* command, char params[][MAX_COMMAND_LENGTH], char* input){
+    int inputIdx, j=0, paramIdx = 0;
+    for(inputIdx=0 ; input[inputIdx] != ' ' && input[inputIdx] != 0 ; inputIdx++){
+        command[inputIdx] = input[inputIdx];
     }
-    command[i] = 0;
-    if(nameWithParams[i] != 0){
-        int paramIdx = 0;
-        for(int j=i ; nameWithParams[j] != 0 ; j++){
-            if(nameWithParams[j] == ' '){
-                params[paramIdx++] = 0;
+    command[inputIdx] = 0;
+    if(input[inputIdx] != 0){
+        inputIdx++;
+        while(input[inputIdx] != 0){
+            if(input[inputIdx] == ' '){
+                params[paramIdx++][j] = 0;
+                j = 0;
+                inputIdx++;
                 continue;
             }
-            params[paramIdx][j] = nameWithParams[j];
+            params[paramIdx][j++] = input[inputIdx++];
         }
+        params[paramIdx++][j] = 0;
+        // for(j=0 ; nameWithParams[i] != 0 ; j++){
+        //     if(nameWithParams[i] == ' '){
+        //         params[paramIdx++][j] = 0;
+        //         j = -1;
+        //         i++;
+        //         continue;
+        //     }
+        //     params[paramIdx][j] = nameWithParams[i++];
+        // }
     }
+    return paramIdx;
 }
 
 void commandHandler(char* string){
     char commandName[20];
-    char params[10][100];
-    getCommandAndParams(commandName, params, string);
-    for(int i=0 ; i < COMMAND_AMOUNT ; i++){
+    char params[MAX_COMMAND_AMOUNT][MAX_COMMAND_LENGTH];
+    int paramAmount = getCommandAndParams(commandName, params, string);
+    for(int i=0 ; i < commandAmount ; i++){
         if(strcmp(commands[i].name, commandName) == 0){
-            (void*)commands[i].handler;
+            ((void(*)(char[][MAX_COMMAND_LENGTH], size_t))commands[i].handler)(params, paramAmount);
         }
     }
 }

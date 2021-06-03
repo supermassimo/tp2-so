@@ -1,5 +1,8 @@
 #include "./include/mystdio.h"
 
+#define STD_OUT 0
+#define STD_ERR 1
+
 typedef unsigned char uint8_t;
 
 extern void write(int output, const char* buffer, size_t buffer_size);
@@ -35,8 +38,12 @@ static int numToStr(size_t value, char* target, uint8_t base){
 	return j;
 }
 
-void printf(const char* string, size_t string_size){
-    write(0, string, string_size);
+void printErr(const char* string){
+	write(STD_ERR, string, strlen(string));
+}
+
+void printf(const char* string){
+    write(STD_OUT, string, strlen(string));
 }
 
 void printInt (int num, size_t string_size, uint8_t base){
