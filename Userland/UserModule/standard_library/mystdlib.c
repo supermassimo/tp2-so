@@ -24,19 +24,21 @@ size_t strlen(char *string){
     return c;
 }
 
-void concatStrings(char** strings, size_t stringAmount, char* output){
-    size_t outputIdx=0, strIdx=0, i=0;
-    while(strIdx < stringAmount){
+size_t concatStrings(char** strings, size_t stringAmount, char* output){
+     size_t outputIdx=0, strIdx=0, i=0;
+     while(strIdx < stringAmount){
         if(strings[strIdx][i] == 0){
             if(strIdx < stringAmount - 1)
-                output[outputIdx] = ' ';
+                output[outputIdx++] = ' ';
             else
                 output[outputIdx] = 0;
             strIdx++;
             i = 0;
         }
-        else
-            output[outputIdx] = strings[strIdx][i];
-        outputIdx++;
-    }
+        else {
+            output[outputIdx] = strings[strIdx][i++];
+            outputIdx++;
+        }
+     }
+     return outputIdx;
 }
