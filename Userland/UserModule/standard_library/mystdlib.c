@@ -1,15 +1,19 @@
 #include "include/mystdlib.h"
 
 int strcmp(char* s1, char* s2){
-    int c;
-    for(int i=0 ; s1[i] != 0 && s2[0] != 0 ; i++){
+    int c, i=-1;
+    do{
+        i++;
         c = s1[i] - s2[i];
-        if(c > 0)
-            return 1;
-        if(c < 0)
-            return -1;
-    }
-    return 0;
+    } while(s1[i] != 0 && s2[i] != 0 && s1[i] == s2[i]);
+    return c;
+    // for(i=0 ; s1[i] != 0 && s2[0] != 0 ; i++){
+    //     c = s1[i] - s2[i];
+    //     if(c > 0)
+    //         return 1;
+    //     if(c < 0)
+    //        return -1;
+    //}
 }
 
 size_t strlen(char *string){
@@ -20,7 +24,7 @@ size_t strlen(char *string){
     return c;
 }
 
-void concatStrings(char** strings, size_t stringAmount, char* output){
+void concatStrings(char strings[][200], size_t stringAmount, char* output){
     size_t outputIdx=0, strIdx=0, i=0;
     while(strIdx < stringAmount){
         if(strings[strIdx][i] == 0){

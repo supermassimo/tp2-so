@@ -14,18 +14,19 @@ typedef struct commandStruct{
 
 const size_t commandAmount = 2;
 
-static void echoHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmoumt){
-    if(paramAmoumt < 1){
+static void echoHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount < 1){
         printErr("Missing parameter for command echo");
         return;
     }
-    // size_t finalLength = 0;
-    // for(int i=0 ; i < paramAmoumt ; i++){
-    //    finalLength += strlen(params[i]) + 1;
-    // }
-    // printInt(finalLength, 10, 10);
+    size_t finalLength = 0;
+    for(int i=0 ; i < paramAmount ; i++){
+        finalLength += strlen(params[i]) + 1;
+    }
+    printInt(finalLength, 10, 10);
+    printInt(paramAmount, 10, 10);
     // char output[finalLength];
-    // concatStrings(params, paramAmoumt, output);
+    // concatStrings(params, paramAmount, output);
     printf(params[0]);
 }
 
@@ -39,7 +40,7 @@ static commandStruct commands[] = {
 };
 
 static int getCommandAndParams(char* command, char params[][MAX_PARAMETER_LENGTH], char* input){
-    int inputIdx, j=0, paramIdx = 0;
+    int inputIdx, j=0, paramIdx=0;
     for(inputIdx=0 ; input[inputIdx] != ' ' && input[inputIdx] != 0 ; inputIdx++){
         command[inputIdx] = input[inputIdx];
     }
@@ -56,15 +57,6 @@ static int getCommandAndParams(char* command, char params[][MAX_PARAMETER_LENGTH
             params[paramIdx][j++] = input[inputIdx++];
         }
         params[paramIdx++][j] = 0;
-        // for(j=0 ; nameWithParams[i] != 0 ; j++){
-        //     if(nameWithParams[i] == ' '){
-        //         params[paramIdx++][j] = 0;
-        //         j = -1;
-        //         i++;
-        //         continue;
-        //     }
-        //     params[paramIdx][j] = nameWithParams[i++];
-        // }
     }
     return paramIdx;
 }

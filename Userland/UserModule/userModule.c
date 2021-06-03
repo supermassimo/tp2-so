@@ -13,8 +13,7 @@ int main() {
 	// printf("beep boop printing from userland", 33);
 	while(1){
 	 	scanf(input, 255);
-		if(input[0] == 'e' && input[1] == 'c' && input[2] == 'h' && input[3] == 'o')
-		 	commandHandler(input);
+		commandHandler(input);
 	};
 	//All the following code may be removed 
 	// *v = 'X';
