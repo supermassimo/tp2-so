@@ -2,7 +2,8 @@
 #include "./include/mystdlib.h"
 
 #define MAX_COMMAND_AMOUNT 10
-#define MAX_COMMAND_LENGTH 200
+#define MAX_COMMAND_LENGTH 20
+#define MAX_PARAMETER_LENGTH 200
 
 extern void writeRegistries();
 
@@ -13,7 +14,7 @@ typedef struct commandStruct{
 
 const size_t commandAmount = 2;
 
-static void echoHandler(char params[][MAX_COMMAND_LENGTH], size_t paramAmoumt){
+static void echoHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmoumt){
     if(paramAmoumt < 1){
         printErr("Missing parameter for command echo");
         return;
@@ -28,7 +29,7 @@ static void echoHandler(char params[][MAX_COMMAND_LENGTH], size_t paramAmoumt){
     printf(params[0]);
 }
 
-static void inforegHandler(char params[][MAX_COMMAND_LENGTH] , size_t paramAmoumt){
+static void inforegHandler(char params[][MAX_PARAMETER_LENGTH] , size_t paramAmoumt){
     writeRegistries();
 }
 
@@ -37,7 +38,7 @@ static commandStruct commands[] = {
     {"inforeg", &inforegHandler}
 };
 
-static int getCommandAndParams(char* command, char params[][MAX_COMMAND_LENGTH], char* input){
+static int getCommandAndParams(char* command, char params[][MAX_PARAMETER_LENGTH], char* input){
     int inputIdx, j=0, paramIdx = 0;
     for(inputIdx=0 ; input[inputIdx] != ' ' && input[inputIdx] != 0 ; inputIdx++){
         command[inputIdx] = input[inputIdx];
@@ -69,12 +70,12 @@ static int getCommandAndParams(char* command, char params[][MAX_COMMAND_LENGTH],
 }
 
 void commandHandler(char* string){
-    char commandName[20];
-    char params[MAX_COMMAND_AMOUNT][MAX_COMMAND_LENGTH];
+    char commandName[MAX_COMMAND_LENGTH];
+    char params[MAX_COMMAND_AMOUNT][MAX_PARAMETER_LENGTH];
     int paramAmount = getCommandAndParams(commandName, params, string);
     for(int i=0 ; i < commandAmount ; i++){
         if(strcmp(commands[i].name, commandName) == 0){
-            ((void(*)(char[][MAX_COMMAND_LENGTH], size_t))commands[i].handler)(params, paramAmount);
+            ((void(*)(char[][MAX_PARAMETER_LENGTH], size_t))commands[i].handler)(params, paramAmount);
         }
     }
 }
