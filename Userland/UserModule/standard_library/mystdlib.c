@@ -87,3 +87,26 @@ size_t strToNumPos(char* string){
     }
     return num;
 }
+
+long strToNum(char* string){
+    int isNegative=0, digit;
+    long num = 0;
+    size_t i=0, length = strlen(string);
+    if(string[0] == '-'){
+        isNegative = 1;
+        i++;
+    }
+    while(i < length){
+        num *= 10;
+        digit = string[i] - 48;
+        if(digit < 0 || digit > 9){
+            printErr("String sent is not a number");
+            break;
+        }
+        num += digit;
+        i++;
+    }
+    if(isNegative)
+        num *= -1;
+    return num;
+}

@@ -6,7 +6,7 @@
 
 void printErr(const char* string);
 void printf (const char* string);
-void printInt (int num, size_t string_size, uint8_t base);
+void printInt (long num, size_t string_size, uint8_t base);
 void scanf (char* string, size_t string_size);
 
 #endif

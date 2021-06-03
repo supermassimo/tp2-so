@@ -91,7 +91,7 @@ static int digitToStr(int num, int base){
 }
 
 // Transforms an integer to string and stores it on target. Returns final string length
-int numToStr(size_t value, char* target, size_t base){
+size_t numToStr(long value, char* target, size_t base){
 	int digit;
 	int sign = 1;		// 0 if negative, 1 if positive
 	int i = -1, j = 0;

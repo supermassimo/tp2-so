@@ -14,6 +14,10 @@ typedef enum RtcRegister{
 	RegB = 11
 } RtcRegister;
 
+typedef enum Months{
+	Jan=1, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
+} Months;
+
 extern uint8_t getRtcReg(uint8_t reg);
 extern uint8_t setRtcReg(uint8_t reg);
 
@@ -51,24 +55,33 @@ void printTime(int utc){
 }
 
 // Fills the Time struct sent with current daytime
-void getTime(Time *dayTime, int utc){
-	dayTime -> hours = getHourUTC(getRtc(Hours), utc);
+// Returns whether the day was changed or not
+//  0 -> day=utcDay
+//  1 -> day=utcDay+1
+// -1 -> day=utcDay-1
+int getTime(Time *dayTime, int utc){
+	int dayChange = 0;
+	int newHour = getRtc(Hours) + utc;
+	if(newHour >= 24){
+		newHour -= 24;
+		dayChange = 1;
+	}
+	if(newHour < 0){
+		newHour += 24;
+		dayChange = -1;
+	}
+	dayTime -> hours = newHour;
     dayTime -> minutes = getRtc(Minutes);
     dayTime -> seconds = getRtc(Seconds);
+	return dayChange;
 }
 
-// Prints date in format DD/MM/YYYY
-void printDate(){
-	Date date = {getRtc(MonthDay), getRtc(Month), getRtc(Year) + 2000};
-	char day[3], month[3], year[5];
-	numToStrSized(date.day, day, 10, 2);
-	numToStrSized(date.month, month, 10, 2);
-	numToStrSized(date.year, year, 10, 4);
-	print(day);
-	print("/");
-	print(month);
-	print("/");
-	println(year);
+static int has30Days(int month){
+	return month == Apr || month == Jun || month == Sep || month == Nov;
+}
+
+static int isLeapYear(int year){
+	return year % 4 == 0 && (year/100) % 4 == 0;
 }
 
 // Fills the Date struct sent with current date
@@ -76,4 +89,67 @@ void getDate(Date *date){
 	date -> day = getRtc(MonthDay);
 	date -> month = getRtc(Month);
 	date -> year = getRtc(Year) + 2000;
+}
+
+void getDateChanged(Date *date, int daySkip){
+	getDate(date);
+	switch(daySkip){
+		case 1:
+			if(date->day == 28 && date->month == Feb){
+				if(isLeapYear(date->year))
+					date->day = 29;
+				else{
+					date->day = 1;
+					date->month = Mar;
+				}
+			}
+			else if(date->day == 30 && has30Days(date->month)){
+				date->day = 1;
+				date->month += 1;
+			}
+			else if(date->day == 31){
+				if(date->month == Dec){
+					date->day = 1;
+					date->month = Jan;
+					date->year += 1;
+				}
+				else{
+					date->day = 1;
+					date->month += 1;
+				}
+			}
+			else{
+				date->day += 1;
+			}
+			break;
+		case -1:
+			if(date->day == 1){
+				if(date->month == Jan){
+					date->day = 31;
+					date->month = Dec;
+					date->year -= 1;
+				}
+				else {
+					if(date->month == Mar){
+						if(!isLeapYear(date->year))
+							date-> day = 28;
+						else
+							date->day = 29;
+					}
+					else {
+						if(has30Days(date->month-1))
+							date->day = 30;
+						else
+							date->day = 31;
+					}
+					date->month -= 1;
+				}
+			}
+			else{
+				date->day -= 1;
+			}
+			break;
+		default:
+			break;
+	}
 }

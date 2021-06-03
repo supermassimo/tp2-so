@@ -1,4 +1,5 @@
 #include "./include/mystdio.h"
+#include "./include/mystdlib.h"
 
 #define STD_OUT 0
 #define STD_ERR 1
@@ -16,7 +17,7 @@ void printf(const char* string){
     write(STD_OUT, string, strlen(string));
 }
 
-void printInt (int num, size_t string_size, uint8_t base){
+void printInt (long num, size_t string_size, uint8_t base){
     char array[string_size];
     int final_size = numToStr(num, array, base);
     char final_string[final_size+1];

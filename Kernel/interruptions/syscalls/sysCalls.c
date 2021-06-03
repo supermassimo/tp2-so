@@ -5,6 +5,9 @@
 void readInput(char* buffer, size_t buffer_size);
 void write(int output, const char* buffer, size_t buffer_size);
 void writeRegistries();
+void writeMemContent(char* startPos, size_t amount);
+void writeDateTime(int utc);
+
 
 void sysCallDispatcher(){
     switch((int)getRBX()){
@@ -19,6 +22,9 @@ void sysCallDispatcher(){
             break;
         case 3:
             writeMemContent(getRDI(), getRSI());
+            break;
+        case 4:
+            writeDateTime(getRDI());
             break;
         default:
             //code invalido
@@ -50,4 +56,8 @@ void writeRegistries(){
 
 void writeMemContent(char* startPos, size_t amount){
     printMemContent(startPos, amount);
+}
+
+void writeDateTime(int utc){
+    printDateTime(utc);
 }

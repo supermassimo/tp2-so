@@ -7,13 +7,14 @@
 
 extern void writeRegistries();
 extern void writeMemContent(char* startPos, size_t amount);
+extern void writeDateTime(int utc);
 
 typedef struct commandStruct{
     char* name;
     void* handler;
 } commandStruct;
 
-static const size_t commandAmount = 3;
+static const size_t commandAmount = 4;
 
 static void echoHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount < 1){
@@ -45,15 +46,33 @@ static void printmemHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmo
         return;
     }
     char *memPos = strToNumPos(params[0]);
-    printInt(memPos, 10000, 10);
-    printf("\n");
     writeMemContent(memPos, 32);
+}
+
+static void datetimeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount < 1){
+        printErr("Missing parameter for command daytime");
+        return;
+    }
+    if(paramAmount > 1){
+        printErr("Too many arguments for command printmem");
+        return;
+    }
+    long utc = strToNum(params[0]);
+    // TODO: Fix code below (takes utc as unsigned number)
+    // printInt(utc, 10000, 10);
+    // if(utc < 12 || utc > 12){
+    //     printErr("Invalid utc value");
+    //     return;
+    // }
+    writeDateTime(utc);
 }
 
 static commandStruct commands[] = {
     {"echo", &echoHandler},
     {"inforeg", &inforegHandler},
-    {"printmem", &printmemHandler}
+    {"printmem", &printmemHandler},
+    {"datetime", &datetimeHandler}
 };
 
 static int getCommandAndParams(char* command, char params[][MAX_PARAMETER_LENGTH], char* input){

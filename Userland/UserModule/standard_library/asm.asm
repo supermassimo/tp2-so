@@ -2,6 +2,7 @@ GLOBAL readInput
 GLOBAL write
 GLOBAL writeRegistries
 GLOBAL writeMemContent
+GLOBAL writeDateTime
 
 section .text
 
@@ -25,6 +26,12 @@ writeRegistries:
 
 writeMemContent:
     mov rbx, 3
+    int 69h
+
+    ret
+
+writeDateTime:
+    mov rbx, 4
     int 69h
 
     ret

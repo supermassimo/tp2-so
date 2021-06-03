@@ -15,9 +15,8 @@ typedef struct Date{
 	uint16_t year;
 } Date;
 
-void getTime(Time *dayTime, int utc);
-void printTime(int utc);
+int getTime(Time *dayTime, int utc);
 void getDate(Date *date);
-void printDate();
+void getDateChanged(Date *date, int daySkip);
 
 #endif
