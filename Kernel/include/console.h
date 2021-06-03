@@ -23,5 +23,6 @@ void printErr(char *string);
 void newLine();
 void clearScreen();
 void printRegistries();
+void printMemContent(char* startPos, size_t amount);
 
 #endif

@@ -221,3 +221,18 @@ void printRegistries(){
 	printInt(array[14], 10);
 	newLine();
 }
+
+void printMemContent(char* startPos, size_t amount){
+	uint8_t memContent[amount];
+	getMemContent(startPos, memContent, amount);
+	for(int i=0 ; i < amount ; i++){
+		print("BYTE ");
+		printInt(amount+i, 16);
+		print(": ");
+		printInt(memContent, 16);
+		if(i % 4)
+			print('    ');
+		else
+			newLine();
+	}
+}

@@ -17,6 +17,9 @@ void sysCallDispatcher(){
         case 2:
             writeRegistries();
             break;
+        case 3:
+            writeMemContent(getRDI(), getRSI());
+            break;
         default:
             //code invalido
             break;
@@ -43,4 +46,8 @@ void write(int output, const char* buffer, size_t buffer_size){
 
 void writeRegistries(){
     printRegistries();
+}
+
+void writeMemContent(char* startPos, size_t amount){
+    printMemContent(startPos, amount);
 }

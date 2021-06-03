@@ -6,13 +6,14 @@
 #define MAX_PARAMETER_LENGTH 200
 
 extern void writeRegistries();
+extern void writeMemContent(char* startPos, size_t amount);
 
 typedef struct commandStruct{
     char* name;
     void* handler;
 } commandStruct;
 
-const size_t commandAmount = 2;
+static const size_t commandAmount = 3;
 
 static void echoHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount < 1){
@@ -25,18 +26,34 @@ static void echoHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
     }
     // printInt(finalLength, 10, 10);
     // printInt(paramAmount, 10, 10);
-    // char output[finalLength];
-    // concatStrings(params, paramAmount, output);
-    printf(params[0]);
+    char output[finalLength];
+    concatStrings(params, paramAmount, output);
+    printf(output);
 }
 
-static void inforegHandler(char params[][MAX_PARAMETER_LENGTH] , size_t paramAmoumt){
+static void inforegHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     writeRegistries();
+}
+
+static void printmemHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount < 1){
+        printErr("Missing parameter for command printmem");
+        return;
+    }
+    if(paramAmount > 1){
+        printErr("Too many arguments for command printmem");
+        return;
+    }
+    size_t memPos = strToNumPos(params[0]);
+    printInt(memPos, 10000, 10);
+    printf("\n");
+    writeMemContent(memPos, 32);
 }
 
 static commandStruct commands[] = {
     {"echo", &echoHandler},
-    {"inforeg", &inforegHandler}
+    {"inforeg", &inforegHandler},
+    {"printmem", &printmemHandler}
 };
 
 static int getCommandAndParams(char* command, char params[][MAX_PARAMETER_LENGTH], char* input){
