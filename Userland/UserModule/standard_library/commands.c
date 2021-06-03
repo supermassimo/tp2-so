@@ -23,8 +23,8 @@ static void echoHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
     for(int i=0 ; i < paramAmount ; i++){
         finalLength += strlen(params[i]) + 1;
     }
-    printInt(finalLength, 10, 10);
-    printInt(paramAmount, 10, 10);
+    // printInt(finalLength, 10, 10);
+    // printInt(paramAmount, 10, 10);
     // char output[finalLength];
     // concatStrings(params, paramAmount, output);
     printf(params[0]);

@@ -24,7 +24,7 @@ size_t strlen(char *string){
     return c;
 }
 
-void concatStrings(char strings[][200], size_t stringAmount, char* output){
+void concatStrings(char** strings, size_t stringAmount, char* output){
     size_t outputIdx=0, strIdx=0, i=0;
     while(strIdx < stringAmount){
         if(strings[strIdx][i] == 0){
