@@ -14,11 +14,14 @@ typedef struct commandStruct{
     void* handler;
 } commandStruct;
 
-static const size_t commandAmount = 4;
+typedef struct helpStruct{
+    char* name;
+    char* help_message;
+} helpStruct;
 
 static void echoHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount < 1){
-        printErr("Missing parameter for command echo");
+        printErr("Missing parameter for command 'echo'\n");
         return;
     }
     size_t finalLength = 0;
@@ -33,16 +36,20 @@ static void echoHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
 }
 
 static void inforegHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount > 0){
+        printErr("Too many arguments for command 'inforeg'\n");
+        return;
+    }
     writeRegistries();
 }
 
 static void printmemHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount < 1){
-        printErr("Missing parameter for command printmem");
+        printErr("Missing parameter for command 'printmem'\n");
         return;
     }
     if(paramAmount > 1){
-        printErr("Too many arguments for command printmem");
+        printErr("Too many arguments for command 'printmem'\n");
         return;
     }
     char *memPos = strToNumPos(params[0]);
@@ -51,11 +58,11 @@ static void printmemHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmo
 
 static void datetimeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount < 1){
-        printErr("Missing parameter for command daytime");
+        printErr("Missing parameter for command 'daytime'\n");
         return;
     }
     if(paramAmount > 1){
-        printErr("Too many arguments for command printmem");
+        printErr("Too many arguments for command 'datetime'\n");
         return;
     }
     long utc = strToNum(params[0]);
@@ -68,7 +75,33 @@ static void datetimeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmo
     writeDateTime(utc);
 }
 
+static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if (paramAmount > 1){
+        printErr("Too many arguments for command 'help'\nUse: help [command]\n");
+    }
+    if (paramAmount == 0){
+        printf(help_messages[0].help_message);
+    }
+    for(int i=0 ; i < commandAmount ; i++){
+        if(strcmp(help_messages[i].name, params[0]) == 0){
+            printf(help_messages[i].help_message);
+        }
+    }
+}
+
+static const size_t commandAmount = 5;
+
+//help must be at the top
+static helpStruct help_messages[] = {
+    {"help", "'help': Get information on how to use commands\nUse: 'help [command]'\n'command': Command to get use information about\n"},
+    {"echo", "'echo': Print a message on the console\nUse: 'echo [message]'\n'message': Message to print in console\n"},
+    {"inforeg", "'inforeg': Print the states of the registries\nUse: 'inforeg'\n"},
+    {"printmem", "'printmem': Print the value in a place in memory\nUse: 'printmem [pointer]'\n'pointer': Memory location to print value of\n"},
+    {"datetime", "'datetime': Print the time and date for a specific timezone\nUse: 'datetime [timezone]'\n'timezone': Timezone to print the current time of"}
+};
+
 static commandStruct commands[] = {
+    {"help", &helpHandler},
     {"echo", &echoHandler},
     {"inforeg", &inforegHandler},
     {"printmem", &printmemHandler},

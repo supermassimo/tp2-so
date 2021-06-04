@@ -2,29 +2,29 @@
 #include <console.h>
 #include <standard_in.h>
 
-void readInput(char* buffer, size_t buffer_size);
-void write(int output, const char* buffer, size_t buffer_size);
-void writeRegistries();
-void writeMemContent(char* startPos, size_t amount);
-void writeDateTime(int utc);
+void sysReadInput(char* buffer, size_t buffer_size);
+void sysWrite(int output, const char* buffer, size_t buffer_size);
+void sysWriteRegistries();
+void sysWriteMemContent(char* startPos, size_t amount);
+void sysWriteDateTime(int utc);
 
 
 void sysCallDispatcher(){
     switch((int)getRBX()){
         case 0:
-            readInput(getRDI(), getRSI());
+            sysReadInput(getRDI(), getRSI());
             break;
         case 1:
-            write(getRDI(), getRSI(), getRDX());
+            sysWrite(getRDI(), getRSI(), getRDX());
             break;
         case 2:
-            writeRegistries();
+            sysWriteRegistries();
             break;
         case 3:
-            writeMemContent(getRDI(), getRSI());
+            sysWriteMemContent(getRDI(), getRSI());
             break;
         case 4:
-            writeDateTime(getRDI());
+            sysWriteDateTime(getRDI());
             break;
         default:
             //code invalido
@@ -32,11 +32,11 @@ void sysCallDispatcher(){
     }
 }
 
-void readInput(char* buffer, size_t buffer_size){
+void sysReadInput(char* buffer, size_t buffer_size){
     getBufferContent(buffer, buffer_size);
 }
 
-void write(int output, const char* buffer, size_t buffer_size){
+void sysWrite(int output, const char* buffer, size_t buffer_size){
     switch (output)
     {
         case 0:
@@ -50,14 +50,14 @@ void write(int output, const char* buffer, size_t buffer_size){
     }
 }
 
-void writeRegistries(){
+void sysWriteRegistries(){
     printRegistries();
 }
 
-void writeMemContent(char* startPos, size_t amount){
+void sysWriteMemContent(char* startPos, size_t amount){
     printMemContent(startPos, amount);
 }
 
-void writeDateTime(int utc){
+void sysWriteDateTime(int utc){
     printDateTime(utc);
 }
