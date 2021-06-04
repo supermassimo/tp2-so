@@ -1,9 +1,6 @@
+#include "./include/commands.h"
 #include "./include/mystdio.h"
 #include "./include/mystdlib.h"
-
-#define MAX_COMMAND_AMOUNT 10
-#define MAX_COMMAND_LENGTH 20
-#define MAX_PARAMETER_LENGTH 200
 
 extern void writeRegistries();
 extern void writeMemContent(char* startPos, size_t amount);
@@ -16,20 +13,24 @@ typedef struct commandStruct{
 
 static const size_t commandAmount = 4;
 
-static void echoHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+static void echoHandler(char *params[MAX_PARAMETER_LENGTH], int paramAmount){
     if(paramAmount < 1){
         printErr("Missing parameter for command echo");
         return;
     }
-    size_t finalLength = 0;
+    int finalLength = 0;
     for(int i=0 ; i < paramAmount ; i++){
         finalLength += strlen(params[i]) + 1;
     }
-    // printInt(finalLength, 10, 10);
-    // printInt(paramAmount, 10, 10);
     char output[finalLength];
     concatStrings(params, paramAmount, output);
     printf(output);
+    // printf("\n");
+    // printInt(actualLength, 10000, 10);
+    // if(actualLength != finalLength){
+    //     printErr("\nError concating the strings");
+    //     return;
+    // }
 }
 
 static void inforegHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){

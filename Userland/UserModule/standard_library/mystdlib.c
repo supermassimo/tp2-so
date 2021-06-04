@@ -18,11 +18,11 @@ size_t strlen(char *string){
     return c;
 }
 
-// Concatenates all the strings sent and returns output string length
-size_t concatStrings(char** strings, size_t stringAmount, char* output){
-    size_t outputIdx=0, strIdx=0, i=0;
+// Concatenates all the strings sent and returns output string length on finalOutputLen
+int concatStrings(char strings[][MAX_PARAMETER_LENGTH], int stringAmount, char* output){
+    int outputIdx=0, strIdx=0, i=0;
     while(strIdx < stringAmount){
-        if(strings[strIdx][i] == 0){
+        if(strings[strIdx][i] == 0){                // *(*(strings+strIdx*stringMaxLen)+i)
             if(strIdx < stringAmount - 1)
                 output[outputIdx++] = ' ';
             else
@@ -31,8 +31,7 @@ size_t concatStrings(char** strings, size_t stringAmount, char* output){
             i = 0;
         }
         else {
-            output[outputIdx] = strings[strIdx][i++];
-            outputIdx++;
+            output[outputIdx++] = strings[strIdx][i++];
         }
     }
     return outputIdx;
