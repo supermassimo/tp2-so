@@ -1,9 +1,6 @@
+#include "./include/commands.h"
 #include "./include/mystdio.h"
 #include "./include/mystdlib.h"
-
-#define MAX_COMMAND_AMOUNT 10
-#define MAX_COMMAND_LENGTH 20
-#define MAX_PARAMETER_LENGTH 200
 
 extern void writeRegistries();
 extern void writeMemContent(char* startPos, size_t amount);
@@ -19,20 +16,23 @@ typedef struct helpStruct{
     char* help_message;
 } helpStruct;
 
-static void echoHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+static void echoHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmount){
     if(paramAmount < 1){
         printErr("Missing parameter for command 'echo'\n");
         return;
     }
-    size_t finalLength = 0;
+    size_t finalLength = 0, actualLength;
     for(int i=0 ; i < paramAmount ; i++){
         finalLength += strlen(params[i]) + 1;
     }
-    // printInt(finalLength, 10, 10);
-    // printInt(paramAmount, 10, 10);
     char output[finalLength];
-    concatStrings(params, paramAmount, output);
+    actualLength = concatStrings(params, paramAmount, output);
     printf(output);
+    printf("\n");
+    if(actualLength != finalLength - 1){            // finalLength computes the '\0' while actualLength doesn't
+        printErr("Error concating the strings\n");
+        return;
+    }
 }
 
 static void inforegHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
@@ -75,6 +75,17 @@ static void datetimeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmo
     writeDateTime(utc);
 }
 
+static const size_t commandAmount = 5;
+
+//help must be at the top
+static helpStruct help_messages[] = {
+    {"help", "'help': Get information on how to use commands\nUse: 'help [command]'\n'command': Command to get use information about\n"},
+    {"echo", "'echo': Print a message on the console\nUse: 'echo [message]'\n'message': Message to print in console\n"},
+    {"inforeg", "'inforeg': Print the states of the registries\nUse: 'inforeg'\n"},
+    {"printmem", "'printmem': Print the value in a place in memory\nUse: 'printmem [pointer]'\n'pointer': Memory location to print value of\n"},
+    {"datetime", "'datetime': Print the time and date for a specific timezone\nUse: 'datetime [timezone]'\n'timezone': Timezone to print the current time of"}
+};
+
 static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if (paramAmount > 1){
         printErr("Too many arguments for command 'help'\nUse: help [command]\n");
@@ -88,17 +99,6 @@ static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
         }
     }
 }
-
-static const size_t commandAmount = 5;
-
-//help must be at the top
-static helpStruct help_messages[] = {
-    {"help", "'help': Get information on how to use commands\nUse: 'help [command]'\n'command': Command to get use information about\n"},
-    {"echo", "'echo': Print a message on the console\nUse: 'echo [message]'\n'message': Message to print in console\n"},
-    {"inforeg", "'inforeg': Print the states of the registries\nUse: 'inforeg'\n"},
-    {"printmem", "'printmem': Print the value in a place in memory\nUse: 'printmem [pointer]'\n'pointer': Memory location to print value of\n"},
-    {"datetime", "'datetime': Print the time and date for a specific timezone\nUse: 'datetime [timezone]'\n'timezone': Timezone to print the current time of"}
-};
 
 static commandStruct commands[] = {
     {"help", &helpHandler},

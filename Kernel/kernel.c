@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <string.h>
+// #include <string.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include <lib.h>
