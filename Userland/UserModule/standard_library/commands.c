@@ -82,7 +82,7 @@ static helpStruct help_messages[] = {
     {"help", "'help': Get information on how to use commands\nUse: 'help [command]'\n'command': Command to get use information about\n"},
     {"echo", "'echo': Print a message on the console\nUse: 'echo [message]'\n'message': Message to print in console\n"},
     {"inforeg", "'inforeg': Print the states of the registries\nUse: 'inforeg'\n"},
-    {"printmem", "'printmem': Print the value in a place in memory\nUse: 'printmem [pointer]'\n'pointer': Memory location to print value of\n"},
+    {"printmem", "'printmem': Print the first 32 bytes following a place in memory\nUse: 'printmem [pointer]'\n'pointer': Memory address of first byte to print\n"},
     {"datetime", "'datetime': Print the time and date for a specific timezone\nUse: 'datetime [timezone]'\n'timezone': Timezone to print the current time of"}
 };
 
