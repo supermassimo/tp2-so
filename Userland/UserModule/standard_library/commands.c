@@ -11,26 +11,25 @@ typedef struct commandStruct{
     void* handler;
 } commandStruct;
 
-static const size_t commandAmount = 4;
+static const size_t commandAmount = 5;
 
-static void echoHandler(char *params[MAX_PARAMETER_LENGTH], int paramAmount){
+static void echoHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmount){
     if(paramAmount < 1){
         printErr("Missing parameter for command echo");
         return;
     }
-    int finalLength = 0;
+    size_t finalLength = 0, actualLength;
     for(int i=0 ; i < paramAmount ; i++){
         finalLength += strlen(params[i]) + 1;
     }
     char output[finalLength];
-    concatStrings(params, paramAmount, output);
+    actualLength = concatStrings(params, paramAmount, output);
     printf(output);
-    // printf("\n");
-    // printInt(actualLength, 10000, 10);
-    // if(actualLength != finalLength){
-    //     printErr("\nError concating the strings");
-    //     return;
-    // }
+    printf("\n");
+    if(actualLength != finalLength - 1){            // finalLength computes the '\0' while actualLength doesn't
+        printErr("Error concating the strings\n");
+        return;
+    }
 }
 
 static void inforegHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
