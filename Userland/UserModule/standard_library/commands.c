@@ -5,6 +5,7 @@
 extern void writeRegistries();
 extern void writeMemContent(char* startPos, size_t amount);
 extern void writeDateTime(int utc);
+extern void invalidOpcodeThrower();
 
 typedef struct commandStruct{
     char* name;
@@ -15,6 +16,14 @@ typedef struct helpStruct{
     char* name;
     char* help_message;
 } helpStruct;
+
+typedef struct exceptionTestStruct{
+    char* exception;
+    void* thrower;
+} exceptionTestStruct;
+
+static const size_t commandAmount = 7;
+static const size_t exceptionAmount = 2;
 
 static void echoHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmount){
     if(paramAmount < 1){
@@ -75,15 +84,15 @@ static void datetimeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmo
     writeDateTime(utc);
 }
 
-static const size_t commandAmount = 5;
-
 //help must be at the top
 static helpStruct help_messages[] = {
     {"help", "'help': Get information on how to use commands\nUse: 'help [command]'\n'command': Command to get use information about\n"},
     {"echo", "'echo': Print a message on the console\nUse: 'echo [message]'\n'message': Message to print in console\n"},
     {"inforeg", "'inforeg': Print the states of the registries\nUse: 'inforeg'\n"},
     {"printmem", "'printmem': Print the first 32 bytes following a place in memory\nUse: 'printmem [pointer]'\n'pointer': Memory address of first byte to print\n"},
-    {"datetime", "'datetime': Print the time and date for a specific timezone\nUse: 'datetime [timezone]'\n'timezone': Timezone to print the current time of"}
+    {"datetime", "'datetime': Print the time and date for a specific timezone\nUse: 'datetime [timezone]'\n'timezone': Timezone to print the current time of\n"},
+    {"localdatetime", "'localdatetime': Print the local time and date\nUse: 'localdatetime'\n"},
+    {"test", "'test': Throws the provided exception\nUse: 'test [exception]'\n''exception': Type of exception to be thrown\n"}
 };
 
 static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
@@ -100,12 +109,45 @@ static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
     }
 }
 
+static void localDateTimeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount > 0){
+        printErr("Too many arguments for command 'localdatetime'");
+        return;
+    }
+    writeDateTime(LOCAL_UTC);
+}
+
+static void divByZeroThrower(){
+    int value = 1/0;
+    return;
+}
+
+static exceptionTestStruct exceptions[] = {
+    {"div-by-zero", &divByZeroThrower},
+    {"invalid-opcode", &invalidOpcodeThrower}
+};
+
+static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount == 0){
+        printErr("Missing argument for command 'test'");
+    }
+    if(paramAmount > 1){
+        printErr("Too many arguments for command 'test'");
+    }
+    for(int i=0 ; i < exceptionAmount ; i++){
+        if(strcmp(params[0], exceptions[i].exception) == 0)
+            ((void(*)())exceptions[i].thrower)();
+    }
+}
+
 static commandStruct commands[] = {
     {"help", &helpHandler},
     {"echo", &echoHandler},
     {"inforeg", &inforegHandler},
     {"printmem", &printmemHandler},
-    {"datetime", &datetimeHandler}
+    {"datetime", &datetimeHandler},
+    {"localdatetime", &localDateTimeHandler},
+    {"test", &testHandler}
 };
 
 static int getCommandAndParams(char* command, char params[][MAX_PARAMETER_LENGTH], char* input){

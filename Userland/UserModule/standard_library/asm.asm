@@ -3,6 +3,7 @@ GLOBAL write
 GLOBAL writeRegistries
 GLOBAL writeMemContent
 GLOBAL writeDateTime
+GLOBAL invalidOpcodeThrower
 
 section .text
 
@@ -34,4 +35,8 @@ writeDateTime:
     mov rbx, 4
     int 69h
 
+    ret
+
+invalidOpcodeThrower:
+    ud2
     ret

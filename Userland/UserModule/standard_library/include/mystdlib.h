@@ -1,6 +1,7 @@
 #ifndef MYSTDLIB_H_
 #define MYSTDLIB_H_
 
+#define LOCAL_UTC -3
 
 #include <stddef.h>
 #include <stdint.h>
