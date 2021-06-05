@@ -30,6 +30,9 @@ void sysCallDispatcher(){
         case 5:
             sysSetIdle(getRDI());
             break;
+        case 6:
+            sysClear();
+            break;
         default:
             //code invalido
             break;
@@ -68,4 +71,8 @@ void sysWriteDateTime(int utc){
 
 void sysSetIdle(int isIdle){
     setIdle(isIdle);
+}
+
+void sysClear(){
+    clearActiveDisplay();
 }

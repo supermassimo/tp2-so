@@ -204,21 +204,46 @@ static void printSpecialChar(char c, uint8_t colorByte){
 	}
 }
 
-static void scrollUp(){
-	char *current = consoles[activeConsole].startPos;
-	// Muevo todos los caracteres (de la linea 1 a la 25) una posicion hacia arriba
-	for(int i=1 ; i < SCR_ROWS ; i++){
-		for(int j=0 ; j < SCR_SIDE_COLS ; j++){
+static void scrollUpActiveDisplay(){
+	char* current = consoles[activeConsole].startPos;
+	// Muevo todos los caracteres  de la consola activa una posicion hacia arriba
+	for(int i=1 ; i < consoles[activeConsole].rows ; i++){
+		for(int j=0 ; j < consoles[activeConsole].cols ; j++){
 			*current = *(current+SCR_COLS*2);
 			*(current+1) = *(current+SCR_COLS*2+1);
 			current += 2;
 		}
-		current += SCR_COLS*2; 
+		current = consoles[activeConsole].startPos + SCR_COLS*2*i;
 	}
 	// Limpio la última línea, dejando el color previamente usado
-	for(int j=0 ; j < SCR_SIDE_COLS ; j++){
+	for(int j=0 ; j < consoles[activeConsole].cols ; j++){
 		*current = 0;
 		current += 2;
+	}
+	// Resetting the cursor to first char of last row
+	scrPos = consoles[activeConsole].startPos + (consoles[activeConsole].rows-1)*SCR_COLS*2;
+}
+
+
+// TODO: Fix this
+static void scrollUp(){
+	char *current = SCR_BASE_ADDR;
+	// Muevo todos los caracteres (de la linea 1 a la 25) una posicion hacia arriba
+	for(int i=1 ; i < SCR_ROWS ; i++){
+		for(int j=0 ; j < SCR_COLS ; j++){
+			*current = *(current+SCR_COLS*2);
+			*(current+1) = *(current+SCR_COLS*2+1);
+			current += 2;
+		}
+		current = SCR_BASE_ADDR + SCR_COLS*2*i;
+	}
+	// Limpio la última línea (excepto los girths), dejando el color previamente usado
+	for(int i=0 ; i < consoleAmount ; i++){
+		for(int j=0 ; j < consoles[i].cols ; j++){
+			*current = 0;
+			current += 2;
+		}
+		current += LIMITER_GIRTH + 1;
 	}
 	//drawDelimiterInRow(SCR_SIDE_COLS+1, SCR_ROWS-1, LIMITER_GIRTH, delimiterColor);
 	// Resetting the cursor to first char of last row
@@ -229,10 +254,40 @@ void printChar(char c){
 	printCharCol(c, foreColor, backColor);
 }
 
+int isLastConsoleActive(){
+	return activeConsole == consoleAmount - 1;
+}
+
 void printCharCol(char c, uint8_t foreColor, uint8_t backColor){
     char colorByte = getColorByte(foreColor, backColor);
-	int offset = ((int)scrPos)-SCR_BASE_ADDR;//(int)consoles[activeConsole].startPos;
-	int column = offset%(SCR_COLS*2);
+	uint64_t offset = (uint64_t)scrPos-(uint64_t)consoles[activeConsole].startPos;
+	size_t absoluteColumn = offset%(SCR_COLS*2);
+	if(absoluteColumn % consoles[activeConsole].cols == 0 && absoluteColumn != 0){
+		if(!isLastConsoleActive())
+			newLine();
+		else{
+			size_t prevRow = offset / (SCR_COLS*2);
+			scrPos = consoles[activeConsole].startPos + SCR_COLS*2*(prevRow+1);
+		}
+	}
+	if(scrPos >= SCR_BASE_ADDR + SCR_ROWS * SCR_COLS * 2){
+        scrollUpActiveDisplay();
+    }
+	if(isSpecialChar(c)){
+		printSpecialChar(c, colorByte);
+	}
+    else{
+        *scrPos = c;
+        *(scrPos+1) = colorByte;
+        scrPos += 2;
+    }
+}
+
+/*
+void printCharCol(char c, uint8_t foreColor, uint8_t backColor){
+    char colorByte = getColorByte(foreColor, backColor);
+	uint64_t offset = ((uint64_t)scrPos)-SCR_BASE_ADDR;//(int)consoles[activeConsole].startPos;
+	size_t column = offset%(SCR_COLS*2);
 	if ((column == 2*SCR_SIDE_COLS || (column == 0 && getCurrentDisplay()))){
 		scrPos += (SCR_SIDE_COLS + LIMITER_GIRTH)*2;
 	}
@@ -248,6 +303,7 @@ void printCharCol(char c, uint8_t foreColor, uint8_t backColor){
         scrPos += 2;
     }
 }
+*/
 
 void printCol(char* msg, uint8_t foreColor, uint8_t backColor){
 	for(int i=0 ; msg[i] != 0 ; i++){
@@ -294,8 +350,17 @@ void clearScreen(){
 	scrPos = SCR_BASE_ADDR;
 }
 
-void clearActiveConsole(){
-	
+void clearActiveDisplay(){
+	char *current = consoles[activeConsole].startPos;
+	for(int i=1 ; i < consoles[activeConsole].rows ; i++){
+		for(int j=0 ; j < consoles[activeConsole].cols ; j++){
+			*current = 0;
+			*(current+1) = 0;
+			current += 2;
+		}
+		current = consoles[activeConsole].startPos + SCR_COLS*2*i;
+	}
+	scrPos = consoles[activeConsole].startPos;
 }
 
 void printRegistries(){

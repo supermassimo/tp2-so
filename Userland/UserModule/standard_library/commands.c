@@ -7,6 +7,7 @@ extern void writeMemContent(char* startPos, size_t amount);
 extern void writeDateTime(int utc);
 extern void invalidOpcodeThrower();
 extern void setIdle(int idle);
+extern void clear();
 
 typedef struct commandStruct{
     char* name;
@@ -23,7 +24,7 @@ typedef struct exceptionTestStruct{
     void* thrower;
 } exceptionTestStruct;
 
-static const size_t commandAmount = 7;
+static const size_t commandAmount = 8;
 static const size_t exceptionAmount = 2;
 
 static void echoHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmount){
@@ -85,6 +86,14 @@ static void datetimeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmo
     writeDateTime(utc);
 }
 
+static void clearHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount > 0){
+        printErr("Too many arguments for command 'clear'\n");
+        return;
+    }
+    clear();
+}
+
 //help must be at the top
 static helpStruct help_messages[] = {
     {"help", "'help': Get information on how to use commands\nUse: 'help [command]'\n'command': Command to get use information about\n"},
@@ -93,7 +102,8 @@ static helpStruct help_messages[] = {
     {"printmem", "'printmem': Print the first 32 bytes following a place in memory\nUse: 'printmem [pointer]'\n'pointer': Memory address of first byte to print\n"},
     {"datetime", "'datetime': Print the time and date for a specific timezone\nUse: 'datetime [timezone]'\n'timezone': Timezone to print the current time of\n"},
     {"localdatetime", "'localdatetime': Print the local time and date\nUse: 'localdatetime'\n"},
-    {"test", "'test': Throws the provided exception\nUse: 'test [exception]'\n''exception': Type of exception to be thrown\n"}
+    {"test", "'test': Throws the provided exception\nUse: 'test [exception]'\n''exception': Type of exception to be thrown\n"},
+    {"clear", "'clear': Clears the current console\nUse: 'clear'\n"}
 };
 
 static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
@@ -148,7 +158,8 @@ static commandStruct commands[] = {
     {"printmem", &printmemHandler},
     {"datetime", &datetimeHandler},
     {"localdatetime", &localDateTimeHandler},
-    {"test", &testHandler}
+    {"test", &testHandler},
+    {"clear", &clearHandler}
 };
 
 static int getCommandAndParams(char* command, char params[][MAX_PARAMETER_LENGTH], char* input){
