@@ -69,12 +69,23 @@ static uint8_t getColorByte(uint8_t foreColor, uint8_t backColor){
 	return backColor << 4 | foreColor;
 }
 
-static void fillScreen(int consoleIdx, uint8_t colorByte){
+static uint8_t getColorForFillScreen(int consoleIdx, uint8_t thisColor, int enabled){
+	if (enabled){
+		if (thisColor == consoles[consoleIdx].inactiveForeColor) return consoles[consoleIdx].activeForeColor;
+		if (thisColor == consoles[consoleIdx].inactiveErrorColor) return consoles[consoleIdx].errorColor;
+	} else {
+		if (thisColor == consoles[consoleIdx].activeForeColor) return consoles[consoleIdx].inactiveForeColor;
+		if (thisColor == consoles[consoleIdx].errorColor) return consoles[consoleIdx].inactiveErrorColor;
+	}
+	return thisColor;
+}
+
+static void fillScreen(int consoleIdx, uint8_t backColor, int enabled){
 	char *current = consoles[consoleIdx].startPos;
 	size_t extraSpaces = (SCR_SIDE_COLS + LIMITER_GIRTH) * (consoleAmount-1);
 	for(int i=1 ; i <= consoles[consoleIdx].rows ; i++){
 		for(int j=1 ; j < consoles[consoleIdx].cols*2 ; j+=2){
-			*(current+j) = colorByte;
+			*(current+j) = getColorByte(getColorForFillScreen(consoleIdx, *(current+j), enabled), backColor);
 		}
 		current = consoles[consoleIdx].startPos + SCR_COLS*2*i;
 	}
@@ -85,12 +96,12 @@ static int isActive(int consoleIdx){
 }
 
 static void setActive(int consoleIdx){
-	fillScreen(consoleIdx, getColorByte(consoles[consoleIdx].activeForeColor, consoles[consoleIdx].backColor));
+	fillScreen(consoleIdx, consoles[consoleIdx].backColor, true);
 
 }
 
 static void setInactive(int consoleIdx){
-	fillScreen(consoleIdx, getColorByte(consoles[consoleIdx].inactiveForeColor, consoles[consoleIdx].backColor));
+	fillScreen(consoleIdx, consoles[consoleIdx].backColor, false);
 }
 
 void changeConsoleSide(int targetConsole){
@@ -129,21 +140,18 @@ void newLine(){
 void setActiveForeColor(int consoleIdx, Color foreColor){
 	consoles[consoleIdx].activeForeColor = foreColor;
 	if(isActive(consoleIdx))
-		fillScreen(consoleIdx, getColorByte(consoles[consoleIdx].activeForeColor, consoles[consoleIdx].backColor));
+		fillScreen(consoleIdx, consoles[consoleIdx].backColor, true);
 }
 
 void setInactiveForeColor(int consoleIdx, Color foreColor){
 	consoles[consoleIdx].inactiveForeColor = foreColor;
 	if(!isActive(consoleIdx))
-		fillScreen(consoleIdx, getColorByte(consoles[consoleIdx].inactiveForeColor, consoles[consoleIdx].backColor));
+		fillScreen(consoleIdx, consoles[consoleIdx].backColor, false);
 }
 
 void setBackColor(int consoleIdx, Color backColor){
 	consoles[consoleIdx].backColor = backColor;
-	if(isActive(consoleIdx))
-		fillScreen(consoleIdx, getColorByte(consoles[consoleIdx].activeForeColor, consoles[consoleIdx].backColor));
-	else
-		fillScreen(consoleIdx, getColorByte(consoles[consoleIdx].inactiveForeColor, consoles[consoleIdx].backColor));
+	fillScreen(consoleIdx, consoles[consoleIdx].backColor, isActive(consoleIdx));
 }
 
 void setErrorColor(int consoleIdx, Color errorColor){
