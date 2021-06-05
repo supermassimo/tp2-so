@@ -137,16 +137,28 @@ void newLine(){
 	scrPos = consoles[activeConsole].startPos + (current+1) * SCR_COLS * 2;
 }
 
+void setActiveErrorColor(int consoleIdx, Color foreColor){
+	consoles[consoleIdx].errorColor = foreColor;
+	if(isActive(consoleIdx))
+		setActive(consoleIdx);
+}
+
+void setInactiveErrorColor(int consoleIdx, Color foreColor){
+	consoles[consoleIdx].inactiveErrorColor = foreColor;
+	if(!isActive(consoleIdx))
+		setInactive(consoleIdx);
+}
+
 void setActiveForeColor(int consoleIdx, Color foreColor){
 	consoles[consoleIdx].activeForeColor = foreColor;
 	if(isActive(consoleIdx))
-		fillScreen(consoleIdx, consoles[consoleIdx].backColor, true);
+		setActive(consoleIdx);
 }
 
 void setInactiveForeColor(int consoleIdx, Color foreColor){
 	consoles[consoleIdx].inactiveForeColor = foreColor;
 	if(!isActive(consoleIdx))
-		fillScreen(consoleIdx, consoles[consoleIdx].backColor, false);
+		setInactive(consoleIdx);
 }
 
 void setBackColor(int consoleIdx, Color backColor){
