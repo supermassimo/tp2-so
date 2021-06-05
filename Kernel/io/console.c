@@ -96,12 +96,12 @@ static int isActive(int consoleIdx){
 }
 
 static void setActive(int consoleIdx){
-	fillScreen(consoleIdx, consoles[consoleIdx].backColor, true);
+	fillScreen(consoleIdx, consoles[consoleIdx].backColor, 1);
 
 }
 
 static void setInactive(int consoleIdx){
-	fillScreen(consoleIdx, consoles[consoleIdx].backColor, false);
+	fillScreen(consoleIdx, consoles[consoleIdx].backColor, 0);
 }
 
 void changeConsoleSide(int targetConsole){
