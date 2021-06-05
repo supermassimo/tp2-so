@@ -1,10 +1,16 @@
 #include <keyboard.h>
 #include <console.h>
-#include <standard_in.h>
+#include <standardIn.h>
+#include <dualDisplayManager.h>
 
-static unsigned char keyboard_buffer[BUFFER_SIZE];
-static unsigned int nextToStore = 0;
-static unsigned int currentToRead = 0;
+static unsigned char keyboard_buffer_0[BUFFER_SIZE];
+static unsigned int nextToStore_0 = 0;
+static unsigned int currentToRead_0 = 0;
+
+static unsigned char keyboard_buffer_1[BUFFER_SIZE];
+static unsigned int nextToStore_1 = 0;
+static unsigned int currentToRead_1 = 0;
+
 static unsigned char lastKey;               // Testing purposes. Delete when making final code
 
 static const int keyTable[] = {
@@ -20,31 +26,59 @@ static const int keyTable[] = {
 extern uint8_t pollKeyRaw();
 
 static int keyboardBufferIsFull(){
-    return nextToStore == BUFFER_SIZE;
+    if (getCurrentDisplay())
+        return nextToStore_1 == BUFFER_SIZE;
+    else
+        return nextToStore_0 == BUFFER_SIZE;
 }
 
 static int keyboardbufferIsEmpty(){
-    return currentToRead == nextToStore;
+    if (getCurrentDisplay())
+        return currentToRead_1 == nextToStore_1;
+    else
+        return currentToRead_0 == nextToStore_0;
 }
 
 // Stores a key on the keyboard buffer
 static void typeKey(int key){
-    if(keyboardBufferIsFull())
-        nextToStore = 0;
-    keyboard_buffer[nextToStore++] = key;
+    if (getCurrentDisplay()){
+        if(keyboardBufferIsFull())
+            nextToStore_1 = 0;
+        // if(!keyboardBufferIsFull())
+        keyboard_buffer_1[nextToStore_1++] = key;
+    } else {
+        if(keyboardBufferIsFull())
+            nextToStore_0 = 0;
+        // if(!keyboardBufferIsFull())
+            keyboard_buffer_0[nextToStore_0++] = key;
+    }
+    
 }
 
 static void deleteLast (){
-    if(nextToStore != currentToRead){
-        if(nextToStore == 0)
-            nextToStore = BUFFER_SIZE;
-        nextToStore--;
+    if (getCurrentDisplay()){
+        if(nextToStore_1 != currentToRead_1){
+            if(nextToStore_1 == 0)
+                nextToStore_1 = BUFFER_SIZE;
+            nextToStore_1--;
+        }
+    } else {
+        if(nextToStore_0 != currentToRead_0){
+            if(nextToStore_0 == 0)
+                nextToStore_0 = BUFFER_SIZE;
+            nextToStore_0--;
+        }
     }
+    
 }
 
 // 0-31 and 127 are reserved ASCII control characters
 static int isControlKey(unsigned char c){
 	return c < 32 || c == 127;
+}
+
+static int isPrintableKey(unsigned char c){
+    return c != '\t';
 }
 
 static void applyControlKey(unsigned char key){
@@ -53,8 +87,16 @@ static void applyControlKey(unsigned char key){
             deleteLast();
             break;
         case '\n':
-            setInputBuffer(keyboard_buffer, currentToRead, nextToStore);
-            currentToRead = nextToStore;
+            if (getCurrentDisplay()){
+                setInputBuffer(keyboard_buffer_1, currentToRead_1, nextToStore_1);
+                currentToRead_1 = nextToStore_1;
+            }else{
+                setInputBuffer(keyboard_buffer_0, currentToRead_0, nextToStore_0);
+                currentToRead_0 = nextToStore_0;
+            }
+            break;
+        case '\t':
+            swapDisplay();
             break;
         default:
             break;
@@ -85,8 +127,9 @@ static int readKey(){
 
 void keyboardIntHandler(){
     int key = readKey();
-    if(key != -1){
+    if(key != -1 && isPrintableKey(key) && !keyboardBufferIsFull()){
         printChar(key);
+        // printInt(nextToStore_0, 10);
         lastKey = key;      // Testing purposes. Delete when making final code
     }
 }

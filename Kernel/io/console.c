@@ -5,6 +5,8 @@
 #define SCR_BASE_ADDR 	0xB8000
 #define SCR_ROWS 		25
 #define SCR_COLS 		80
+#define SCR_SIDE_COLS	39
+#define LIMITER_GIRTH	2
 
 #define MAX_NUM_LENGTH 255					// For printing numbers purposes
 
@@ -13,44 +15,154 @@ static uint8_t foreColor = White;			// Default Forecolor
 static uint8_t backColor = Black;			// Default Backcolor
 static uint8_t errorColor = Red;
 
-static void fillScreen(uint8_t colorByte){
-	char* current = SCR_BASE_ADDR + 1;
-	int finalPos = SCR_ROWS * SCR_COLS;
-	for(int i=0 ; i < finalPos ; i++){
-		*current = colorByte;
-		current += 2;
+static uint8_t delimiterColor = Green;
+
+#define CONSOLE_0_START SCR_BASE_ADDR
+#define CONSOLE_1_START SCR_BASE_ADDR+(SCR_SIDE_COLS+LIMITER_GIRTH)*2
+
+static int activeConsole = 0;
+
+typedef struct Console
+{
+	const char* startPos;
+	char* currentPos;
+	const size_t rows;
+	const size_t cols;
+	uint8_t activeForeColor;
+	uint8_t inactiveForeColor;
+	uint8_t backColor;
+	uint8_t inactiveErrorColor;
+	uint8_t errorColor;
+} Console;
+
+/* 
+--------||--------
+--------||--------
+--------||--------
+--------||--------
+--------||--------
+*/
+
+static Console consoles[] = {
+	{CONSOLE_0_START, CONSOLE_0_START, SCR_ROWS, SCR_SIDE_COLS, White, DarkGray, Black, LightRed, Red},
+	{CONSOLE_1_START, CONSOLE_1_START, SCR_ROWS, SCR_SIDE_COLS, White, DarkGray, Black, LightRed, Red}
+};
+
+static const int consoleAmount = 2;
+
+static void drawDelimiterInRow(size_t col, size_t row, size_t girth, uint8_t colorByte){
+	char* delim = SCR_BASE_ADDR + col*2 + row*SCR_COLS*2 - 2;
+	for (int x=0; x<girth; x++){
+		*(delim+(x*2)) = '|';
+        *(delim+1+(x*2)) = colorByte;
+	}
+		
+}
+
+static void drawDelimiter(size_t col, size_t girth, uint8_t colorByte){
+	for(int y=0 ; y < SCR_ROWS ; y++){
+		drawDelimiterInRow(col, y, girth, colorByte);
 	}
 }
 
+static uint8_t getColorByte(uint8_t foreColor, uint8_t backColor){
+	return backColor << 4 | foreColor;
+}
+
+static void fillScreen(int consoleIdx, uint8_t colorByte){
+	char *current = consoles[consoleIdx].startPos;
+	size_t extraSpaces = (SCR_SIDE_COLS + LIMITER_GIRTH) * (consoleAmount-1);
+	for(int i=1 ; i <= consoles[consoleIdx].rows ; i++){
+		for(int j=1 ; j < consoles[consoleIdx].cols*2 ; j+=2){
+			*(current+j) = colorByte;
+		}
+		current = consoles[consoleIdx].startPos + SCR_COLS*2*i;
+	}
+}
+
+static int isActive(int consoleIdx){
+	return consoleIdx == activeConsole;
+}
+
+static void setActive(int consoleIdx){
+	fillScreen(consoleIdx, getColorByte(consoles[consoleIdx].activeForeColor, consoles[consoleIdx].backColor));
+
+}
+
+static void setInactive(int consoleIdx){
+	fillScreen(consoleIdx, getColorByte(consoles[consoleIdx].inactiveForeColor, consoles[consoleIdx].backColor));
+}
+
+void changeConsoleSide(int targetConsole){
+	consoles[activeConsole].currentPos = scrPos;
+	scrPos = consoles[targetConsole].currentPos;
+	activeConsole = targetConsole;
+	for(int i=0 ; i < consoleAmount; i++){
+		if(i == activeConsole)
+			setActive(i);
+		else
+			setInactive(i);
+	}
+	switch (targetConsole){
+		case 0:
+			delimiterColor = Green;
+			break;
+		case 1:
+			delimiterColor = Blue;
+			break;
+	}
+	drawDelimiter(SCR_SIDE_COLS+1, LIMITER_GIRTH, delimiterColor);
+}
+/*
 void newLine(){
 	int current = scrPos - SCR_BASE_ADDR;
 	current /= SCR_COLS * 2;
 	scrPos = SCR_BASE_ADDR + (current+1) * SCR_COLS * 2;
 }
-
-static uint8_t getColorByte(){
-	return backColor << 4 | foreColor;
+*/
+void newLine(){
+	int current = scrPos - SCR_BASE_ADDR;
+	current /= SCR_COLS * 2;
+	scrPos = consoles[activeConsole].startPos + (current+1) * SCR_COLS * 2;
 }
 
-static uint8_t getColorByteCustom(uint8_t foreColor, uint8_t backColor){
-	return backColor << 4 | foreColor;		// NO TOCAR
+void setActiveForeColor(int consoleIdx, Color foreColor){
+	consoles[consoleIdx].activeForeColor = foreColor;
+	if(isActive(consoleIdx))
+		fillScreen(consoleIdx, getColorByte(consoles[consoleIdx].activeForeColor, consoles[consoleIdx].backColor));
 }
 
-void setForeColor(uint8_t color){
-	foreColor = color;
-	fillScreen(getColorByte());
+void setInactiveForeColor(int consoleIdx, Color foreColor){
+	consoles[consoleIdx].inactiveForeColor = foreColor;
+	if(!isActive(consoleIdx))
+		fillScreen(consoleIdx, getColorByte(consoles[consoleIdx].inactiveForeColor, consoles[consoleIdx].backColor));
 }
 
-void setBackColor(uint8_t color){
-	backColor = color;
-	fillScreen(getColorByte());
+void setBackColor(int consoleIdx, Color backColor){
+	consoles[consoleIdx].backColor = backColor;
+	if(isActive(consoleIdx))
+		fillScreen(consoleIdx, getColorByte(consoles[consoleIdx].activeForeColor, consoles[consoleIdx].backColor));
+	else
+		fillScreen(consoleIdx, getColorByte(consoles[consoleIdx].inactiveForeColor, consoles[consoleIdx].backColor));
 }
 
-void setErrorColor(uint8_t color){
-	errorColor = color;
+void setErrorColor(int consoleIdx, Color errorColor){
+	consoles[consoleIdx].errorColor = errorColor;
 }
 
 // Returns the previous char address omitting 'empty' chars
+static uint64_t getPrevCharAddr(int consoleIdx){
+	char *prevChar = scrPos;
+	long extraSpaces = (SCR_SIDE_COLS + LIMITER_GIRTH + 1) * (consoleAmount-1) * 2;
+	do{
+		if((prevChar - consoles[consoleIdx].startPos)%(SCR_COLS*2) == 0)
+			prevChar -= extraSpaces;
+		else
+			prevChar -= 2;
+	}while(*prevChar == 0);
+	return (uint64_t)prevChar;
+}
+/*
 static uint64_t getPrevCharAddr(){
 	char* prevChar = scrPos;
 	while(*prevChar == 0){
@@ -58,6 +170,7 @@ static uint64_t getPrevCharAddr(){
 	}
 	return (uint64_t)prevChar;
 }
+*/
 
 static int isSpecialChar(char c){
 	int res;
@@ -79,10 +192,10 @@ static void printSpecialChar(char c, uint8_t colorByte){
 			newLine();
 			break;
 		case '\b':
-			if(scrPos-2 >= SCR_BASE_ADDR){			// Check if there are chars to delete
-				finalPos = getPrevCharAddr();
+			if(scrPos-2 >= consoles[activeConsole].startPos){			// Check if there are chars to delete
+				finalPos = getPrevCharAddr(activeConsole);
 				*finalPos = *(finalPos+2);			// Backspace functionality
-				*(finalPos+1) = getColorByte();		// Fill current char with next one and move cursor one place back
+				*(finalPos+1) = getColorByte(Black, Black);		// Fill current char with next one and move cursor one place back
 				scrPos = finalPos;
 			}
 			break;
@@ -92,22 +205,24 @@ static void printSpecialChar(char c, uint8_t colorByte){
 }
 
 static void scrollUp(){
-	char *current = SCR_BASE_ADDR;
+	char *current = consoles[activeConsole].startPos;
 	// Muevo todos los caracteres (de la linea 1 a la 25) una posicion hacia arriba
 	for(int i=1 ; i < SCR_ROWS ; i++){
-		for(int j=0 ; j < SCR_COLS ; j++){
+		for(int j=0 ; j < SCR_SIDE_COLS ; j++){
 			*current = *(current+SCR_COLS*2);
 			*(current+1) = *(current+SCR_COLS*2+1);
 			current += 2;
 		}
+		current += SCR_COLS*2; 
 	}
 	// Limpio la última línea, dejando el color previamente usado
-	for(int j=0 ; j < SCR_COLS ; j++){
+	for(int j=0 ; j < SCR_SIDE_COLS ; j++){
 		*current = 0;
 		current += 2;
 	}
+	//drawDelimiterInRow(SCR_SIDE_COLS+1, SCR_ROWS-1, LIMITER_GIRTH, delimiterColor);
 	// Resetting the cursor to first char of last row
-	scrPos = SCR_BASE_ADDR + (SCR_ROWS-1)*SCR_COLS*2;
+	scrPos = consoles[activeConsole].startPos + (SCR_ROWS-1)*SCR_COLS*2;
 }
 
 void printChar(char c){
@@ -115,7 +230,12 @@ void printChar(char c){
 }
 
 void printCharCol(char c, uint8_t foreColor, uint8_t backColor){
-    char colorByte = getColorByteCustom(foreColor, backColor);
+    char colorByte = getColorByte(foreColor, backColor);
+	int offset = ((int)scrPos)-SCR_BASE_ADDR;//(int)consoles[activeConsole].startPos;
+	int column = offset%(SCR_COLS*2);
+	if ((column == 2*SCR_SIDE_COLS || (column == 0 && getCurrentDisplay()))){
+		scrPos += (SCR_SIDE_COLS + LIMITER_GIRTH)*2;
+	}
 	if(scrPos >= SCR_BASE_ADDR + SCR_ROWS * SCR_COLS * 2){
         scrollUp();
     }
@@ -174,6 +294,10 @@ void clearScreen(){
 	scrPos = SCR_BASE_ADDR;
 }
 
+void clearActiveConsole(){
+	
+}
+
 void printRegistries(){
 	uint64_t array[15];
 	getRegistries(array, 15);
@@ -226,16 +350,18 @@ void printRegistries(){
 
 void printMemContent(char* startPos, size_t amount){
 	uint8_t memContent[amount];
+	char numStr[3];
 	getMemContent(startPos, memContent, amount);
 	for(int i=0 ; i < amount ; i++){
-		print("BYTE ");
-		printInt(startPos+i, 16);
-		print(": ");
-		printInt(memContent[i], 16);
-		if((i+1)%4 == 0)
+		if(i%8 == 0){
+			printInt(startPos+i, 16);
+			print("h: ");
+		}
+		numToStrSized((size_t)memContent[i], numStr, 16, 2);
+		print(numStr);
+		print(" ");
+		if((i+1)%8 == 0)
 			newLine();
-		else
-			print("    ");
 	}
 }
 
@@ -277,4 +403,8 @@ void printDateTime(int utc){
 	newLine();
 	printDate(currentDate);
 	printTime(currentTime);
+}
+
+void initializeConsole (){
+	drawDelimiter(SCR_SIDE_COLS+1, LIMITER_GIRTH, delimiterColor);
 }

@@ -140,23 +140,25 @@ int main()
 
 	load_idt();
 
+	initializeConsole();
+
 	((EntryPoint)sampleCodeModuleAddress)();
 
 	/* getBufferContent() test */
-	uint8_t buf[255];
+	// uint8_t buf[255];
 
-	uint8_t lastKey = 0;
+	// uint8_t lastKey = 0;
 
-	while(1){
-		if((lastKey != getLastPressedKey()) && getLastPressedKey() == '\t'){
-			printCpuFeatures();
-			//readInput(buf, 255);
-		 	//write(0, buf, 255);
-			//getMemContent(0xB8000, buf, 32);
-			//write(1, buf, 255);
-			lastKey = getLastPressedKey();
-		}
-	}
+	// while(1){
+	// 	if((lastKey != getLastPressedKey()) && getLastPressedKey() == '\t'){
+	// 		printCpuFeatures();
+	// 		//readInput(buf, 255);
+	// 	 	//write(0, buf, 255);
+	// 		//getMemContent(0xB8000, buf, 32);
+	// 		//write(1, buf, 255);
+	// 		lastKey = getLastPressedKey();
+	// 	}
+	// }
 
 	// int segundos = 0;
 	// char sec[12];

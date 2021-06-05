@@ -6,6 +6,7 @@ extern void writeRegistries();
 extern void writeMemContent(char* startPos, size_t amount);
 extern void writeDateTime(int utc);
 extern void invalidOpcodeThrower();
+extern void setIdle(int idle);
 
 typedef struct commandStruct{
     char* name;
@@ -173,12 +174,16 @@ static int getCommandAndParams(char* command, char params[][MAX_PARAMETER_LENGTH
 }
 
 void commandHandler(char* string){
-    char commandName[MAX_COMMAND_LENGTH];
+    char commandName[MAX_COMMAND_LENGTH] = "";
     char params[MAX_COMMAND_AMOUNT][MAX_PARAMETER_LENGTH];
     int paramAmount = getCommandAndParams(commandName, params, string);
     for(int i=0 ; i < commandAmount ; i++){
         if(strcmp(commands[i].name, commandName) == 0){
+            setIdle(0);
             ((void(*)(char[][MAX_PARAMETER_LENGTH], size_t))commands[i].handler)(params, paramAmount);
+            setIdle(1);
+            return;
         }
     }
+    printErr("Unknown command. Use 'help' for a list of commands");
 }

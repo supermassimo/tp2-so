@@ -9,8 +9,12 @@ typedef enum Color {
 	LightRed, LightPurple, Yellow, White
 } Color;
 
-void setForeColor(uint8_t color);
-void setBackColor(uint8_t color);
+void initializeConsole();
+void changeSide(int targetConsole);
+void setActiveForeColor(int consoleIdx, Color foreColor);
+void setInactiveForeColor(int consoleIdx, Color foreColor);
+void setBackColor(int consoleIdx, Color backColor);
+void setErrorColor(int consoleIdx, Color errorColor);
 void print(char *string);
 void printCol(char *string, uint8_t foreColor, uint8_t backColor);
 void println(char *string);

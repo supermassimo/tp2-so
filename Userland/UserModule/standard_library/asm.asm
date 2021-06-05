@@ -3,6 +3,7 @@ GLOBAL write
 GLOBAL writeRegistries
 GLOBAL writeMemContent
 GLOBAL writeDateTime
+GLOBAL setIdle
 GLOBAL invalidOpcodeThrower
 
 section .text
@@ -33,6 +34,12 @@ writeMemContent:
 
 writeDateTime:
     mov rbx, 4
+    int 69h
+
+    ret
+
+setIdle:
+    mov rbx, 5
     int 69h
 
     ret
