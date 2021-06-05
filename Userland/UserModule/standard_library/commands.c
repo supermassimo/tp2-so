@@ -192,9 +192,11 @@ void commandHandler(char* string){
         if(strcmp(commands[i].name, commandName) == 0){
             setIdle(0);
             ((void(*)(char[][MAX_PARAMETER_LENGTH], size_t))commands[i].handler)(params, paramAmount);
+            printf("> ");
             setIdle(1);
             return;
         }
     }
     printErr("Unknown command. Use 'help' for a list of commands");
+    printf("> ");
 }

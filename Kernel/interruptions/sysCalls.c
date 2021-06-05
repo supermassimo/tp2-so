@@ -74,5 +74,5 @@ void sysSetIdle(int isIdle){
 }
 
 void sysClear(){
-    clearActiveDisplay();
+    clearActiveConsole();
 }

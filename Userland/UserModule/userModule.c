@@ -12,6 +12,7 @@ int main() {
 	char input[256];
 	// writeRegistries();
 	// printf("beep boop printing from userland", 33);
+	printf("> ");
 	while(1){
 	 	scanf(input, 255);
 		if(strcmp(input, "") != 0)

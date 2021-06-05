@@ -204,7 +204,7 @@ static void printSpecialChar(char c, uint8_t colorByte){
 	}
 }
 
-static void scrollUpActiveDisplay(){
+static void scrollUpActiveConsole(){
 	char* current = consoles[activeConsole].startPos;
 	// Muevo todos los caracteres  de la consola activa una posicion hacia arriba
 	for(int i=1 ; i < consoles[activeConsole].rows ; i++){
@@ -271,7 +271,7 @@ void printCharCol(char c, uint8_t foreColor, uint8_t backColor){
 		}
 	}
 	if(scrPos >= SCR_BASE_ADDR + SCR_ROWS * SCR_COLS * 2){
-        scrollUpActiveDisplay();
+        scrollUpActiveConsole();
     }
 	if(isSpecialChar(c)){
 		printSpecialChar(c, colorByte);
@@ -350,7 +350,7 @@ void clearScreen(){
 	scrPos = SCR_BASE_ADDR;
 }
 
-void clearActiveDisplay(){
+void clearActiveConsole(){
 	char *current = consoles[activeConsole].startPos;
 	for(int i=1 ; i < consoles[activeConsole].rows ; i++){
 		for(int j=0 ; j < consoles[activeConsole].cols ; j++){
