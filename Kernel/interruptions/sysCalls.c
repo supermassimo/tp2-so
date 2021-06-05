@@ -8,6 +8,7 @@ void sysWriteRegistries();
 void sysWriteMemContent(char* startPos, size_t amount);
 void sysWriteDateTime(int utc);
 void sysSetIdle(int isIdle);
+int sysGetActiveDisplay();
 
 
 void sysCallDispatcher(){
@@ -32,6 +33,9 @@ void sysCallDispatcher(){
             break;
         case 6:
             sysClear();
+            break;
+        case 7:
+            sysGetActiveDisplay();
             break;
         default:
             //code invalido
@@ -75,4 +79,8 @@ void sysSetIdle(int isIdle){
 
 void sysClear(){
     clearActiveConsole();
+}
+
+int sysGetActiveDisplay(){
+    return getCurrentDisplay();
 }
