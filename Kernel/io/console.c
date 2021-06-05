@@ -44,8 +44,8 @@ typedef struct Console
 */
 
 static Console consoles[] = {
-	{CONSOLE_0_START, CONSOLE_0_START, SCR_ROWS, SCR_SIDE_COLS, White, DarkGray, Black, LightRed, Red},
-	{CONSOLE_1_START, CONSOLE_1_START, SCR_ROWS, SCR_SIDE_COLS, White, DarkGray, Black, LightRed, Red}
+	{CONSOLE_0_START, CONSOLE_0_START, SCR_ROWS, SCR_SIDE_COLS, White, DarkGray, Black, Brown, Red},
+	{CONSOLE_1_START, CONSOLE_1_START, SCR_ROWS, SCR_SIDE_COLS, White, DarkGray, Black, Brown, Red}
 };
 
 static const int consoleAmount = 2;
