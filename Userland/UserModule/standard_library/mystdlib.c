@@ -67,12 +67,12 @@ size_t numToStr(size_t value, char* target, size_t base){
 	return j;
 }
 
-size_t strToNumPos(char* string){
+long strToNumPos(char* string){
     size_t num = 0, digit, i=0;
     size_t length = strlen(string);
     if(string[0] == '-'){
         printErr("String sent must be positive");
-        return 0;
+        return -1;
     }
     while(i < length){
         num *= 10;

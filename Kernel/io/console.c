@@ -372,7 +372,7 @@ void clearScreen(){
 
 void clearActiveConsole(){
 	char *current = consoles[activeConsole].startPos;
-	for(int i=1 ; i < consoles[activeConsole].rows ; i++){
+	for(int i=1 ; i <= consoles[activeConsole].rows ; i++){
 		for(int j=0 ; j < consoles[activeConsole].cols ; j++){
 			*current = 0;
 			*(current+1) = 0;

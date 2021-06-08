@@ -1,0 +1,1 @@
+qemu-system-x86_64.exe -accel whpx -cpu kvm64,+mmx,+sse,+sse2,+sse3,+sse4.1,+sse4.2,+aes,+pclmulqdq,+avx,+vaes,+vpclmulqdq,+f16c,+fma,+avx2 -hda Image/x64BareBonesImage.qcow2
