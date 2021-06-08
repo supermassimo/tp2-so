@@ -10,6 +10,7 @@ void sysWriteDateTime(int utc);
 void sysSetIdle(int isIdle);
 int sysGetActiveDisplay();
 void sysRestartUserModule();
+void printCpuFeatures();
 
 
 void sysCallDispatcher(){
@@ -39,6 +40,9 @@ void sysCallDispatcher(){
             sysGetActiveDisplay();
             break;
         case 8:
+            sysWriteCpuFeatures();
+            break;
+        case 9:
             sysRestartUserModule();
             break;
         default:
@@ -87,6 +91,10 @@ void sysClear(){
 
 int sysGetActiveDisplay(){
     return getCurrentDisplay();
+}
+
+void sysWriteCpuFeatures(){
+    printCpuFeatures();
 }
 
 void sysRestartUserModule(){

@@ -4,6 +4,8 @@ GLOBAL getCpuFeaturesECXRaw
 GLOBAL getCpuExtendedFeaturesEBXRaw
 GLOBAL getCpuExtendedFeaturesECXRaw
 
+GLOBAL getCpuIdSupport
+
 section .text
 	
 cpuVendor:
@@ -90,3 +92,31 @@ getCpuExtendedFeaturesECXRaw:
 
 	leave
 	ret
+
+; If software can toggle the value of bit 21 on EFLAGS register, then the CPUID instruction is executable
+; (Intel's Processor Identification and the CPUID Instruction, May 2012)
+getCpuIdSupport:
+	push rbp
+	mov rbp, rsp
+	pushfq				; Pushes EFLAGS register into stack
+	pop rax
+	mov rdx, rax		; Save current state of flags on rdx
+	xor rax, 200000h	; Toggle bit 21 -> 0 xor 1 = 1
+	push rax			;				   1 xor 1 = 0
+	popfq				; Put the changed flags register (bit 21 toggled) back in place
+	pushfq
+	pop rax				; Get current flags register
+	cmp rdx, rax		; Check if CPU changed bit 21
+	je _noCpuId
+	mov rax, 1
+	leave
+	ret
+_noCpuId:
+	mov rax, 0
+	leave
+	ret
+
+
+
+
+	

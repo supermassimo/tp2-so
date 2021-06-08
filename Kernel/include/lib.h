@@ -17,6 +17,7 @@ uint32_t getCpuFeaturesEDXRaw();
 uint32_t getCpuFeaturesECXRaw();
 uint32_t getCpuExtendedFeaturesEBXRaw();
 uint32_t getCpuExtendedFeaturesECXRaw();
+int getCpuIdSupport();
 void printCpuFeatures();
 
 void* getRAX ();

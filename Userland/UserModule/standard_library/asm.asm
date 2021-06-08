@@ -5,6 +5,7 @@ GLOBAL writeMemContent
 GLOBAL writeDateTime
 GLOBAL setIdle
 GLOBAL clear
+GLOBAL writeCpuFeatures
 GLOBAL invalidOpcodeThrower
 GLOBAL restart
 
@@ -48,6 +49,12 @@ setIdle:
 
 clear:
     mov rbx, 6
+    int 69h
+
+    ret
+
+writeCpuFeatures:
+    mov rbx, 8
     int 69h
 
     ret
