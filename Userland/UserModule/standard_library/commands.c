@@ -111,7 +111,7 @@ static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
         printErr("Too many arguments for command 'help'\nUse: help [command]\n");
     }
     if (paramAmount == 0){
-        printf(help_messages[0].help_message);
+        printf("Available Commands:\nhelp [command]\necho [message]\ninforeg\nprintmem [pointer]\ndatetime [timezone]\nlocaldatetime]\ntest [exception]\nclear");
     }
     for(int i=0 ; i < commandAmount ; i++){
         if(strcmp(help_messages[i].name, params[0]) == 0){

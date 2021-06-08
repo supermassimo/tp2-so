@@ -1,4 +1,5 @@
 #include <console.h>
+//Dual Integrated Logical Display Output
 
 static int currentDisplay = 0;
 static int waitingToChange = 0;

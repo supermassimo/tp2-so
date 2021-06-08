@@ -6,6 +6,7 @@ GLOBAL writeDateTime
 GLOBAL setIdle
 GLOBAL clear
 GLOBAL invalidOpcodeThrower
+GLOBAL restart
 
 section .text
 
@@ -53,4 +54,10 @@ clear:
 
 invalidOpcodeThrower:
     ud2
+    ret
+
+restart:
+    mov rbx, 8
+    int 69h
+
     ret

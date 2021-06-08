@@ -16,11 +16,15 @@ void exceptionDispatcher(int exception) {
 }
 
 static void zero_division() {
-	printErr("ERROR: Cannot divide by zero");
-	printRegistries();
+	// printErr("ERROR: Cannot divide by zero");
+	// printRegistries();
+
+	//UNLOAD USER MODULE AND START EXCEPTION MODULE
 }
 
 static void invalid_op() {
-	printErr("ERROR: Invalid opcode");
-	printRegistries();
+	// printErr("ERROR: Invalid opcode");
+	// printRegistries();
+	
+	//UNLOAD USER MODULE AND START EXCEPTION MODULE
 }
