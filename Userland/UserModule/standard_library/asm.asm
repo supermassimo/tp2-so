@@ -64,7 +64,7 @@ invalidOpcodeThrower:
     ret
 
 restart:
-    mov rbx, 8
+    mov rbx, 9
     int 69h
 
     ret
