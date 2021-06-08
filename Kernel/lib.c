@@ -161,6 +161,9 @@ void printCpuFeatures(){
 	uint32_t extendedFeaturesEBX = getCpuExtendedFeaturesEBXRaw();
 	uint32_t extendedFeaturesECX = getCpuExtendedFeaturesECXRaw();
 	// TODO: Add cpuid support, mx support
+	print("mmx_support: ");
+	auxMsg = (hasFeature(featuresEDX, mmx))? "Yes" : "No";
+	println(auxMsg);
 	print("sse_support: ");
 	auxMsg = (hasFeature(featuresEDX, sse))? "Yes" : "No";
 	println(auxMsg);

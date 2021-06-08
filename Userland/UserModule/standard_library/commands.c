@@ -8,6 +8,7 @@ extern void writeDateTime(int utc);
 extern void invalidOpcodeThrower();
 extern void setIdle(int idle);
 extern void clear();
+extern void writeCpuFeatures();
 
 typedef struct commandStruct{
     char* name;
@@ -24,7 +25,7 @@ typedef struct exceptionTestStruct{
     void* thrower;
 } exceptionTestStruct;
 
-static const size_t commandAmount = 8;
+static const size_t commandAmount = 9;
 static const size_t exceptionAmount = 2;
 
 static void echoHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmount){
@@ -102,6 +103,7 @@ static helpStruct help_messages[] = {
     {"printmem", "'printmem': Print the first 32 bytes following a place in memory\nUse: 'printmem [pointer]'\n'pointer': Memory address of first byte to print\n"},
     {"datetime", "'datetime': Print the time and date for a specific timezone\nUse: 'datetime [timezone]'\n'timezone': Timezone to print the current time of\n"},
     {"localdatetime", "'localdatetime': Print the local time and date\nUse: 'localdatetime'\n"},
+    {"cpufeatures", "'cpufeatures': Print cpu support for key features like mmx, sse, avx, etc\nUse: 'cpufeatures'\n"},
     {"test", "'test': Throws the provided exception\nUse: 'test [exception]'\n''exception': Type of exception to be thrown\n"},
     {"clear", "'clear': Clears the current console\nUse: 'clear'\n"}
 };
@@ -126,6 +128,14 @@ static void localDateTimeHandler(char params[][MAX_PARAMETER_LENGTH], size_t par
         return;
     }
     writeDateTime(LOCAL_UTC);
+}
+
+static void cpufeaturesHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount > 0){
+        printErr("Too many arguments for command 'cpufeatures'");
+        return;
+    }
+    writeCpuFeatures();
 }
 
 static void divByZeroThrower(){
@@ -158,6 +168,7 @@ static commandStruct commands[] = {
     {"printmem", &printmemHandler},
     {"datetime", &datetimeHandler},
     {"localdatetime", &localDateTimeHandler},
+    {"cpufeatures", &cpufeaturesHandler},
     {"test", &testHandler},
     {"clear", &clearHandler}
 };

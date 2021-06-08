@@ -9,6 +9,7 @@ void sysWriteMemContent(char* startPos, size_t amount);
 void sysWriteDateTime(int utc);
 void sysSetIdle(int isIdle);
 int sysGetActiveDisplay();
+void printCpuFeatures();
 
 
 void sysCallDispatcher(){
@@ -36,6 +37,9 @@ void sysCallDispatcher(){
             break;
         case 7:
             sysGetActiveDisplay();
+            break;
+        case 8:
+            sysWriteCpuFeatures();
             break;
         default:
             //code invalido
@@ -83,4 +87,8 @@ void sysClear(){
 
 int sysGetActiveDisplay(){
     return getCurrentDisplay();
+}
+
+void sysWriteCpuFeatures(){
+    printCpuFeatures();
 }
