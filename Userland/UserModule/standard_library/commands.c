@@ -65,6 +65,8 @@ static void printmemHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmo
         return;
     }
     char *memPos = strToNumPos(params[0]);
+    if((int64_t)memPos == -1)
+        return;
     writeMemContent(memPos, 32);
 }
 
