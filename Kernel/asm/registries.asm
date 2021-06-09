@@ -1,3 +1,4 @@
+GLOBAL getRIP
 GLOBAL getRAX
 GLOBAL getRBX
 GLOBAL getRCX
@@ -75,4 +76,9 @@ getR14:
 
 getR15:
 	mov rax, r15
+	ret
+
+getRIP:
+	call _RIP
+_RIP: pop rax
 	ret
