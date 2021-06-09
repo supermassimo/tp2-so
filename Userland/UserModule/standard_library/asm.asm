@@ -7,7 +7,7 @@ GLOBAL setIdle
 GLOBAL clear
 GLOBAL writeCpuFeatures
 GLOBAL invalidOpcodeThrower
-GLOBAL restart
+GLOBAL swapConsole
 
 section .text
 
@@ -55,6 +55,12 @@ clear:
 
 writeCpuFeatures:
     mov rbx, 8
+    int 69h
+
+    ret
+
+swapConsole:
+    mov rbx, 9
     int 69h
 
     ret
