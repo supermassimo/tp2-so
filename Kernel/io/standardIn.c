@@ -64,7 +64,7 @@ int getKey(){
 // and returns # of keys read from buffer
 int getBufferContent(unsigned char* target, size_t size_limit){
     int i=0, aux;
-    while((aux = getKey()) != -1 && i<size_limit){
+    while((aux = getKey()) != -1 && i<(size_limit-1)){
         target[i++] = aux;
     }
     target[i] = 0;
