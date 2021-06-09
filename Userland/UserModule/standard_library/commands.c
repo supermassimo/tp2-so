@@ -75,7 +75,7 @@ static void quadraticHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmoun
         printf(" has one real root:\nx = ");
         char root_0[FLOAT_STRING_SIZE];
         floatToStr(roots[0], root_0, QUADRATIC_PRECISION, 10);
-        printf(root_1);
+        printf(root_0);
     } else if (found == 2){
         printf("Function ");
         printQuadratic(a, b, c);
