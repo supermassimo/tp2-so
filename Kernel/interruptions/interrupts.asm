@@ -23,6 +23,10 @@ EXTERN exceptionDispatcher
 
 EXTERN sysCallDispatcher
 
+EXTERN loader
+
+EXTERN waitUntilRestart
+
 SECTION .text
 
 %macro pushState 0
@@ -84,7 +88,9 @@ SECTION .text
 	call exceptionDispatcher
 
 	popState
-	iretq
+	;call waitUntilRestart
+	call loader
+	;iretq
 %endmacro
 
 _sysCallHandler:
