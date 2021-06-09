@@ -69,7 +69,7 @@ static int isControlKey(unsigned char c){
 }
 
 static int isPrintableKey(unsigned char c){
-    return c != '\t';
+    return c != -1 && c != '\t';
 }
 
 static void applyControlKey(unsigned char key){
@@ -118,7 +118,7 @@ static int readKey(){
 
 void keyboardIntHandler(){
     int key = readKey();
-    if(key != -1 && !keyboardBufferIsFull()){
+    if(isPrintableKey(key) && !keyboardBufferIsFull()){
         // if(isControlKey(key) && keyboardbufferIsEmpty())
         //    return;
         printChar(key);
