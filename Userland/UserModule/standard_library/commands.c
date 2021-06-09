@@ -41,12 +41,10 @@ static void echoHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmount){
     actualLength = concatStrings(params, paramAmount, output);
     printf(output);
     printf("\n");
-    /*
     if(actualLength != finalLength - 1){            // finalLength computes the '\0' while actualLength doesn't
         printErr("Error concating the strings\n");
         return;
     }
-    */
 }
 
 static void inforegHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){

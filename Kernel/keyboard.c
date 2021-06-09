@@ -64,12 +64,12 @@ static void deleteLast (){
 }
 
 // 0-31 and 127 are reserved ASCII control characters
-static int isControlKey(unsigned char c){
+static int isControlKey(int c){
 	return c < 32 || c == 127;
 }
 
-static int isPrintableKey(unsigned char c){
-    return c != -1 || c != '\t';
+static int isPrintableKey(int c){
+    return c != -1 && c != '\t';
 }
 
 static void applyControlKey(unsigned char key){
