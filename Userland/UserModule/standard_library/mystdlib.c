@@ -18,7 +18,7 @@ size_t strlen(char *string){
     return c;
 }
 
-// Concatenates all the strings sent and returns output string length on finalOutputLen
+// Concatenates all the strings sent and returns output string length
 size_t concatStrings(char strings[][MAX_PARAMETER_LENGTH], size_t stringAmount, char* output){
     size_t outputIdx=0, strIdx=0, i=0;
     while(strIdx < stringAmount){

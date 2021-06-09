@@ -25,7 +25,6 @@ int bufferIsEmpty(){
 }
 
 void setInputBuffer(unsigned char* newBuffer, int end){
-    
     int auxIdx = 0;
     while(auxIdx != end){
         if(auxIdx == BUFFER_SIZE)
