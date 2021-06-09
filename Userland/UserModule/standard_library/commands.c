@@ -175,7 +175,7 @@ static commandStruct commands[] = {
     {"clear", &clearHandler}
 };
 
-static int getCommandAndParams(char* command, char params[MAX_COMMAND_AMOUNT][MAX_PARAMETER_LENGTH], char* input){
+static int getCommandAndParams(char* command, char params[][MAX_PARAMETER_LENGTH], char* input){
     int inputIdx, j=0, paramIdx=0;
     for(inputIdx=0 ; input[inputIdx] != ' ' && input[inputIdx] != 0 ; inputIdx++){
         command[inputIdx] = input[inputIdx];
