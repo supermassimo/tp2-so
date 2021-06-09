@@ -8,19 +8,27 @@
 // static int var1 = 0;
 // static int var2 = 0;
 
-int main() {
+void waitForInput(){
 	char input[256];
+	while(1){
+	 	scanf(input, 255);
+		 printf("scanned\n");
+		if(strcmp(input, "") != 0)
+			commandHandler(input);
+	};
+}
+
+int main() {
+	
 	// writeRegistries();
 	// printf("beep boop printing from userland", 33);
 	consoleSwap();
 	printf("> ");
 	consoleSwap();
 	printf("> ");
-	while(1){
-	 	scanf(input, 255);
-		if(strcmp(input, "") != 0)
-			commandHandler(input);
-	};
+	
+	waitForInput();
+
 	//All the following code may be removed 
 	// *v = 'X';
 	// *(v+1) = 0x74;
