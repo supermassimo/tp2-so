@@ -117,26 +117,24 @@ long strToNum(char* string){
 //precision es el numero de caracteres despues de la coma
 size_t floatToStr(float value, char* target, size_t precision){
     int digit;
-	int sign = 1;		// 0 if negative, 1 if positive
     char aux2[precision+1];
-	if(value < 0){
-		sign = 0;
-		value *= -1;
-	}
-    float value2 = value - ((int)value);
-	
+
     int j = numToStr((int)value, target, 10);
 
+	if(value < 0)
+		value *= -1;
+    float value2 = value - ((int)value);
+	
     target[j++] = '.';
-    //if (precision == 0)
+    if (precision == 0)
         target[j++] = '0';
-    //else {
-    //    for (int p=0; p<precision; p++){
-    //        value2 *= 10;
-	//	    digit = (int)value2;
-	//	    target[j++] = digitToStr(digit, 10);
-    //    }
-    //}
+    else {
+        for (int p=0; p<precision; p++){
+            value2 *= 10;
+		    digit = (int)value2;
+		    target[j++] = digitToStr(digit, 10);
+        }
+    }
 
 	target[j] = 0;
 	return j;
