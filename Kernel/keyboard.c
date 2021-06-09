@@ -23,9 +23,9 @@ extern uint8_t pollKeyRaw();
 
 static int keyboardBufferIsFull(){
     if (getCurrentDisplay())
-        return nextToStore_1 == BUFFER_SIZE;
+        return nextToStore_1 >= BUFFER_SIZE;
     else
-        return nextToStore_0 == BUFFER_SIZE;
+        return nextToStore_0 >= BUFFER_SIZE;
 }
 
 static int keyboardbufferIsEmpty(){
@@ -37,14 +37,13 @@ static int keyboardbufferIsEmpty(){
 
 // Stores a key on the keyboard buffer
 static void typeKey(int key){
-    if (getCurrentDisplay()){
-         if(!keyboardBufferIsFull())
-        keyboard_buffer_1[nextToStore_1++] = key;
-    } else {
-         if(!keyboardBufferIsFull())
+    if(!keyboardBufferIsFull()){
+        if (getCurrentDisplay()){
+            keyboard_buffer_1[nextToStore_1++] = key;
+        } else {
             keyboard_buffer_0[nextToStore_0++] = key;
+        }
     }
-    
 }
 
 static void deleteLast (){
