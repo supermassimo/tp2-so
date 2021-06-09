@@ -20,6 +20,7 @@ uint32_t getCpuExtendedFeaturesECXRaw();
 int getCpuIdSupport();
 void printCpuFeatures();
 
+void* getRIP ();
 void* getRAX ();
 void* getRBX ();
 void* getRCX ();

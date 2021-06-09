@@ -34,7 +34,7 @@ static int keyboardbufferIsEmpty(){
     if (getCurrentDisplay())
         return nextToStore_1 == 0;
     else
-        return nextToStore_1 == 0;
+        return nextToStore_0 == 0;
 }
 
 // Stores a key on the keyboard buffer
