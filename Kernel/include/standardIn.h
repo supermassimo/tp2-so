@@ -8,7 +8,7 @@
 int bufferIsEmpty();
 int bufferIsFull();
 int getBufferContent(unsigned char* target, size_t size_limit);
-void setInputBuffer(unsigned char* newBuffer, int start, int end);
+void setInputBuffer(unsigned char* newBuffer, int end);
 void deleteLastFromBuffer();
 
 #endif
