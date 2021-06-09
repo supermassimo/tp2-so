@@ -1,5 +1,4 @@
 #include <console.h>
-#include <kernel.h>
 
 static void zero_division();
 static void invalid_op();

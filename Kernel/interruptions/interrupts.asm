@@ -23,8 +23,6 @@ EXTERN exceptionDispatcher
 
 EXTERN sysCallDispatcher
 
-EXTERN main
-
 SECTION .text
 
 %macro pushState 0
@@ -86,7 +84,6 @@ SECTION .text
 	call exceptionDispatcher
 
 	popState
-	; call main
 	iretq
 %endmacro
 

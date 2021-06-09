@@ -201,7 +201,7 @@ static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
         printErr("Too many parameters for command 'help'\nUse: help [command]\n");
     }
     if (paramAmount == 0){
-        printf("Available Commands:\nhelp [command]\necho [message]\ninforeg\nprintmem [pointer]\ndatetime [timezone]\nlocaldatetime]\ntest [exception]\nclear\n");
+        printf("Available Commands:\nhelp [command]\necho [message]\ninforeg\nprintmem [pointer]\ndatetime [timezone]\nlocaldatetime]\ntest [exception]\nclear");
     }
     for(int i=0 ; i < commandAmount ; i++){
         if(strcmp(help_messages[i].name, params[0]) == 0){
@@ -285,8 +285,8 @@ static int getCommandAndParams(char* command, char params[][MAX_PARAMETER_LENGTH
 }
 
 void commandHandler(char* string){
-    char commandName[MAX_COMMAND_LENGTH];
-    char params[MAX_PARAMETER_AMOUNT][MAX_PARAMETER_LENGTH];
+    char commandName[MAX_COMMAND_LENGTH] = "";
+    char params[MAX_COMMAND_AMOUNT][MAX_PARAMETER_LENGTH];
     int paramAmount = getCommandAndParams(commandName, params, string);
     for(int i=0 ; i < commandAmount ; i++){
         if(strcmp(commands[i].name, commandName) == 0){

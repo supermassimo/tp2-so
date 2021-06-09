@@ -39,31 +39,30 @@ void * initializeKernelBinary()
 {
 	char buffer[10];
 
-	// ncPrint("[x64BareBones]");
-	// ncNewline();
+	ncPrint("[x64BareBones]");
+	ncNewline();
 
-	// ncPrint("CPU Vendor:");
-	// ncPrint(cpuVendor(buffer));
-	// ncNewline();
+	ncPrint("CPU Vendor:");
+	ncPrint(cpuVendor(buffer));
+	ncNewline();
 
-	// ncPrint("[Loading modules]");
-	// ncNewline();
+	ncPrint("[Loading modules]");
+	ncNewline();
 	void * moduleAddresses[] = {
-		userCodeModuleAddress,
-		sampleDataModuleAddress
+		userCodeModuleAddress
+		,sampleDataModuleAddress
 	};
 
 	loadModules(&endOfKernelBinary, moduleAddresses);
-	// ncPrint("[Done]");
-	// ncNewline();
-	// ncNewline();
+	ncPrint("[Done]");
+	ncNewline();
+	ncNewline();
 
-	// ncPrint("[Initializing kernel's binary]");
-	// ncNewline();
+	ncPrint("[Initializing kernel's binary]");
+	ncNewline();
 
 	clearBSS(&bss, &endOfKernel - &bss);
 
-	/*
 	ncPrint("  text: 0x");
 	ncPrintHex((uint64_t)&text);
 	ncNewline();
@@ -80,12 +79,6 @@ void * initializeKernelBinary()
 	ncPrint("[Done]");
 	ncNewline();
 	ncNewline();
-	*/
-
-	clearScreen();
-	initializeConsole();
-	load_idt();
-
 	return getStackBase();
 }
 
@@ -147,6 +140,11 @@ int main()
 	// ncNewline();
 
 	// ncPrint("[Finished]");
+	clearScreen();
+
+	load_idt();
+
+	initializeConsole();
 
 	loadUserModuleAdress();
 
