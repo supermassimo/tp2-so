@@ -128,15 +128,15 @@ size_t floatToStr(float value, char* target, size_t precision){
     int j = numToStr((int)value, target, 10);
 
     target[j++] = '.';
-    if (precision == 0)
+    //if (precision == 0)
         target[j++] = '0';
-    else {
-        for (int p=0; p<precision; p++){
-            value2 *= 10;
-		    digit = (int)value2;
-		    target[j++] = digitToStr(digit, 10);
-        }
-    }
+    //else {
+    //    for (int p=0; p<precision; p++){
+    //        value2 *= 10;
+	//	    digit = (int)value2;
+	//	    target[j++] = digitToStr(digit, 10);
+    //    }
+    //}
 
 	target[j] = 0;
 	return j;
@@ -174,6 +174,6 @@ void strToFloat(char* string, float* target){
 
     if(isNegative)
         num *= -1;
-        
+
     *target = num;
 }
