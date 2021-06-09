@@ -69,7 +69,7 @@ static int isControlKey(unsigned char c){
 }
 
 static int isPrintableKey(unsigned char c){
-    return c != -1 && c != '\t';
+    return c != -1 || c != '\t';
 }
 
 static void applyControlKey(unsigned char key){
