@@ -142,7 +142,7 @@ size_t floatToStr(float value, char* target, size_t precision){
 	return j;
 }
 
-float strToFloat(char* string){
+void strToFloat(char* string, float* target){
     int isNegative=0, digit;
     float num=0, fraction=0;
     size_t i=0, length = strlen(string);
@@ -174,5 +174,6 @@ float strToFloat(char* string){
 
     if(isNegative)
         num *= -1;
-    return num;
+        
+    *target = num;
 }

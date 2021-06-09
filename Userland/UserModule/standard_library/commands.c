@@ -58,7 +58,8 @@ static void echofloatHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmoun
     }
 
     int precision = strToNumPos(params[0]);
-    float value = strToFloat(params[1]);
+    float value;
+    strToFloat(params[1], &value);
     char output[100 + precision + 2];
     floatToStr(value, output, precision);
 
