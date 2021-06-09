@@ -9,7 +9,6 @@ void sysWriteMemContent(char* startPos, size_t amount);
 void sysWriteDateTime(int utc);
 void sysSetIdle(int isIdle);
 int sysGetActiveDisplay();
-void sysRestartUserModule();
 void printCpuFeatures();
 
 
@@ -41,9 +40,6 @@ void sysCallDispatcher(){
             break;
         case 8:
             sysWriteCpuFeatures();
-            break;
-        case 9:
-            sysRestartUserModule();
             break;
         default:
             //code invalido
@@ -95,8 +91,4 @@ int sysGetActiveDisplay(){
 
 void sysWriteCpuFeatures(){
     printCpuFeatures();
-}
-
-void sysRestartUserModule(){
-    //RESTART USER MODULE
 }

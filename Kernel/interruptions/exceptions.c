@@ -1,7 +1,9 @@
 #include <console.h>
+#include <kernel.h>
 
 static void zero_division();
 static void invalid_op();
+static void exceptionReloadPointer();
 
 void exceptionDispatcher(int exception) {
 	switch (exception) {
@@ -16,15 +18,19 @@ void exceptionDispatcher(int exception) {
 }
 
 static void zero_division() {
-	// printErr("ERROR: Cannot divide by zero");
-	// printRegistries();
+	printErr("ERROR: Cannot divide by zero");
+	printRegistries();
 
-	//UNLOAD USER MODULE AND START EXCEPTION MODULE
+	exceptionReloadPointer();
 }
 
 static void invalid_op() {
-	// printErr("ERROR: Invalid opcode");
-	// printRegistries();
+	printErr("ERROR: Invalid opcode");
+	printRegistries();
 	
-	//UNLOAD USER MODULE AND START EXCEPTION MODULE
+	exceptionReloadPointer();
+}
+
+static void exceptionReloadPointer(){
+	loadUserModuleAdress();
 }

@@ -62,9 +62,3 @@ writeCpuFeatures:
 invalidOpcodeThrower:
     ud2
     ret
-
-restart:
-    mov rbx, 9
-    int 69h
-
-    ret
