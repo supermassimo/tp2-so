@@ -165,7 +165,7 @@ void strToFloat(char* string, float* target){
             digit = string[i] - 48;
             if(!isDigit(digit))
                 break;
-            num += digit * (1.0/(offset))
+            num += digit * (1.0/(offset));
             i++;
             offset*=10;
         }

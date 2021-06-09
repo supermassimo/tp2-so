@@ -14,6 +14,6 @@ int strcmp(char* s1, char* s2);
 size_t strlen(char *string);
 size_t concatStrings(char strings[][MAX_PARAMETER_LENGTH], size_t stringAmount, char* output);
 size_t floatToStr(float value, char* target, size_t precision);
-float strToFloat(char* string);
+void strToFloat(char* string, float* target);
 
 #endif
