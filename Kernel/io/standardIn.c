@@ -27,12 +27,15 @@ int bufferIsEmpty(){
 void setInputBuffer(unsigned char* newBuffer, int end){
     int auxIdx = 0;
     while(auxIdx != end){
-        if(auxIdx == BUFFER_SIZE)
-            auxIdx = 0;
         if (getCurrentDisplay())
             input_buffer_1[endOfContent_1++] = newBuffer[auxIdx++];
         else
             input_buffer_0[endOfContent_0++] = newBuffer[auxIdx++];
+    }
+    if (getCurrentDisplay()){
+        currentToRead_1 = 0;
+    } else {
+        currentToRead_0 = 0;
     }
 }
 
@@ -65,12 +68,14 @@ int getBufferContent(unsigned char* target, size_t size_limit){
         target[i++] = aux;
     }
     target[i] = 0;
-    if (getCurrentDisplay()){
-        currentToRead_1 = 0;
-        endOfContent_1 = 0;
-    } else {
-        currentToRead_0 = 0;
-        endOfContent_0 = 0;
+    if (aux == -1){
+        if (getCurrentDisplay()){
+            currentToRead_1 = 0;
+            endOfContent_1 = 0;
+        } else {
+            currentToRead_0 = 0;
+            endOfContent_0 = 0;
+        }
     }
     return i;
 }
