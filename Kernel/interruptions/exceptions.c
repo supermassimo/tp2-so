@@ -4,6 +4,7 @@
 static void zero_division();
 static void invalid_op();
 static void exceptionReloadPointer();
+extern void loader();
 
 void exceptionDispatcher(int exception) {
 	switch (exception) {
@@ -21,16 +22,16 @@ static void zero_division() {
 	printErr("ERROR: Cannot divide by zero");
 	printRegistries();
 
-	exceptionReloadPointer();
+	// exceptionReloadPointer();
 }
 
 static void invalid_op() {
 	printErr("ERROR: Invalid opcode");
 	printRegistries();
 	
-	exceptionReloadPointer();
+	// exceptionReloadPointer();
 }
 
 static void exceptionReloadPointer(){
-	loadUserModuleAdress();
+	main();
 }

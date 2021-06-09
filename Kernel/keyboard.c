@@ -42,14 +42,14 @@ static int keyboardbufferIsEmpty(){
 // Stores a key on the keyboard buffer
 static void typeKey(int key){
     if (getCurrentDisplay()){
-        if(keyboardBufferIsFull())
-            nextToStore_1 = 0;
-        // if(!keyboardBufferIsFull())
-        keyboard_buffer_1[nextToStore_1++] = key;
+        // if(keyboardBufferIsFull())
+        //    nextToStore_1 = 0;
+        if(!keyboardBufferIsFull())
+            keyboard_buffer_1[nextToStore_1++] = key;
     } else {
-        if(keyboardBufferIsFull())
-            nextToStore_0 = 0;
-        // if(!keyboardBufferIsFull())
+        // if(keyboardBufferIsFull())
+        // nextToStore_0 = 0;
+        if(!keyboardBufferIsFull())
             keyboard_buffer_0[nextToStore_0++] = key;
     }
     
@@ -127,7 +127,9 @@ static int readKey(){
 
 void keyboardIntHandler(){
     int key = readKey();
-    if(key != -1 && isPrintableKey(key) && !keyboardBufferIsFull()){
+    if(key != -1 && !keyboardBufferIsFull()){
+        // if(isControlKey(key) && keyboardbufferIsEmpty())
+        //    return;
         printChar(key);
         // printInt(nextToStore_0, 10);
         lastKey = key;      // Testing purposes. Delete when making final code

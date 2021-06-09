@@ -17,7 +17,7 @@ extern uint8_t endOfKernel;
 static const uint64_t PageSize = 0x1000;
 
 static void * const userCodeModuleAddress = (void*)0x400000;
-//static void * const sampleDataModuleAddress = (void*)0x500000;
+static void * const sampleDataModuleAddress = (void*)0x500000;
 
 typedef int (*EntryPoint)();
 
@@ -39,30 +39,31 @@ void * initializeKernelBinary()
 {
 	char buffer[10];
 
-	ncPrint("[x64BareBones]");
-	ncNewline();
+	// ncPrint("[x64BareBones]");
+	// ncNewline();
 
-	ncPrint("CPU Vendor:");
-	ncPrint(cpuVendor(buffer));
-	ncNewline();
+	// ncPrint("CPU Vendor:");
+	// ncPrint(cpuVendor(buffer));
+	// ncNewline();
 
-	ncPrint("[Loading modules]");
-	ncNewline();
+	// ncPrint("[Loading modules]");
+	// ncNewline();
 	void * moduleAddresses[] = {
-		userCodeModuleAddress
-//		,sampleDataModuleAddress
+		userCodeModuleAddress,
+		sampleDataModuleAddress
 	};
 
 	loadModules(&endOfKernelBinary, moduleAddresses);
-	ncPrint("[Done]");
-	ncNewline();
-	ncNewline();
+	// ncPrint("[Done]");
+	// ncNewline();
+	// ncNewline();
 
-	ncPrint("[Initializing kernel's binary]");
-	ncNewline();
+	// ncPrint("[Initializing kernel's binary]");
+	// ncNewline();
 
 	clearBSS(&bss, &endOfKernel - &bss);
 
+	/*
 	ncPrint("  text: 0x");
 	ncPrintHex((uint64_t)&text);
 	ncNewline();
@@ -79,6 +80,12 @@ void * initializeKernelBinary()
 	ncPrint("[Done]");
 	ncNewline();
 	ncNewline();
+	*/
+
+	clearScreen();
+	initializeConsole();
+	load_idt();
+
 	return getStackBase();
 }
 
@@ -140,11 +147,6 @@ int main()
 	// ncNewline();
 
 	// ncPrint("[Finished]");
-	clearScreen();
-
-	load_idt();
-
-	initializeConsole();
 
 	loadUserModuleAdress();
 
