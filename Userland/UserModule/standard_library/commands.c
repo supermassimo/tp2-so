@@ -9,6 +9,8 @@ extern void invalidOpcodeThrower();
 extern void setIdle(int idle);
 extern void clear();
 extern void writeCpuFeatures();
+extern void getQuadratic(float a, float b, float c, float* out);
+
 
 typedef struct commandStruct{
     char* name;
@@ -25,8 +27,44 @@ typedef struct exceptionTestStruct{
     void* thrower;
 } exceptionTestStruct;
 
-static const size_t commandAmount = 9;
+static const size_t commandAmount = 10;
 static const size_t exceptionAmount = 2;
+
+static void quadraticHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmount){
+    if(paramAmount > 3){
+        printErr("Too many parameters for command 'quadratic'\n");
+        return;
+    }
+    if(paramAmount < 3){
+        printErr("Missing parameters for command 'quadratic'\n");
+        return;
+    }
+
+
+
+    float roots[2];
+
+}
+
+// for testing purposes
+static void echofloatHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmount){
+    if(paramAmount < 2){
+        printErr("Missing parameters for command 'echofloat'\n");
+        return;
+    }
+    if(paramAmount > 2){
+        printErr("Too many parameters for command 'echofloat'\n");
+        return;
+    }
+
+    int precision = strToNumPos(params[0]);
+    float value = strToFloat(params[1]);
+    char output[100 + precision + 2];
+    floatToStr(value, output, precision);
+
+    printf(output);
+    printf("\n");
+}
 
 static void echoHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmount){
     if(paramAmount < 1){
@@ -51,7 +89,7 @@ static void echoHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmount){
 
 static void inforegHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount > 0){
-        printErr("Too many arguments for command 'inforeg'\n");
+        printErr("Too many parameters for command 'inforeg'\n");
         return;
     }
     writeRegistries();
@@ -63,7 +101,7 @@ static void printmemHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmo
         return;
     }
     if(paramAmount > 1){
-        printErr("Too many arguments for command 'printmem'\n");
+        printErr("Too many parameters for command 'printmem'\n");
         return;
     }
     char *memPos = strToNumPos(params[0]);
@@ -78,7 +116,7 @@ static void datetimeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmo
         return;
     }
     if(paramAmount > 1){
-        printErr("Too many arguments for command 'datetime'\n");
+        printErr("Too many parameters for command 'datetime'\n");
         return;
     }
     long utc = strToNum(params[0]);
@@ -93,7 +131,7 @@ static void datetimeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmo
 
 static void clearHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount > 0){
-        printErr("Too many arguments for command 'clear'\n");
+        printErr("Too many parameters for command 'clear'\n");
         return;
     }
     clear();
@@ -103,6 +141,7 @@ static void clearHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount
 static helpStruct help_messages[] = {
     {"help", "'help': Get information on how to use commands\nUse: 'help [command]'\n'command': Command to get use information about\n"},
     {"echo", "'echo': Print a message on the console\nUse: 'echo [message]'\n'message': Message to print in console\n"},
+    {"echofloat", "'echofloat': Prints a floating point number on the console\nUse: 'echo [precision] [number]'\n'precision': Ammount of numbers after the point\n'message': Number to print\n"},
     {"inforeg", "'inforeg': Print the states of the registries\nUse: 'inforeg'\n"},
     {"printmem", "'printmem': Print the first 32 bytes following a place in memory\nUse: 'printmem [pointer]'\n'pointer': Memory address of first byte to print\n"},
     {"datetime", "'datetime': Print the time and date for a specific timezone\nUse: 'datetime [timezone]'\n'timezone': Timezone to print the current time of\n"},
@@ -114,7 +153,7 @@ static helpStruct help_messages[] = {
 
 static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if (paramAmount > 1){
-        printErr("Too many arguments for command 'help'\nUse: help [command]\n");
+        printErr("Too many parameters for command 'help'\nUse: help [command]\n");
     }
     if (paramAmount == 0){
         printf("Available Commands:\nhelp [command]\necho [message]\ninforeg\nprintmem [pointer]\ndatetime [timezone]\nlocaldatetime]\ntest [exception]\nclear\n");
@@ -128,7 +167,7 @@ static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
 
 static void localDateTimeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount > 0){
-        printErr("Too many arguments for command 'localdatetime'");
+        printErr("Too many parameters for command 'localdatetime'");
         return;
     }
     writeDateTime(LOCAL_UTC);
@@ -136,7 +175,7 @@ static void localDateTimeHandler(char params[][MAX_PARAMETER_LENGTH], size_t par
 
 static void cpufeaturesHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount > 0){
-        printErr("Too many arguments for command 'cpufeatures'");
+        printErr("Too many parameters for command 'cpufeatures'");
         return;
     }
     writeCpuFeatures();
@@ -154,10 +193,10 @@ static exceptionTestStruct exceptions[] = {
 
 static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount == 0){
-        printErr("Missing argument for command 'test'");
+        printErr("Missing parameter for command 'test'");
     }
     if(paramAmount > 1){
-        printErr("Too many arguments for command 'test'");
+        printErr("Too many parameters for command 'test'");
     }
     for(int i=0 ; i < exceptionAmount ; i++){
         if(strcmp(params[0], exceptions[i].exception) == 0)
@@ -168,6 +207,7 @@ static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
 static commandStruct commands[] = {
     {"help", &helpHandler},
     {"echo", &echoHandler},
+    {"echofloat", &echofloatHandler},
     {"inforeg", &inforegHandler},
     {"printmem", &printmemHandler},
     {"datetime", &datetimeHandler},

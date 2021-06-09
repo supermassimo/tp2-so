@@ -41,6 +41,14 @@ static int digitToStr(int num, int base){
 	return base > 10 ? num - 10 + 'A' : num + '0';
 }
 
+static int isDigit(int digit){
+        if(digit < 0 || digit > 9){
+            printErr("String sent is not a number\n");
+            return 0;
+        }
+        return 1;
+}
+
 // Transforms an integer to string and stores it on target. Returns final string length
 size_t numToStr(size_t value, char* target, size_t base){
 	int digit;
@@ -71,16 +79,14 @@ long strToNumPos(char* string){
     size_t num = 0, digit, i=0;
     size_t length = strlen(string);
     if(string[0] == '-'){
-        printErr("String sent must be positive");
+        printErr("String sent must be positive\n");
         return -1;
     }
     while(i < length){
         num *= 10;
         digit = string[i] - 48;
-        if(digit < 0 || digit > 9){
-            printErr("String sent is not a number");
+        if(!isDigit(digit))
             break;
-        }
         num += digit;
         i++;
     }
@@ -98,13 +104,74 @@ long strToNum(char* string){
     while(i < length){
         num *= 10;
         digit = string[i] - 48;
-        if(digit < 0 || digit > 9){
-            printErr("String sent is not a number");
+        if(!isDigit(digit))
             break;
-        }
         num += digit;
         i++;
     }
+    if(isNegative)
+        num *= -1;
+    return num;
+}
+
+//precision es el numero de caracteres despues de la coma
+size_t floatToStr(float value, char* target, size_t precision){
+    int digit;
+	int sign = 1;		// 0 if negative, 1 if positive
+    char aux2[precision+1];
+	if(value < 0){
+		sign = 0;
+		value *= -1;
+	}
+    float value2 = value - ((int)value);
+	
+    int j = numToStr((int)value, target, 10);
+
+    target[j++] = '.';
+    if (precision == 0)
+        target[j++] = '0';
+    else {
+        for (int p=0; p<precision; p++){
+            value2 *= 10;
+		    digit = (int)value2;
+		    target[j++] = digitToStr(digit, 10);
+        }
+    }
+
+	target[j] = 0;
+	return j;
+}
+
+float strToFloat(char* string){
+    int isNegative=0, digit;
+    float num=0, fraction=0;
+    size_t i=0, length = strlen(string);
+    if(string[0] == '-'){
+        isNegative = 1;
+        i++;
+    }
+    while(i < length && string[i] != '.'){
+        num *= 10;
+        digit = string[i] - 48;
+        if(!isDigit(digit))
+            break;
+        num += digit;
+        i++;
+    }
+    if (string[i] == '.'){
+        i+=1;
+        long offset = 10;
+        while(i < length){
+            digit = string[i] - 48;
+            if(!isDigit(digit))
+                break;
+            num += digit * (1.0/(offset))
+            i++;
+            offset*=10;
+        }
+    }
+    num += fraction;
+
     if(isNegative)
         num *= -1;
     return num;
