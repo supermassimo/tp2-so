@@ -40,14 +40,10 @@ static int keyboardbufferIsEmpty(){
 // Stores a key on the keyboard buffer
 static void typeKey(int key){
     if (getCurrentDisplay()){
-        if(keyboardBufferIsFull())
-            nextToStore_1 = 0;
-        // if(!keyboardBufferIsFull())
+         if(!keyboardBufferIsFull())
         keyboard_buffer_1[nextToStore_1++] = key;
     } else {
-        if(keyboardBufferIsFull())
-            nextToStore_0 = 0;
-        // if(!keyboardBufferIsFull())
+         if(!keyboardBufferIsFull())
             keyboard_buffer_0[nextToStore_0++] = key;
     }
     
