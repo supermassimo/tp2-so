@@ -115,11 +115,9 @@ long strToNum(char* string){
 }
 
 //precision es el numero de caracteres despues de la coma
-size_t floatToStr(float value, char* target, size_t precision){
+size_t floatToStr(float value, char* target, size_t precision, size_t base){
     int digit;
-    char aux2[precision+1];
-
-    int j = numToStr((int)value, target, 10);
+    int j = numToStr((int)value, target, base);
 
 	if(value < 0)
 		value *= -1;
@@ -130,9 +128,9 @@ size_t floatToStr(float value, char* target, size_t precision){
         target[j++] = '0';
     else {
         for (int p=0; p<precision; p++){
-            value2 *= 10;
+            value2 *= base;
 		    digit = (int)value2;
-		    target[j++] = digitToStr(digit, 10);
+		    target[j++] = digitToStr(digit, base);
         }
     }
 
@@ -148,25 +146,28 @@ void strToFloat(char* string, float* target){
         isNegative = 1;
         i++;
     }
-    while(i < length && string[i] != '.'){
-        num *= 10;
-        digit = string[i] - 48;
-        if(!isDigit(digit))
-            break;
-        num += digit;
-        i++;
-    }
-    if (string[i] == '.'){
-        i+=1;
-        long offset = 10;
-        while(i < length){
+    int afterPoint = 0;
+    long offset = 10;
+    while(i < length){
+        if (string[i] == '.'){
+            if (afterPoint){
+                printErr("String sent is not valid\n");
+                return;
+            }
+            afterPoint = 1;
+        } else {
             digit = string[i] - 48;
-            if(!isDigit(digit))
-                break;
-            num += digit * (1.0/(offset));
-            i++;
-            offset*=10;
+                if(!isDigit(digit))
+                    return;
+            if (afterPoint){
+                fraction += digit * (1.0/(offset));
+                offset*=10;
+            } else {
+                num *= 10;
+                num += digit;
+            }
         }
+        i++;
     }
     num += fraction;
 

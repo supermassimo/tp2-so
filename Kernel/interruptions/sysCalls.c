@@ -9,10 +9,7 @@ void sysWriteMemContent(char* startPos, size_t amount);
 void sysWriteDateTime(int utc);
 void sysSetIdle(int isIdle);
 int sysGetActiveDisplay();
-void sysSwapConsole();
-
-void printCpuFeatures();
-
+void sysSwapActiveDisplay();
 
 void sysCallDispatcher(){
     switch((int)getRBX()){
@@ -44,7 +41,7 @@ void sysCallDispatcher(){
             sysWriteCpuFeatures();
             break;
         case 9:
-            sysSwapConsole();
+            sysSwapActiveDisplay();
             break;
         default:
             //code invalido
@@ -98,6 +95,6 @@ void sysWriteCpuFeatures(){
     printCpuFeatures();
 }
 
-void sysSwapConsole(){
+void sysSwapActiveDisplay(){
     swapDisplay();
 }
