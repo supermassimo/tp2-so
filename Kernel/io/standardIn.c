@@ -24,9 +24,9 @@ int bufferIsEmpty(){
     
 }
 
-void setInputBuffer(unsigned char* newBuffer, int start, int end){
+void setInputBuffer(unsigned char* newBuffer, int end){
     
-    int auxIdx = start;
+    int auxIdx = 0;
     while(auxIdx != end){
         if(auxIdx == BUFFER_SIZE)
             auxIdx = 0;

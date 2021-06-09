@@ -5,11 +5,9 @@
 
 static unsigned char keyboard_buffer_0[BUFFER_SIZE];
 static unsigned int nextToStore_0 = 0;
-static unsigned int currentToRead_0 = 0;
 
 static unsigned char keyboard_buffer_1[BUFFER_SIZE];
 static unsigned int nextToStore_1 = 0;
-static unsigned int currentToRead_1 = 0;
 
 static unsigned char lastKey;               // Testing purposes. Delete when making final code
 
@@ -34,9 +32,9 @@ static int keyboardBufferIsFull(){
 
 static int keyboardbufferIsEmpty(){
     if (getCurrentDisplay())
-        return currentToRead_1 == nextToStore_1;
+        return nextToStore_1 == 0;
     else
-        return currentToRead_0 == nextToStore_0;
+        return nextToStore_1 == 0;
 }
 
 // Stores a key on the keyboard buffer
@@ -56,20 +54,13 @@ static void typeKey(int key){
 }
 
 static void deleteLast (){
-    if (getCurrentDisplay()){
-        if(nextToStore_1 != currentToRead_1){
-            if(nextToStore_1 == 0)
-                nextToStore_1 = BUFFER_SIZE;
+    if (!keyboardbufferIsEmpty()){
+        if (getCurrentDisplay()){
             nextToStore_1--;
-        }
-    } else {
-        if(nextToStore_0 != currentToRead_0){
-            if(nextToStore_0 == 0)
-                nextToStore_0 = BUFFER_SIZE;
+        } else {
             nextToStore_0--;
         }
     }
-    
 }
 
 // 0-31 and 127 are reserved ASCII control characters
@@ -88,11 +79,11 @@ static void applyControlKey(unsigned char key){
             break;
         case '\n':
             if (getCurrentDisplay()){
-                setInputBuffer(keyboard_buffer_1, currentToRead_1, nextToStore_1);
-                currentToRead_1 = nextToStore_1;
+                setInputBuffer(keyboard_buffer_1, nextToStore_1);
+                nextToStore_1 = 0;
             }else{
-                setInputBuffer(keyboard_buffer_0, currentToRead_0, nextToStore_0);
-                currentToRead_0 = nextToStore_0;
+                setInputBuffer(keyboard_buffer_0, nextToStore_0);
+                nextToStore_0 = 0;
             }
             break;
         case '\t':
