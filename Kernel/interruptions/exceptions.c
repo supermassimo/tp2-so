@@ -6,13 +6,6 @@ static void invalid_op();
 static void exceptionReloadPointer();
 extern void loader();
 
-void waitUntilRestart(){
-	char keys[BUFFER_SIZE];
-	getBufferContent(keys, BUFFER_SIZE);
-	print("Press any key to restart system...");
-	while(!getBufferContent(keys, BUFFER_SIZE));
-}
-
 void exceptionDispatcher(int exception) {
 	switch (exception) {
 		case 0:

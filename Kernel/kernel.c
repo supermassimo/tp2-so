@@ -6,6 +6,7 @@
 #include <rtc.h>
 #include <console.h>
 #include <sysCalls.h>
+#include <standardIn.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -38,7 +39,7 @@ void * getStackBase()
 void * initializeKernelBinary()
 {
 	char buffer[10];
-
+/*
 	ncPrint("[x64BareBones]");
 	ncNewline();
 
@@ -48,21 +49,23 @@ void * initializeKernelBinary()
 
 	ncPrint("[Loading modules]");
 	ncNewline();
+	*/
 	void * moduleAddresses[] = {
 		userCodeModuleAddress
 		,sampleDataModuleAddress
 	};
 
 	loadModules(&endOfKernelBinary, moduleAddresses);
+	/*
 	ncPrint("[Done]");
 	ncNewline();
 	ncNewline();
 
 	ncPrint("[Initializing kernel's binary]");
 	ncNewline();
-
+	*/
 	clearBSS(&bss, &endOfKernel - &bss);
-
+	/*
 	ncPrint("  text: 0x");
 	ncPrintHex((uint64_t)&text);
 	ncNewline();
@@ -79,7 +82,12 @@ void * initializeKernelBinary()
 	ncPrint("[Done]");
 	ncNewline();
 	ncNewline();
+	*/
 	return getStackBase();
+}
+
+void rebootKernel(){
+	loader();
 }
 
 void loadUserModuleAdress(){

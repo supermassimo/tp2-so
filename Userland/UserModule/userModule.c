@@ -9,10 +9,9 @@
 // static int var2 = 0;
 
 void waitForInput(){
-	char input[256];
+	char input[120];
 	while(1){
-	 	scanf(input, 255);
-		 printf("scanned\n");
+	 	scanf(input, 119);
 		if(strcmp(input, "") != 0)
 			commandHandler(input);
 	};

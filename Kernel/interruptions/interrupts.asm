@@ -23,9 +23,9 @@ EXTERN exceptionDispatcher
 
 EXTERN sysCallDispatcher
 
-EXTERN loader
+EXTERN rebootKernel
 
-EXTERN waitUntilRestart
+EXTERN awaitForInstantInput
 
 SECTION .text
 
@@ -89,7 +89,9 @@ SECTION .text
 
 	popState
 	;call waitUntilRestart
-	call loader
+	call _hlt
+	call awaitForInstantInput
+	call rebootKernel
 	;iretq
 %endmacro
 

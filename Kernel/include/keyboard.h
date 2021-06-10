@@ -1,4 +1,4 @@
 #include <stdint.h>
 
-unsigned char getLastPressedKey();
+int keyboardBufferIsEmpty();
 void keyboardIntHandler();
