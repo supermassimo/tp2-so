@@ -24,7 +24,7 @@ $(KERNEL): $(STATICLIBS) $(ALL_OBJECTS)
 	$(LD) $(LDFLAGS) -T kernel.ld -o $@ $^
 
 %.o: %.c
-	$(GCC) $(GCCFLAGS) -I./include -I./interruptions -c $< -o $@
+	$(GCC) $(GCCFLAGS) -I./include -I./interruptions -I./io -c $< -o $@
 
 %.o : %.asm
 	$(ASM) $(ASMFLAGS) $< -o $@

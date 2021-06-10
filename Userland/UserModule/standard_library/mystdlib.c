@@ -42,11 +42,11 @@ static int digitToStr(int num, int base){
 }
 
 static int isDigit(int digit){
-        if(digit < 0 || digit > 9){
-            printErr("String sent is not a number\n");
-            return 0;
-        }
-        return 1;
+    if(digit < 0 || digit > 9){
+        printErr("String sent is not a number");
+        return 0;
+    }
+    return 1;
 }
 
 // Transforms an integer to string and stores it on target. Returns final string length
@@ -79,7 +79,7 @@ long strToNumPos(char* string){
     size_t num = 0, digit, i=0;
     size_t length = strlen(string);
     if(string[0] == '-'){
-        printErr("String sent must be positive\n");
+        printErr("String sent must be positive");
         return -1;
     }
     while(i < length){
@@ -151,7 +151,7 @@ void strToFloat(char* string, float* target){
     while(i < length){
         if (string[i] == '.'){
             if (afterPoint){
-                printErr("String sent is not valid\n");
+                printErr("String sent is not valid");
                 return;
             }
             afterPoint = 1;
