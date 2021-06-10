@@ -8,7 +8,7 @@
 #define SCR_SIDE_COLS	39
 #define LIMITER_GIRTH	2
 
-#define MAX_NUM_LENGTH 255					// For printing numbers purposes
+#define MAX_NUM_LENGTH BUFFER_SIZE			// For printing numbers purposes
 
 static char* scrPos = SCR_BASE_ADDR; 		// Current position on the screen
 static uint8_t foreColor = White;			// Default Forecolor

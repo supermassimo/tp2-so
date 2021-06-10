@@ -99,9 +99,9 @@ static void selectMode(){
 	int sel = -1;
 	setIdle(0);
 	while (sel == -1){
-		char string[256];
+		char string[BUFFER_SIZE];
 		if (!bufferIsEmpty()){
-			getBufferContent(string, 256);
+			getBufferContent(string, BUFFER_SIZE);
 			if (string[0] == 't' || string[0] == 'T')
 				sel = 0;
 			else if (string[0] == 'g' || string[0] == 'G')
