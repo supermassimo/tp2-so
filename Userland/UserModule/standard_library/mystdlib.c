@@ -123,9 +123,6 @@ size_t floatToStr(float value, char* target, size_t precision, size_t base){
 		value *= -1;
     float value2 = value - ((int)value);
 
-    printInt((int)value);
-    printf("\n");
-
     target[j++] = '.';
     if (precision == 0)
         target[j++] = '0';
