@@ -35,17 +35,11 @@ static const size_t exceptionAmount = 2;
 #define FLOAT_STRING_SIZE 100
 
 static void printQuadratic(float a, float b, float c){
-    char out_a[FLOAT_STRING_SIZE];
-    char out_b[FLOAT_STRING_SIZE];
-    char out_c[FLOAT_STRING_SIZE];
-    floatToStr(a, out_a, QUADRATIC_PRECISION, 10);
-    floatToStr(b, out_b, QUADRATIC_PRECISION, 10);
-    floatToStr(c, out_c, QUADRATIC_PRECISION, 10);
-    printf(out_a);
+    printFloat(a, FLOAT_STRING_SIZE, QUADRATIC_PRECISION, 10);
     printf("x^2 + ");
-    printf(out_b);
+    printFloat(b, FLOAT_STRING_SIZE, QUADRATIC_PRECISION, 10);
     printf("x + ");
-    printf(out_c);
+    printFloat(c, FLOAT_STRING_SIZE, QUADRATIC_PRECISION, 10);
 }
 
 static void quadraticHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmount){
@@ -74,20 +68,14 @@ static void quadraticHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmoun
         printf("Function ");
         printQuadratic(a, b, c);
         printf(" has one real root:\nx = ");
-        char root_0[FLOAT_STRING_SIZE];
-        floatToStr(roots[0], root_0, QUADRATIC_PRECISION, 10);
-        printf(root_0);
+        printFloat(roots[0], FLOAT_STRING_SIZE, QUADRATIC_PRECISION, 10);
     } else if (found == 2){
         printf("Function ");
         printQuadratic(a, b, c);
         printf(" has two real roots:\nx = ");
-        char root_0[FLOAT_STRING_SIZE];
-        char root_1[FLOAT_STRING_SIZE];
-        floatToStr(roots[0], root_0, QUADRATIC_PRECISION, 10);
-        floatToStr(roots[1], root_1, QUADRATIC_PRECISION, 10);
-        printf(root_0);
+        printFloat(roots[0], FLOAT_STRING_SIZE, QUADRATIC_PRECISION, 10);
         printf("\nx = ");
-        printf(root_1);
+        printFloat(roots[1], FLOAT_STRING_SIZE, QUADRATIC_PRECISION, 10);
     }
     printf("\n");
 
@@ -106,12 +94,10 @@ static void echofloatHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmoun
 
     int precision = strToNumPos(params[0]);
     float value;
-    strToFloat(params[1], &value);
-    char output[strlen(params[1]) + precision + 1];
-    floatToStr(value, output, precision, 10);
-
-    printf(output);
-    printf("\n");
+    if (strToFloat(params[1], &value) != -1){
+        printFloat(value, FLOAT_STRING_SIZE, QUADRATIC_PRECISION, 10);
+        printf("\n");
+    }
 }
 
 static void echoHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmount){

@@ -84,7 +84,7 @@ long strToNumPos(char* string){
     }
     while(i < length){
         num *= 10;
-        digit = string[i] - 48;
+        digit = string[i] - '0';
         if(!isDigit(digit))
             break;
         num += digit;
@@ -103,7 +103,7 @@ long strToNum(char* string){
     }
     while(i < length){
         num *= 10;
-        digit = string[i] - 48;
+        digit = string[i] - '0';
         if(!isDigit(digit))
             break;
         num += digit;
@@ -130,7 +130,11 @@ size_t floatToStr(float value, char* target, size_t precision, size_t base){
         for (int p=0; p<precision; p++){
             value2 *= base;
 		    digit = (int)value2;
-		    target[j++] = digitToStr(digit, base);
+            
+            int charDigit = digitToStr(digit, base);
+            if(!isDigit(charDigit))
+                    charDigit = '0';
+		    target[j++] = charDigit;
         }
     }
 
@@ -138,7 +142,7 @@ size_t floatToStr(float value, char* target, size_t precision, size_t base){
 	return j;
 }
 
-void strToFloat(char* string, float* target){
+int strToFloat(char* string, float* target){
     int isNegative=0, digit;
     float num=0, fraction=0;
     size_t i=0, length = strlen(string);
@@ -152,13 +156,13 @@ void strToFloat(char* string, float* target){
         if (string[i] == '.'){
             if (afterPoint){
                 printErr("String sent is not valid");
-                return;
+                return -1;
             }
             afterPoint = 1;
         } else {
-            digit = string[i] - 48;
+            digit = string[i] - '0';
                 if(!isDigit(digit))
-                    return;
+                    return -1;
             if (afterPoint){
                 fraction += digit * (1.0/(offset));
                 offset*=10;
@@ -175,4 +179,6 @@ void strToFloat(char* string, float* target){
         num *= -1;
 
     *target = num;
+    
+    return 0;
 }

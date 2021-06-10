@@ -1,14 +1,13 @@
 #include <console.h>
 #include <lib.h>
 #include <rtc.h>
+#include <standardIn.h>
 
 #define SCR_BASE_ADDR 	0xB8000
 #define SCR_ROWS 		25
 #define SCR_COLS 		80
 #define SCR_SIDE_COLS	39
 #define LIMITER_GIRTH	2
-
-#define MAX_NUM_LENGTH BUFFER_SIZE			// For printing numbers purposes
 
 static char* scrPos = SCR_BASE_ADDR; 		// Current position on the screen
 static uint8_t foreColor = White;			// Default Forecolor
@@ -285,7 +284,7 @@ void printInt(long num, size_t base){
 }
 
 void printIntCol(long num, size_t base, uint8_t foreColor, uint8_t backColor){
-	char strNum[MAX_NUM_LENGTH];
+	char strNum[BUFFER_SIZE];
 	numToStr(num, strNum, base);
 	printCol(strNum, foreColor, backColor);
 }

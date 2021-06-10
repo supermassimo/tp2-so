@@ -28,6 +28,16 @@ void printInt (long num, size_t string_size, uint8_t base){
     write (0, final_string, string_size);
 }
 
+void printFloat (float num, size_t string_size, size_t precision, uint8_t base){
+    char array[string_size];
+    int final_size = floatToStr(num, array, precision, base);
+    char final_string[final_size+1];
+    for (int i=0; i<=final_size; i++){
+        final_string[i] = array[i];
+    }
+    write (0, final_string, string_size);
+}
+
 void scanf (char* string, size_t string_size){
     readInput (string, string_size);
 }
