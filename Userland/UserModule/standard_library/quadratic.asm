@@ -14,6 +14,8 @@ section .text
 ;SQRTPS [destination], [sqrt of this] square root float
 ;ADDSS [this], [plus this] add floats
 ;SUBSS [this], [minus this] substract floats
+;CVTSI2SS [float reg], [int reg] moves a value from an integer register to a float one
+;XORPS [float reg 1], [float reg 2] XOR instruction for float registers
 
 ;xmm0 = a
 ;xmm1 = b
@@ -29,28 +31,35 @@ getQuadratic:
     
     movss xmm4, xmm0    ;move a to xmm4
     mulss xmm4, xmm2    ;multiply a by c (stored in xmm4)
-    mulss xmm4, 4       ;multiply (a*c) by 4 (stored in xmm4)
+    mov rdx, 4
+    cvtsi2ss xmm6, rdx
+    mulss xmm4, xmm6       ;multiply (a*c) by 4 (stored in xmm4)
 
-    ;[a][b][c][b*b][a*c*4][][][]
+    ;[a][b][c][b*b][a*c*4][][4][]
 
     movss xmm5, xmm0    ;move a to xmm5
-    mulss xmm5, 2       ;multiply a by 2 (stored in xmm5)
+    mov rdx, 2
+    cvtsi2ss xmm6, rdx
+    mulss xmm5, xmm6       ;multiply a by 2 (stored in xmm5)
 
-    ;[a][b][c][b*b][a*c*4][a*2][][]
+    ;[a][b][c][b*b][a*c*4][a*2][2][]
 
     subss xmm3, xmm4    ;substract (b*b) minus (4*a*c) (stored in xmm3)
 
-    ;[a][b][c][(b*b)-(a*c*4)][a*c*4][a*2][][]
+    ;[a][b][c][(b*b)-(a*c*4)][a*c*4][a*2][2][]
 
-    ucomiss xmm3, 0x0   ;if ((b*b)-(4*a*c)) is negative, roots are imaginary
-    jb rootsAreImaginary
-    je singleRoot
+    ;mov rdx, 0
+    ;cvtsi2ss xmm6, rdx
+    ;ucomiss xmm3, xmm6   ;if ((b*b)-(4*a*c)) is negative, roots are imaginary
+    ;jl rootsAreImaginary
+    ;ucomiss xmm3, xmm6   ;if ((b*b)-(4*a*c)) is negative, roots are imaginary
+    ;je singleRoot
 
     sqrtps xmm6, xmm3   ;sqrt of ((b*b)-(4*a*c)) (stored in xmm4)
 
     ;[a][b][c][(b*b)-(a*c*4)][a*c*4][a*2][d][]
 
-    movss xmm3, 0x0     
+    xorps xmm3, xmm3    ;set xmm3 to 0
     subss xmm3, xmm1    ;set xmm3 to -b
     movss xmm4, xmm3    ;set xmm4 to -b
 
@@ -81,7 +90,7 @@ rootsAreImaginary:
 singleRoot:
     ;[a][b][c][(b*b)-(a*c*4)][a*c*4][a*2][][]
 
-    movss xmm3, 0x0
+    xorps xmm3, xmm3      ;set xmm3 to zero
     subss xmm3, xmm1    ;set xmm3 to -b
 
     ;[a][b][c][-b][a*c*4][a*2][][]

@@ -31,7 +31,7 @@ typedef struct exceptionTestStruct{
 static const size_t commandAmount = 12;
 static const size_t exceptionAmount = 2;
 
-#define QUADRATIC_PRECISION 4
+#define QUADRATIC_PRECISION 2
 #define FLOAT_STRING_SIZE 100
 
 static void printQuadratic(float a, float b, float c){
