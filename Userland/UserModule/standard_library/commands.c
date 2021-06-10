@@ -178,7 +178,7 @@ static helpStruct help_messages[] = {
     {"localdatetime", "'localdatetime': Print the local time and date\nUse: 'localdatetime'\n"},
     {"cpufeatures", "'cpufeatures': Print cpu support for key features like mmx, sse, avx, etc\nUse: 'cpufeatures'\n"},
     {"sleep", "'sleep': Causes the system to sleep for the seconds specified\nUse: 'sleep' [seconds]\n'seconds': Number of seconds for the system to sleep\n"},
-    {"test", "'test': Throws the provided exception\nUse: 'test [exception]'\n''exception': Type of exception to be thrown\n"},
+    {"test", "'test': Throws the provided exception\nUse: 'test [exception]'\n''exception': Type of exception to be thrown\nAvailable exceptions:\ndiv-by-zero\ninvalid-opcode\n"},
     {"clear", "'clear': Clears the current console\nUse: 'clear'\n"}
 };
 
