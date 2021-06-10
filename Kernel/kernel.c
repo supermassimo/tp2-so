@@ -109,10 +109,14 @@ static void selectMode(){
 			else
 				println("invalid key. choose (T/G)\nT: text mode\nG: graphic mode\n");
 		}
+		if (sel == 1) {
+			//would enable graphic mode here
+			printErr("Graphic Mode is not available on this version\n");
+			sel = -1;
+		}
 	}
 	setIdle(1);
-	if (sel == 1) //would enable graphic mode here
-		println("Graphic Mode is not available on this version\n");
+	
 }
 
 int main()
@@ -174,6 +178,7 @@ int main()
 	load_idt();
 
 	selectMode();
+	clearScreen();
 
 	initializeConsole();
 
