@@ -96,11 +96,11 @@ static void quadraticHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmoun
 // for testing purposes
 static void echofloatHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmount){
     if(paramAmount < 2){
-        printErr("Missing parameters for command 'echofloat'\n");
+        printErr("Missing parameters for command 'echofloat'");
         return;
     }
     if(paramAmount > 2){
-        printErr("Too many parameters for command 'echofloat'\n");
+        printErr("Too many parameters for command 'echofloat'");
         return;
     }
 
@@ -116,7 +116,7 @@ static void echofloatHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmoun
 
 static void echoHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmount){
     if(paramAmount < 1){
-        printErr("Missing parameter for command 'echo'\n");
+        printErr("Missing parameter for command 'echo'");
         return;
     }
     size_t finalLength = 0, actualLength;
@@ -128,14 +128,14 @@ static void echoHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmount){
     printf(output);
     printf("\n");
     if(actualLength != finalLength - 1){            // finalLength computes the '\0' while actualLength doesn't
-        printErr("Error concating the strings\n");
+        printErr("Error concating the strings");
         return;
     }
 }
 
 static void inforegHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount > 0){
-        printErr("Too many parameters for command 'inforeg'\n");
+        printErr("Too many parameters for command 'inforeg'");
         return;
     }
     writeRegistries();
@@ -143,11 +143,11 @@ static void inforegHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmou
 
 static void printmemHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount < 1){
-        printErr("Missing parameter for command 'printmem'\n");
+        printErr("Missing parameter for command 'printmem'");
         return;
     }
     if(paramAmount > 1){
-        printErr("Too many parameters for command 'printmem'\n");
+        printErr("Too many parameters for command 'printmem'");
         return;
     }
     char *memPos = strToNumPos(params[0]);
@@ -158,11 +158,11 @@ static void printmemHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmo
 
 static void datetimeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount < 1){
-        printErr("Missing parameter for command 'daytime'\n");
+        printErr("Missing parameter for command 'daytime'");
         return;
     }
     if(paramAmount > 1){
-        printErr("Too many parameters for command 'datetime'\n");
+        printErr("Too many parameters for command 'datetime'");
         return;
     }
     long utc = strToNum(params[0]);
@@ -177,7 +177,7 @@ static void datetimeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmo
 
 static void clearHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount > 0){
-        printErr("Too many parameters for command 'clear'\n");
+        printErr("Too many parameters for command 'clear'");
         return;
     }
     clear();
@@ -200,7 +200,7 @@ static helpStruct help_messages[] = {
 
 static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if (paramAmount > 1){
-        printErr("Too many parameters for command 'help'\nUse: help [command]\n");
+        printErr("Too many parameters for command 'help'\nUse: help [command]");
     }
     if (paramAmount == 0){
         printf("Available Commands:\nhelp [command]\necho [message]\nechofloat [precision] [number]\ninforeg\nprintmem [pointer]\ndatetime [timezone]\nlocaldatetime]\ntest [exception]\nclear\n");
