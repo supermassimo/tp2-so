@@ -18,7 +18,7 @@ extern uint8_t endOfKernel;
 static const uint64_t PageSize = 0x1000;
 
 static void * const userCodeModuleAddress = (void*)0x400000;
-static void * const sampleDataModuleAddress = (void*)0x500000;
+static void * const dataModuleAddress = (void*)0x500000;
 
 typedef int (*EntryPoint)();
 
@@ -52,7 +52,7 @@ void * initializeKernelBinary()
 	*/
 	void * moduleAddresses[] = {
 		userCodeModuleAddress
-		,sampleDataModuleAddress
+		,dataModuleAddress
 	};
 
 	loadModules(&endOfKernelBinary, moduleAddresses);
@@ -92,6 +92,27 @@ void rebootKernel(){
 
 void loadUserModuleAdress(){
 	((EntryPoint)userCodeModuleAddress)();
+}
+
+static void selectMode(){
+	println("Select mode to load (T/G)\nT: text mode\nG: graphic mode\n");
+	int sel = -1;
+	setIdle(0);
+	while (sel == -1){
+		char string[256];
+		if (!bufferIsEmpty()){
+			getBufferContent(string, 256);
+			if (string[0] == 't' || string[0] == 'T')
+				sel = 0;
+			else if (string[0] == 'g' || string[0] == 'G')
+				sel = 1;
+			else
+				println("invalid key. choose (T/G)\nT: text mode\nG: graphic mode\n");
+		}
+	}
+	setIdle(1);
+	if (sel == 1) //would enable graphic mode here
+		println("Graphic Mode is not available on this version\n");
 }
 
 int main()
@@ -148,9 +169,11 @@ int main()
 	// ncNewline();
 
 	// ncPrint("[Finished]");
-	clearScreen();
 
+	clearScreen();
 	load_idt();
+
+	selectMode();
 
 	initializeConsole();
 

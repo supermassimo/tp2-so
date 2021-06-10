@@ -5,4 +5,6 @@ void swapDisplay ();
 
 int getCurrentDisplay ();
 
+void setIdle (int value);
+
 #endif
