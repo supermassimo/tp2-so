@@ -152,12 +152,10 @@ static void datetimeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmo
         return;
     }
     long utc = strToNum(params[0]);
-    // TODO: Fix code below (takes utc as unsigned number)
-    // printInt(utc, 10000, 10);
-    // if(utc < 12 || utc > 12){
-    //     printErr("Invalid utc value");
-    //     return;
-    // }
+    if(utc < -12 || utc > 12){
+        printErr("Invalid utc value");
+        return;
+    }
     writeDateTime(utc);
 }
 
