@@ -122,7 +122,10 @@ size_t floatToStr(float value, char* target, size_t precision, size_t base){
 	if(value < 0)
 		value *= -1;
     float value2 = value - ((int)value);
-	
+
+    printInt((int)value);
+    printf("\n");
+
     target[j++] = '.';
     if (precision == 0)
         target[j++] = '0';
@@ -131,10 +134,7 @@ size_t floatToStr(float value, char* target, size_t precision, size_t base){
             value2 *= base;
 		    digit = (int)value2;
             
-            int charDigit = digitToStr(digit, base);
-            if(!isDigit(charDigit))
-                    charDigit = '0';
-		    target[j++] = charDigit;
+		    target[j++] = digitToStr(digit, base);
         }
     }
 
