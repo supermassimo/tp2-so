@@ -95,7 +95,7 @@ void loadUserModuleAdress(){
 }
 
 static void selectMode(){
-	println("Select mode to load (T/G)\nT: text mode\nG: graphic mode\n");
+	ncPrint("Select mode to load (T/G)\nT: text mode\nG: graphic mode\n");
 	int sel = -1;
 	setIdle(0);
 	while (sel == -1){
@@ -107,11 +107,11 @@ static void selectMode(){
 			else if (string[0] == 'g' || string[0] == 'G')
 				sel = 1;
 			else
-				println("invalid key. choose (T/G)\nT: text mode\nG: graphic mode\n");
+				ncPrint("invalid key. choose (T/G)\nT: text mode\nG: graphic mode\n");
 		}
 		if (sel == 1) {
 			//would enable graphic mode here
-			printErr("Graphic Mode is not available on this version\n");
+			printErr("Graphic Mode is not available\n");
 			sel = -1;
 		}
 	}
