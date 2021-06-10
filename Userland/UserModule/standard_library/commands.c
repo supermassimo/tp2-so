@@ -95,7 +95,7 @@ static void echofloatHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmoun
     int precision = strToNumPos(params[0]);
     float value;
     if (strToFloat(params[1], &value) != -1){
-        printFloat(value, FLOAT_STRING_SIZE, QUADRATIC_PRECISION, 10);
+        printFloat(value, FLOAT_STRING_SIZE, precision, 10);
         printf("\n");
     }
 }
