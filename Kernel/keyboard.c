@@ -114,6 +114,7 @@ static int readKey(){
 
 void keyboardIntHandler(){
     int key = readKey();
+    printInt(nextToStore_1);
     if(isPrintableKey(key) && !keyboardBufferIsFull()){
         printChar(key);
     }
