@@ -5,6 +5,6 @@ section .text
 
 getQuadratic:
 
-    move rax, 0x0
+    mov rax, 0x0
 
     ret
