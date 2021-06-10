@@ -133,8 +133,8 @@ size_t floatToStr(float value, char* target, size_t precision, size_t base){
         for (int p=0; p<precision; p++){
             value2 *= base;
 		    digit = (int)value2;
-            
 		    target[j++] = digitToStr(digit, base);
+            value2 -= digit;
         }
     }
 
