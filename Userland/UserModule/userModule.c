@@ -11,7 +11,7 @@
 void waitForInput(){
 	char input[120];
 	while(1){
-	 	scanf(input, 119);
+	 	scanf(input, 120);
 		if(strcmp(input, "") != 0)
 			commandHandler(input);
 	};
