@@ -97,7 +97,6 @@ static int isActive(int consoleIdx){
 
 static void setActive(int consoleIdx){
 	fillScreen(consoleIdx, consoles[consoleIdx].backColor, 1);
-
 }
 
 static void setInactive(int consoleIdx){

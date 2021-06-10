@@ -10,7 +10,7 @@ typedef enum Color {
 } Color;
 
 void initializeConsole();
-void changeSide(int targetConsole);
+void changeConsoleSide(int targetConsole);
 void setActiveForeColor(int consoleIdx, Color foreColor);
 void setInactiveForeColor(int consoleIdx, Color foreColor);
 void setBackColor(int consoleIdx, Color backColor);
