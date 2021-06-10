@@ -9,8 +9,6 @@ static unsigned int nextToStore_0 = 0;
 static unsigned char keyboard_buffer_1[BUFFER_SIZE];
 static unsigned int nextToStore_1 = 0;
 
-int isAwaitingForRestart = 0;
-
 static const int keyTable[] = {
 	0, 27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\'', 168,			// 1:ESC
 	'\b', '\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '´', '+',		// 14:BACKSPACE
@@ -104,7 +102,7 @@ static int readKey(){
     int key = -1;
     uint8_t keyCode = pollKeyRaw();
     // If it´s a MAKE, a key was pressed
-    if(keyCode < 94){
+    if(keyCode < 127){
         key = keyTable[keyCode];
         if(isControlKey(key))
             applyControlKey(key);
@@ -114,15 +112,15 @@ static int readKey(){
     return key;
 }
 
-void awaitForInstantInput(){
-    print("Press any key to continue...");
-    while(keyboardBufferIsEmpty());
-    emptyKeyboardBuffer();
-}
-
 void keyboardIntHandler(){
     int key = readKey();
     if(isPrintableKey(key) && !keyboardBufferIsFull()){
         printChar(key);
     }
+}
+
+void awaitForInstantInput(){
+    print("Press any key to continue...");
+    while(keyboardBufferIsEmpty());
+    emptyKeyboardBuffer();
 }
