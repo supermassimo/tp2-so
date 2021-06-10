@@ -10,6 +10,7 @@ void sysWriteDateTime(int utc);
 void sysSetIdle(int isIdle);
 int sysGetActiveDisplay();
 void sysSwapActiveDisplay();
+void sysSleep(long seconds);
 
 void sysCallDispatcher(){
     switch((int)getRBX()){
@@ -42,6 +43,9 @@ void sysCallDispatcher(){
             break;
         case 9:
             sysSwapActiveDisplay();
+            break;
+        case 10:
+            sysSleep(getRDI());
             break;
         default:
             //code invalido
@@ -97,4 +101,8 @@ void sysWriteCpuFeatures(){
 
 void sysSwapActiveDisplay(){
     swapDisplay();
+}
+
+void sysSleep(long seconds){
+    timerTickSleep(seconds);
 }

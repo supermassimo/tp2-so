@@ -9,6 +9,8 @@ GLOBAL writeCpuFeatures
 GLOBAL invalidOpcodeThrower
 GLOBAL swapConsole
 
+GLOBAL sleep
+
 section .text
 
 readInput:
@@ -61,6 +63,12 @@ writeCpuFeatures:
 
 swapConsole:
     mov rbx, 9
+    int 69h
+
+    ret
+
+sleep:
+    mov rbx, 10
     int 69h
 
     ret

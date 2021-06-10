@@ -9,6 +9,7 @@ extern void invalidOpcodeThrower();
 extern void setIdle(int idle);
 extern void clear();
 extern void writeCpuFeatures();
+extern void sleep(long seconds);
 extern int getQuadratic(float a, float b, float c, float* out);
 
 
@@ -27,7 +28,7 @@ typedef struct exceptionTestStruct{
     void* thrower;
 } exceptionTestStruct;
 
-static const size_t commandAmount = 10;
+static const size_t commandAmount = 11;
 static const size_t exceptionAmount = 2;
 
 #define QUADRATIC_PRECISION 4
@@ -192,6 +193,7 @@ static helpStruct help_messages[] = {
     {"datetime", "'datetime': Print the time and date for a specific timezone\nUse: 'datetime [timezone]'\n'timezone': Timezone to print the current time of\n"},
     {"localdatetime", "'localdatetime': Print the local time and date\nUse: 'localdatetime'\n"},
     {"cpufeatures", "'cpufeatures': Print cpu support for key features like mmx, sse, avx, etc\nUse: 'cpufeatures'\n"},
+    {"sleep", "'sleep': Causes the system to sleep for the seconds specified\nUse: 'sleep' [seconds]\n'seconds': Number of seconds for the system to sleep\n"},
     {"test", "'test': Throws the provided exception\nUse: 'test [exception]'\n''exception': Type of exception to be thrown\n"},
     {"clear", "'clear': Clears the current console\nUse: 'clear'\n"}
 };
@@ -226,6 +228,20 @@ static void cpufeaturesHandler(char params[][MAX_PARAMETER_LENGTH], size_t param
     writeCpuFeatures();
 }
 
+static void sleepHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount < 1){
+        printErr("Missing parameter for command 'sleep'");
+        return;
+    }
+    if(paramAmount > 1){
+        printErr("Too many parameters for command 'sleep'");
+        return;
+    }
+    long seconds = strToNumPos(params[0]);
+    if(seconds > 0)
+        sleep(seconds);
+}
+
 static void divByZeroThrower(){
     int value = 1/0;
     return;
@@ -258,6 +274,7 @@ static commandStruct commands[] = {
     {"datetime", &datetimeHandler},
     {"localdatetime", &localDateTimeHandler},
     {"cpufeatures", &cpufeaturesHandler},
+    {"sleep", &sleepHandler},
     {"test", &testHandler},
     {"clear", &clearHandler}
 };
