@@ -28,7 +28,7 @@ typedef struct exceptionTestStruct{
     void* thrower;
 } exceptionTestStruct;
 
-static const size_t commandAmount = 12;
+static const size_t commandAmount = 11;
 static const size_t exceptionAmount = 2;
 
 #define QUADRATIC_PRECISION 2
@@ -178,8 +178,8 @@ static helpStruct help_messages[] = {
     {"cpufeatures", "'cpufeatures': Print cpu support for key features like mmx, sse, avx, etc\nUse: 'cpufeatures'\n"},
     {"sleep", "'sleep': Causes the system to sleep for the seconds specified\nUse: 'sleep' [seconds]\n'seconds': Number of seconds for the system to sleep\n"},
     {"test", "'test': Throws the provided exception\nUse: 'test [exception]'\n'exception': Type of exception to be thrown\nAvailable exceptions:\ndiv-by-zero\ninvalid-opcode\n"},
-    {"clear", "'clear': Clears the current console\nUse: 'clear'\n"},
-    {"quadratic", "'quadratic': Calculates the roots of a quadratic ecuation\nUse: 'quadratic [a] [b] [c]'\n'a': Quadratic coeficient\n'b': Lineal coeficient\n'c': Independent coeficient\n"}
+    {"clear", "'clear': Clears the current console\nUse: 'clear'\n"}
+//    ,{"quadratic", "'quadratic': Calculates the roots of a quadratic ecuation\nUse: 'quadratic [a] [b] [c]'\n'a': Quadratic coeficient\n'b': Lineal coeficient\n'c': Independent coeficient\n"}
 };
 
 static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
@@ -187,7 +187,7 @@ static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
         printErr("Too many parameters for command 'help'\nUse: help [command]");
     }
     if (paramAmount == 0){
-        printf("Available Commands:\nhelp [command]\necho [message]\nechofloat [precision] [number]\ninforeg\nprintmem [pointer]\ndatetime [timezone]\nlocaldatetime\ncpufeatures\nsleep [seconds]\ntest [exception]\nclear\nquadratic [a] [b] [c]\n");
+        printf("Available Commands:\nhelp [command]\necho [message]\nechofloat [precision] [number]\ninforeg\nprintmem [pointer]\ndatetime [timezone]\nlocaldatetime\ncpufeatures\nsleep [seconds]\ntest [exception]\nclear\n");//quadratic [a] [b] [c]\n");
     }
     for(int i=0 ; i < commandAmount ; i++){
         if(strcmp(help_messages[i].name, params[0]) == 0){
@@ -260,8 +260,8 @@ static commandStruct commands[] = {
     {"cpufeatures", &cpufeaturesHandler},
     {"sleep", &sleepHandler},
     {"test", &testHandler},
-    {"clear", &clearHandler},
-    {"quadratic", &quadraticHandler}
+    {"clear", &clearHandler}
+//    ,{"quadratic", &quadraticHandler}
 };
 
 static int getCommandAndParams(char* command, char params[][MAX_PARAMETER_LENGTH], char* input){
