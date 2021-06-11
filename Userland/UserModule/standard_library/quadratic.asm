@@ -48,12 +48,12 @@ getQuadratic:
 
     ;[a][b][c][(b*b)-(a*c*4)][a*c*4][a*2][2][]
 
-    ;mov rdx, 0
-    ;cvtsi2ss xmm6, rdx
-    ;ucomiss xmm3, xmm6   ;if ((b*b)-(4*a*c)) is negative, roots are imaginary
-    ;jl rootsAreImaginary
-    ;ucomiss xmm3, xmm6   ;if ((b*b)-(4*a*c)) is negative, roots are imaginary
-    ;je singleRoot
+    mov rdx, 0          ;set rdx to 0 then transform it into a float to compare with
+    cvtsi2ss xmm6, rdx
+    ucomiss xmm3, xmm6  ;if ((b*b)-(4*a*c)) is negative, roots are imaginary
+    jl rootsAreImaginary
+    ucomiss xmm3, xmm6  ;if ((b*b)-(4*a*c)) is negative, roots are imaginary
+    je singleRoot
 
     sqrtps xmm6, xmm3   ;sqrt of ((b*b)-(4*a*c)) (stored in xmm4)
 
@@ -90,7 +90,7 @@ rootsAreImaginary:
 singleRoot:
     ;[a][b][c][(b*b)-(a*c*4)][a*c*4][a*2][][]
 
-    xorps xmm3, xmm3      ;set xmm3 to zero
+    xorps xmm3, xmm3    ;set xmm3 to zero
     subss xmm3, xmm1    ;set xmm3 to -b
 
     ;[a][b][c][-b][a*c*4][a*2][][]
