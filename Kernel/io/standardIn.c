@@ -43,14 +43,6 @@ void setInputBuffer(unsigned char* newBuffer, int end){
         currentToRead_0 = 0;
 }
 
-// Returns last stored key without removing it from buffer
-// int peekLastKey(){
-//     int last = nextToStore - 1;
-//     if(last == -1)
-//         last = BUFFER_SIZE - 1;
-//     return input_buffer[last];
-// }
-
 // If there are keys on buffer, returns the first available. Else returns -1
 int getKey(){
     if (getCurrentDisplay()){
@@ -72,14 +64,12 @@ int getBufferContent(unsigned char* target, size_t size_limit){
         target[i++] = aux;
     }
     target[i] = 0;
-    //if (aux == -1){
-        if (getCurrentDisplay()){
-            currentToRead_1 = 0;
-            endOfContent_1 = 0;
-        } else {
-            currentToRead_0 = 0;
-            endOfContent_0 = 0;
-        }
-    //}
+    if (getCurrentDisplay()){
+         currentToRead_1 = 0;
+         endOfContent_1 = 0;
+    } else {
+        currentToRead_0 = 0;
+        endOfContent_0 = 0;
+    }
     return i;
 }

@@ -1,5 +1,4 @@
 #include <stdint.h>
-// #include <string.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include <lib.h>
@@ -39,50 +38,15 @@ void * getStackBase()
 void * initializeKernelBinary()
 {
 	char buffer[10];
-/*
-	ncPrint("[x64BareBones]");
-	ncNewline();
-
-	ncPrint("CPU Vendor:");
-	ncPrint(cpuVendor(buffer));
-	ncNewline();
-
-	ncPrint("[Loading modules]");
-	ncNewline();
-	*/
 	void * moduleAddresses[] = {
 		userCodeModuleAddress
 		,dataModuleAddress
 	};
 
 	loadModules(&endOfKernelBinary, moduleAddresses);
-	/*
-	ncPrint("[Done]");
-	ncNewline();
-	ncNewline();
 
-	ncPrint("[Initializing kernel's binary]");
-	ncNewline();
-	*/
 	clearBSS(&bss, &endOfKernel - &bss);
-	/*
-	ncPrint("  text: 0x");
-	ncPrintHex((uint64_t)&text);
-	ncNewline();
-	ncPrint("  rodata: 0x");
-	ncPrintHex((uint64_t)&rodata);
-	ncNewline();
-	ncPrint("  data: 0x");
-	ncPrintHex((uint64_t)&data);
-	ncNewline();
-	ncPrint("  bss: 0x");
-	ncPrintHex((uint64_t)&bss);
-	ncNewline();
 
-	ncPrint("[Done]");
-	ncNewline();
-	ncNewline();
-	*/
 	return getStackBase();
 }
 
@@ -116,64 +80,10 @@ static void selectMode(){
 		}
 	}
 	setIdle(1);
-	
 }
 
 int main()
 {
-	// int key;
-	// char hours[3], seconds[3], minutes[3];
-	// char day[3], month[3], year[5];
-	// Time dayTime;
-	// Date date;
-	// clearScreen();
-	// printTime(-3);
-	// getTime(&dayTime, -3);
-	// numToStr(dayTime.hours, hours, 10);
-	// numToStr(dayTime.minutes, minutes, 10);
-	// numToStr(dayTime.seconds, seconds, 10);
-	// print(hours);
-	// print(":");
-	// print(minutes);
-	// print(":");
-	// println(seconds);
-	// printDate();
-	// getDate(&date);
-	// numToStr(date.day, day, 10);
-	// numToStr(date.month, month, 10);
-	// numToStr(date.year, year, 10);
-	// print(day);
-	// print("/");
-	// print(month);
-	// print("/");
-	// println(year);
-	// setBackColor(Green);
-	// setForeColor(Black);
-	// println("Esperando tecla...");
-	// while(1){
-	// 	printChar(pollKey());
-	// }
-	// return 0;
-
-	// ncPrint("[Kernel Main]");
-	// ncNewline();
-	// ncPrint("  Sample code module at 0x");
-	// ncPrintHex((uint64_t)sampleCodeModuleAddress);
-	// ncNewline();
-	// ncPrint("  Calling the sample code module returned: ");
-	// // ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
-	// ncNewline();
-	// ncNewline();
-
-	// ncPrint("  Sample data module at 0x");
-	// ncPrintHex((uint64_t)sampleDataModuleAddress);
-	// ncNewline();
-	// ncPrint("  Sample data module contents: ");
-	// ncPrint((char*)sampleDataModuleAddress);
-	// ncNewline();
-
-	// ncPrint("[Finished]");
-
 	clearScreen();
 	load_idt();
 
@@ -183,36 +93,6 @@ int main()
 	initializeConsole();
 
 	loadUserModuleAdress();
-
-	/* getBufferContent() test */
-	// uint8_t buf[255];
-
-	// uint8_t lastKey = 0;
-
-	// while(1){
-	// 	if((lastKey != getLastPressedKey()) && getLastPressedKey() == '\t'){
-	// 		printCpuFeatures();
-	// 		//readInput(buf, 255);
-	// 	 	//write(0, buf, 255);
-	// 		//getMemContent(0xB8000, buf, 32);
-	// 		//write(1, buf, 255);
-	// 		lastKey = getLastPressedKey();
-	// 	}
-	// }
-
-	// int segundos = 0;
-	// char sec[12];
-
-	// while(1){
-	// 	if(seconds_elapsed() - segundos > 0){
-	// 		numToStr(segundos, sec, 10);
-	// 		print("Pasaron ");
-	// 		print(sec);
-	// 		println(" segundos");
-	// 		segundos++;
-	// 	}
-	// }
-
 	return 0;
 }
 

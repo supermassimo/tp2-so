@@ -88,7 +88,6 @@ SECTION .text
 	call exceptionDispatcher
 
 	popState
-	;call waitUntilRestart
 	call _hlt
 	call awaitForInstantInput
 	call rebootKernel

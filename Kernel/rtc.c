@@ -31,7 +31,6 @@ static uint8_t getHourUTC(uint8_t hour, int utc){
 }
 
 // 2 digit version
-// TODO: Make it standard for all digits
 static int bcdToBinary(int value){
 	return ((value / 16) * 10) + (value & 0x0F);
 }

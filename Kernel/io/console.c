@@ -197,8 +197,8 @@ static void printSpecialChar(char c, uint8_t colorByte){
 		case '\b':
 			if(scrPos-2 >= consoles[activeConsole].startPos){			// Check if there are chars to delete
 				finalPos = getPrevCharAddr(activeConsole);
-				*finalPos = *(finalPos+2);			// Backspace functionality
-				*(finalPos+1) = getColorByte(Black, Black);		// Fill current char with next one and move cursor one place back
+				*finalPos = *(finalPos+2);								// Backspace functionality
+				*(finalPos+1) = getColorByte(Black, Black);				// Fill current char with next one and move cursor one place back
 				scrPos = finalPos;
 			}
 			break;
