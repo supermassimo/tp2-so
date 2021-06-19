@@ -27,6 +27,8 @@ EXTERN rebootKernel
 
 EXTERN awaitForInstantInput
 
+USER_MODULE_ADDRESS EQU 0x400000
+
 SECTION .text
 
 %macro pushState 0
@@ -87,11 +89,13 @@ SECTION .text
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
 
-	popState
 	call _hlt
 	call awaitForInstantInput
-	call rebootKernel
-	;iretq
+	;call rebootKernel
+	popState
+	add rsp, 8
+	push USER_MODULE_ADDRESS
+	iretq
 %endmacro
 
 _sysCallHandler:
