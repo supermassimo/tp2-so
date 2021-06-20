@@ -21,11 +21,11 @@ static const int keyTable[] = {
 
 extern uint8_t pollKeyRaw();
 
-static int keyboardBufferIsFull(){
+static int keyboardBufferIsFull(int offset){
     if (getCurrentDisplay())
-        return nextToStore_1 >= BUFFER_SIZE;
+        return nextToStore_1 + offset >= BUFFER_SIZE;
     else
-        return nextToStore_0 >= BUFFER_SIZE;
+        return nextToStore_0 + offset >= BUFFER_SIZE;
 }
 
 int keyboardBufferIsEmpty(){
@@ -44,7 +44,7 @@ void emptyKeyboardBuffer(){
 
 // Stores a key on the keyboard buffer
 static void typeKey(int key){
-    if(!keyboardBufferIsFull()){
+    if(!keyboardBufferIsFull(0)){
         if (getCurrentDisplay()){
             keyboard_buffer_1[nextToStore_1++] = key;
         } else {
@@ -108,7 +108,7 @@ void keyboardIntHandler(){
         }
         else
             pushSingleKey(key);
-    } else if(!keyboardBufferIsFull()){
+    } else if(!keyboardBufferIsFull(1)){
         typeKey(key);
     }
 }
