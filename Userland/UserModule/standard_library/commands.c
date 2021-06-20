@@ -266,12 +266,12 @@ static commandStruct commands[] = {
 
 static int getCommandAndParams(char* command, char params[][MAX_PARAMETER_LENGTH], char* input){
     int inputIdx, j=0, paramIdx=0;
-    for(inputIdx=0 ; input[inputIdx] != ' ' && input[inputIdx] != 0 ; inputIdx++){
+    for(inputIdx=0 ; input[inputIdx] != ' ' && input[inputIdx] != '\n' && input[inputIdx] != 0 ; inputIdx++){
         if (inputIdx < MAX_COMMAND_LENGTH)
             command[inputIdx] = input[inputIdx];
     }
     command[inputIdx] = 0;
-    if(input[inputIdx] != 0){
+    if(input[inputIdx] != 0 && input[inputIdx] != '\n'){
         inputIdx++;
         while(input[inputIdx] != 0){
             if(input[inputIdx] == ' '){
