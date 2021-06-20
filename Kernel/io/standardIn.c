@@ -39,7 +39,7 @@ void setInputBuffer(unsigned char* newBuffer, int end){
     }
     if (getCurrentDisplay())
         currentToRead_1 = 0;
-     else 
+    else 
         currentToRead_0 = 0;
 }
 

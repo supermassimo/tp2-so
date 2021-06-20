@@ -18,6 +18,18 @@ GLOBAL _exception6Handler
 
 GLOBAL _sysCallHandler
 
+EXTERN sysReadInput
+EXTERN sysWrite
+EXTERN sysWriteRegistries
+EXTERN sysWriteMemContent
+EXTERN sysWriteDateTime
+EXTERN sysSetIdle
+EXTERN sysClear
+EXTERN sysGetActiveDisplay
+EXTERN sysWriteCpuFeatures
+EXTERN sysSwapActiveDisplay
+EXTERN sysSleep
+
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 
@@ -31,8 +43,8 @@ USER_MODULE_ADDRESS EQU 0x400000
 
 SECTION .text
 
+
 %macro pushState 0
-	push rax
 	push rbx
 	push rcx
 	push rdx
@@ -47,9 +59,11 @@ SECTION .text
 	push r13
 	push r14
 	push r15
+	push rax
 %endmacro
 
 %macro popState 0
+	pop rax
 	pop r15
 	pop r14
 	pop r13
@@ -64,7 +78,6 @@ SECTION .text
 	pop rdx
 	pop rcx
 	pop rbx
-	pop rax
 %endmacro
 
 %macro irqHandlerMaster 1
@@ -99,11 +112,66 @@ SECTION .text
 %endmacro
 
 _sysCallHandler:
-	pushState
-	call sysCallDispatcher
-	
-	popState
-	iretq
+		pushState
+		cmp rax, 0
+		je syscall_0
+		cmp rax, 1
+		je syscall_1
+		cmp rax, 2
+		je syscall_2
+		cmp rax, 3
+		je syscall_3
+		cmp rax, 4
+		je syscall_4
+		cmp rax, 5
+		je syscall_5
+		cmp rax, 6
+		je syscall_6
+		cmp rax, 7
+		je syscall_7
+		cmp rax, 8
+		je syscall_8
+		cmp rax, 9
+		je syscall_9
+		cmp rax, 10
+		je syscall_10
+	syscall_0:
+		call sysReadInput
+		jmp endSysCallHandler
+	syscall_1:
+		call sysWrite
+		jmp endSysCallHandler
+	syscall_2:
+		call sysWriteRegistries
+		jmp endSysCallHandler
+	syscall_3:
+		call sysWriteMemContent
+		jmp endSysCallHandler
+	syscall_4:
+		call sysWriteMemContent
+		jmp endSysCallHandler
+	syscall_5:
+		call sysSetIdle
+		jmp endSysCallHandler
+	syscall_6:
+		call sysClear
+		jmp endSysCallHandler
+	syscall_7:
+		call sysGetActiveDisplay
+		jmp endSysCallHandler
+	syscall_8:
+		call sysWriteCpuFeatures
+		jmp endSysCallHandler
+	syscall_9:
+		call sysSwapActiveDisplay
+		jmp endSysCallHandler
+	syscall_10:
+		call sysSleep
+		jmp endSysCallHandler
+		
+	endSysCallHandler:
+		popState
+		iretq
 
 _hlt:
 	sti
@@ -178,3 +246,4 @@ haltcpu:
 
 SECTION .bss
 	aux resq 1
+	regs resq 15

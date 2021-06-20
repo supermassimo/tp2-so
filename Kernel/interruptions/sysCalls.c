@@ -8,12 +8,15 @@ void sysWriteRegistries();
 void sysWriteMemContent(char* startPos, size_t amount);
 void sysWriteDateTime(int utc);
 void sysSetIdle(int isIdle);
+void sysClear();
 int sysGetActiveDisplay();
+void sysWriteCpuFeatures();
 void sysSwapActiveDisplay();
 void sysSleep(long seconds);
 
+/*
 void sysCallDispatcher(){
-    switch((int)getRBX()){
+    switch((int)getRAX()){
         case 0:
             sysReadInput(getRDI(), getRSI());
             break;
@@ -52,6 +55,7 @@ void sysCallDispatcher(){
             break;
     }
 }
+*/
 
 void sysReadInput(char* buffer, size_t buffer_size){
     getBufferContent(buffer, buffer_size);

@@ -14,62 +14,62 @@ GLOBAL sleep
 section .text
 
 readInput:
-    mov rbx, 0 ; pasaje de parametro
-	int 69h
+    mov rax, 0 ; pasaje de parametro
+	int 80h
 
     ret
 
 write:
-    mov rbx, 1 ; pasaje de parametro
-	int 69h
+    mov rax, 1 ; pasaje de parametro
+	int 80h
 
     ret
 
 writeRegistries:
-    mov rbx, 2 ; pasaje de parametro
-	int 69h
+    mov rax, 2 ; pasaje de parametro
+	int 80h
 
     ret
 
 writeMemContent:
-    mov rbx, 3
-    int 69h
+    mov rax, 3
+    int 80h
 
     ret
 
 writeDateTime:
-    mov rbx, 4
-    int 69h
+    mov rax, 4
+    int 80h
 
     ret
 
 setIdle:
-    mov rbx, 5
-    int 69h
+    mov rax, 5
+    int 80h
 
     ret
 
 clear:
-    mov rbx, 6
-    int 69h
+    mov rax, 6
+    int 80h
 
     ret
 
 writeCpuFeatures:
-    mov rbx, 8
-    int 69h
+    mov rax, 8
+    int 80h
 
     ret
 
 swapConsole:
-    mov rbx, 9
-    int 69h
+    mov rax, 9
+    int 80h
 
     ret
 
 sleep:
-    mov rbx, 10
-    int 69h
+    mov rax, 10
+    int 80h
 
     ret
 
