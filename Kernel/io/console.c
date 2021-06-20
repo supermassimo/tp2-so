@@ -235,22 +235,22 @@ void printCharCol(char c, uint8_t foreColor, uint8_t backColor){
     }
 }
 
-void printCol(char* msg, uint8_t foreColor, uint8_t backColor){
+void printCol(const char* msg, uint8_t foreColor, uint8_t backColor){
 	for(int i=0 ; msg[i] != 0 ; i++){
 		printCharCol(msg[i], foreColor, backColor);
 	}
 }
 
-void print(char* msg){
+void print(const char* msg){
 	printCol(msg, foreColor, backColor);
 }
 
-void printlnCol(char* msg, uint8_t foreColor, uint8_t backColor){
+void printlnCol(const char* msg, uint8_t foreColor, uint8_t backColor){
 	printCol(msg, foreColor, backColor);
 	newLine();
 }
 
-void println(char* msg){
+void println(const char* msg){
 	printlnCol(msg, foreColor, backColor);
 }
 
@@ -264,7 +264,7 @@ void printIntCol(long num, size_t base, uint8_t foreColor, uint8_t backColor){
 	printCol(strNum, foreColor, backColor);
 }
 
-void printErr(char* msg){
+void printErr(const char* msg){
 	printlnCol(msg, errorColor, backColor);
 }
 
