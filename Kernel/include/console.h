@@ -26,6 +26,7 @@ void printIntCol(long num, size_t base, uint8_t foreColor, uint8_t backColor);
 void printErr(const char *string);
 void newLine();
 void clearScreen();
+void clearActiveConsole();
 void printRegistries();
 void printMemContent(char* startPos, size_t amount);
 void printDateTime(int utc);
