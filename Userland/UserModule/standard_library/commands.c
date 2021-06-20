@@ -264,16 +264,21 @@ static commandStruct commands[] = {
 //    ,{"quadratic", &quadraticHandler}
 };
 
+static int isEnd(int c){
+    if (c == '\n' || c == 0) return 1;
+    return 0;
+}
+
 static int getCommandAndParams(char* command, char params[][MAX_PARAMETER_LENGTH], char* input){
     int inputIdx, j=0, paramIdx=0;
-    for(inputIdx=0 ; input[inputIdx] != ' ' && input[inputIdx] != '\n' && input[inputIdx] != 0 ; inputIdx++){
+    for(inputIdx=0 ; input[inputIdx] != ' ' && !isEnd(input[inputIdx]); inputIdx++){
         if (inputIdx < MAX_COMMAND_LENGTH)
             command[inputIdx] = input[inputIdx];
     }
     command[inputIdx] = 0;
-    if(input[inputIdx] != 0 && input[inputIdx] != '\n'){
+    if(!isEnd(input[inputIdx])){
         inputIdx++;
-        while(input[inputIdx] != 0){
+        while(!isEnd(input[inputIdx])){
             if(input[inputIdx] == ' '){
                 params[paramIdx++][j] = 0;
                 j = 0;
@@ -288,8 +293,8 @@ static int getCommandAndParams(char* command, char params[][MAX_PARAMETER_LENGTH
 }
 
 void commandHandler(char* string){
-    char commandName[MAX_COMMAND_LENGTH] = "";
-    char params[MAX_PARAMETER_AMOUNT][MAX_PARAMETER_LENGTH];
+    char commandName[MAX_COMMAND_LENGTH+1] = "";
+    char params[MAX_PARAMETER_AMOUNT][MAX_PARAMETER_LENGTH+1];
     int paramAmount = getCommandAndParams(commandName, params, string);
     for(int i=0 ; i < commandAmount ; i++){
         if(strcmp(commands[i].name, commandName) == 0){
