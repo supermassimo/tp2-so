@@ -22,7 +22,7 @@ size_t strlen(char *string){
 size_t concatStrings(char strings[][MAX_PARAMETER_LENGTH], size_t stringAmount, char* output){
     size_t outputIdx=0, strIdx=0, i=0;
     while(strIdx < stringAmount){
-        if(strings[strIdx][i] == 0){                // *(*(strings+strIdx*stringMaxLen)+i)
+        if(strings[strIdx][i] == 0){         
             if(strIdx < stringAmount - 1)
                 output[outputIdx++] = ' ';
             else

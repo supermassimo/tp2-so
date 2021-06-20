@@ -28,7 +28,7 @@ typedef struct exceptionTestStruct{
     void* thrower;
 } exceptionTestStruct;
 
-static const size_t commandAmount = 11;
+static const size_t commandAmount = 12;
 static const size_t exceptionAmount = 2;
 
 #define QUADRATIC_PRECISION 2
@@ -179,7 +179,7 @@ static helpStruct help_messages[] = {
     {"sleep", "'sleep': Causes the system to sleep for the seconds specified\nUse: 'sleep' [seconds]\n'seconds': Number of seconds for the system to sleep\n"},
     {"test", "'test': Throws the provided exception\nUse: 'test [exception]'\n'exception': Type of exception to be thrown\nAvailable exceptions:\ndiv-by-zero\ninvalid-opcode\n"},
     {"clear", "'clear': Clears the current console\nUse: 'clear'\n"}
-//    ,{"quadratic", "'quadratic': Calculates the roots of a quadratic ecuation\nUse: 'quadratic [a] [b] [c]'\n'a': Quadratic coeficient\n'b': Lineal coeficient\n'c': Independent coeficient\n"}
+    ,{"quadratic", "'quadratic': Calculates the roots of a quadratic ecuation\nUse: 'quadratic [a] [b] [c]'\n'a': Quadratic coeficient\n'b': Lineal coeficient\n'c': Independent coeficient\n"}
 };
 
 static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
@@ -261,7 +261,7 @@ static commandStruct commands[] = {
     {"sleep", &sleepHandler},
     {"test", &testHandler},
     {"clear", &clearHandler}
-//    ,{"quadratic", &quadraticHandler}
+    ,{"quadratic", &quadraticHandler}
 };
 
 static int isEnd(int c){

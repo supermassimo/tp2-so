@@ -11,11 +11,11 @@ section .text
 ;MOVSS [to here], [from here] move float
 ;DIVSS [div this], [by this] divide float
 ;MULSS [mult this], [by this] multiply float
-;SQRTPS [destination], [sqrt of this] square root float
+;SQRTSS [destination], [sqrt of this] square root float
 ;ADDSS [this], [plus this] add floats
 ;SUBSS [this], [minus this] substract floats
 ;CVTSI2SS [float reg], [int reg] moves a value from an integer register to a float one
-;XORPS [float reg 1], [float reg 2] XOR instruction for float registers
+;XORSS [float reg 1], [float reg 2] XOR instruction for float registers
 
 ;xmm0 = a
 ;xmm1 = b
@@ -55,11 +55,11 @@ getQuadratic:
     ucomiss xmm3, xmm6  ;if ((b*b)-(4*a*c)) is negative, roots are imaginary
     je singleRoot
 
-    sqrtps xmm6, xmm3   ;sqrt of ((b*b)-(4*a*c)) (stored in xmm4)
+    sqrtss xmm6, xmm3   ;sqrt of ((b*b)-(4*a*c)) (stored in xmm4)
 
     ;[a][b][c][(b*b)-(a*c*4)][a*c*4][a*2][d][]
 
-    xorps xmm3, xmm3    ;set xmm3 to 0
+    xorss xmm3, xmm3    ;set xmm3 to 0
     subss xmm3, xmm1    ;set xmm3 to -b
     movss xmm4, xmm3    ;set xmm4 to -b
 
@@ -90,7 +90,7 @@ rootsAreImaginary:
 singleRoot:
     ;[a][b][c][(b*b)-(a*c*4)][a*c*4][a*2][][]
 
-    xorps xmm3, xmm3    ;set xmm3 to zero
+    xorss xmm3, xmm3    ;set xmm3 to zero
     subss xmm3, xmm1    ;set xmm3 to -b
 
     ;[a][b][c][-b][a*c*4][a*2][][]
