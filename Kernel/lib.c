@@ -72,7 +72,7 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 
 // Fills target array with #count bytes of memory starting from startPos
 void getMemContent(char* startPos, uint8_t* target, size_t count){
-	int8_t *pos = startPos;
+	int8_t *pos = (int8_t*)startPos;
 	for(int i=0 ; i < count ; i++){
 		target[i] = pos[i];
 	}
@@ -133,22 +133,22 @@ void numToStrSized(size_t value, char* target, size_t base, size_t length){
 
 void getRegistries (uint64_t* array, size_t array_size){
 	if (array_size < 16) return;
-	array[0] = getRIP();
-	array[1] = getRAX();
-	array[2] = getRBX();
-	array[3] = getRCX();
-	array[4] = getRDX();
-	array[5] = getRBP();
-	array[6] = getRDI();
-	array[7] = getRSI();
-	array[8] = getR8();
-	array[9] = getR9();
-	array[10] = getR10();
-	array[11] = getR11();
-	array[12] = getR12();
-	array[13] = getR13();
-	array[14] = getR14();
-	array[15] = getR15();
+	array[0] = (uint64_t)getRIP();
+	array[1] = (uint64_t)getRAX();
+	array[2] = (uint64_t)getRBX();
+	array[3] = (uint64_t)getRCX();
+	array[4] = (uint64_t)getRDX();
+	array[5] = (uint64_t)getRBP();
+	array[6] = (uint64_t)getRDI();
+	array[7] = (uint64_t)getRSI();
+	array[8] = (uint64_t)getR8();
+	array[9] = (uint64_t)getR9();
+	array[10] = (uint64_t)getR10();
+	array[11] = (uint64_t)getR11();
+	array[12] = (uint64_t)getR12();
+	array[13] = (uint64_t)getR13();
+	array[14] = (uint64_t)getR14();
+	array[15] = (uint64_t)getR15();
 }
 
 static int hasFeature(uint32_t features, int feature){

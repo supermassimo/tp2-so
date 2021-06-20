@@ -24,7 +24,7 @@ int bufferIsEmpty(){
     
 }
 
-void setInputBuffer(unsigned char* newBuffer, int end){
+void setInputBuffer(char* newBuffer, int end){
     int auxIdx = 0;
     if (getCurrentDisplay())
         endOfContent_1 = 0;
@@ -58,7 +58,7 @@ int getKey(){
 
 // Fills array sent with buffer content on string format (ends with '\0')
 // and returns # of keys read from buffer
-int getBufferContent(unsigned char* target, size_t size_limit){
+int getBufferContent(char* target, size_t size_limit){
     int i=0, aux;
     while((aux = getKey()) != -1 && i<(size_limit-1)){
         target[i++] = aux;

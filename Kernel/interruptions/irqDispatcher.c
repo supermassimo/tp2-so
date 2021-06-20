@@ -1,4 +1,5 @@
 #include <time.h>
+#include <keyboard.h>
 #include <stdint.h>
 
 static void irqTimerTick();

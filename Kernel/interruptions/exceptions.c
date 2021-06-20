@@ -3,7 +3,6 @@
 
 static void zero_division();
 static void invalid_op();
-static void exceptionReloadPointer();
 extern void loader();
 
 void exceptionDispatcher(int exception) {

@@ -29,6 +29,7 @@ EXTERN sysGetActiveDisplay
 EXTERN sysWriteCpuFeatures
 EXTERN sysSwapActiveDisplay
 EXTERN sysSleep
+EXTERN sysDelKey
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher

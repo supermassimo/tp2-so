@@ -14,6 +14,8 @@ extern uint8_t bss;
 extern uint8_t endOfKernelBinary;
 extern uint8_t endOfKernel;
 
+extern void load_idt();
+
 static const uint64_t PageSize = 0x1000;
 
 static void * const userCodeModuleAddress = (void*)0x400000;
@@ -37,7 +39,7 @@ void * getStackBase()
 
 void * initializeKernelBinary()
 {
-	char buffer[10];
+	// char buffer[10];
 	void * moduleAddresses[] = {
 		userCodeModuleAddress
 		,dataModuleAddress
@@ -48,10 +50,6 @@ void * initializeKernelBinary()
 	clearBSS(&bss, &endOfKernel - &bss);
 
 	return getStackBase();
-}
-
-void rebootKernel(){
-	loader();
 }
 
 void loadUserModuleAdress(){
