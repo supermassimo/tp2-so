@@ -45,6 +45,7 @@ SECTION .text
 
 
 %macro pushState 0
+	push rax
 	push rbx
 	push rcx
 	push rdx
@@ -59,11 +60,9 @@ SECTION .text
 	push r13
 	push r14
 	push r15
-	push rax
 %endmacro
 
 %macro popState 0
-	pop rax
 	pop r15
 	pop r14
 	pop r13
@@ -78,6 +77,7 @@ SECTION .text
 	pop rdx
 	pop rcx
 	pop rbx
+	pop rax
 %endmacro
 
 %macro irqHandlerMaster 1
@@ -175,6 +175,7 @@ _sysCallHandler:
 		jmp endSysCallHandler
 		
 	endSysCallHandler:
+		mov [rsp+8], rax
 		popState
 		iretq
 
