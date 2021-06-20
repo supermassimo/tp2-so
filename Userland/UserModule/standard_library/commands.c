@@ -289,7 +289,7 @@ static int getCommandAndParams(char* command, char params[][MAX_PARAMETER_LENGTH
 
 void commandHandler(char* string){
     char commandName[MAX_COMMAND_LENGTH] = "";
-    char params[MAX_COMMAND_AMOUNT][MAX_PARAMETER_LENGTH];
+    char params[MAX_PARAMETER_AMOUNT][MAX_PARAMETER_LENGTH];
     int paramAmount = getCommandAndParams(commandName, params, string);
     for(int i=0 ; i < commandAmount ; i++){
         if(strcmp(commands[i].name, commandName) == 0){

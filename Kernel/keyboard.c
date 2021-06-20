@@ -43,14 +43,14 @@ void emptyKeyboardBuffer(){
 }
 
 // Stores a key on the keyboard buffer
-static void typeKey(int key, int print){
+static void typeKey(int key){
     if(!keyboardBufferIsFull()){
         if (getCurrentDisplay()){
             keyboard_buffer_1[nextToStore_1++] = key;
         } else {
             keyboard_buffer_0[nextToStore_0++] = key;
         }
-        if (print == 1) printChar(key);
+        printChar(key);
     }
 }
 
@@ -103,13 +103,13 @@ void keyboardIntHandler(){
     int key = readKey();
     if (isControlKey(key)){
         if(key == '\n'){
-            typeKey(key, 0);
+            typeKey(key);
             pushKeyboardBuffer();
         }
         else
             pushSingleKey(key);
     } else if(!keyboardBufferIsFull()){
-        typeKey(key, 1);
+        typeKey(key);
     }
 }
 

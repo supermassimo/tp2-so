@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-#define BUFFER_SIZE 120
+#define BUFFER_SIZE 256
 
 int bufferIsEmpty();
 int bufferIsFull();
