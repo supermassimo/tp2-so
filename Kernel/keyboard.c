@@ -60,6 +60,7 @@ void keyboardDeleteKey(){
         } else {
             nextToStore_0--;
         }
+        deleteKeyConsole();
     }
 }
 
