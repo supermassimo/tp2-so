@@ -6,5 +6,7 @@
 int keyboardBufferIsEmpty();
 void keyboardIntHandler();
 void awaitForInstantInput();
+void keyboardDeleteKey();
+void pushKeyboardBuffer();
 
 #endif

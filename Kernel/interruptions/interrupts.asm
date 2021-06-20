@@ -135,6 +135,8 @@ _sysCallHandler:
 		je syscall_9
 		cmp rax, 10
 		je syscall_10
+		cmp rax, 11
+		je syscall_11
 	syscall_0:
 		call sysReadInput
 		jmp endSysCallHandler
@@ -167,6 +169,9 @@ _sysCallHandler:
 		jmp endSysCallHandler
 	syscall_10:
 		call sysSleep
+		jmp endSysCallHandler
+	syscall_11:
+		call sysDelKey
 		jmp endSysCallHandler
 		
 	endSysCallHandler:

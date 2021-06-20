@@ -7,7 +7,12 @@ void waitForInput(){
 	char input[120];
 	while(1){
 	 	scanf(input, 120);
-		if(strcmp(input, "") != 0)
+		if(strlen(input) <= 1){
+			if(strcmp(input, "\t") != 0)
+				consoleSwap();
+			if(strcmp(input, "\b") != 0)
+				deleteKey();
+		} else if(strcmp(input, "") != 0)
 			commandHandler(input);
 	};
 }

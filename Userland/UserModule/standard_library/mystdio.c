@@ -9,6 +9,7 @@ typedef unsigned char uint8_t;
 extern void write(int output, const char* buffer, size_t buffer_size);
 extern void readInput(char* buffer, size_t buffer_size);
 extern void swapConsole();
+extern void delKey();
 
 void printErr(const char* string){
 	write(STD_ERR, string, strlen(string));
@@ -44,4 +45,8 @@ void scanf (char* string, size_t string_size){
 
 void consoleSwap(){
 	swapConsole();
+}
+
+void deleteKey(){
+	delKey();
 }

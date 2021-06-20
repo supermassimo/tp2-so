@@ -53,46 +53,35 @@ static void typeKey(int key){
     }
 }
 
-static void deleteLast (){
+void keyboardDeleteKey(){
     if (!keyboardBufferIsEmpty()){
         if (getCurrentDisplay()){
             nextToStore_1--;
         } else {
             nextToStore_0--;
         }
-        printChar('\b');
     }
+}
+
+void pushKeyboardBuffer(){
+    if (getCurrentDisplay()){
+        setInputBuffer(keyboard_buffer_1, nextToStore_1);
+        nextToStore_1 = 0;
+    }else{
+        setInputBuffer(keyboard_buffer_0, nextToStore_0);
+        nextToStore_0 = 0;
+    }
+}
+
+void pushSingleKey(int c){
+    char str[1];
+    str[0] = c;
+    setInputBuffer(str, 1);
 }
 
 // 0-31 and 127 are reserved ASCII control characters
 static int isControlKey(int c){
-	return c < 32 || c == 127;
-}
-
-static int isPrintableKey(int c){
-    return c != -1 && c != '\b' && c != '\t';
-}
-
-static void applyControlKey(unsigned char key){
-    switch(key){
-        case '\b':
-            deleteLast();
-            break;
-        case '\n':
-            if (getCurrentDisplay()){
-                setInputBuffer(keyboard_buffer_1, nextToStore_1);
-                nextToStore_1 = 0;
-            }else{
-                setInputBuffer(keyboard_buffer_0, nextToStore_0);
-                nextToStore_0 = 0;
-            }
-            break;
-        case '\t':
-            swapDisplay();
-            break;
-        default:
-            break;
-    }
+	return c != '\n' && (c < 32 || c == 127);
 }
 
 // Reads the input
@@ -104,17 +93,18 @@ static int readKey(){
     // If it´s a MAKE, a key was pressed
     if(keyCode < 127){
         key = keyTable[keyCode];
-        if(isControlKey(key))
-            applyControlKey(key);
-        else
-            typeKey(key);
+        typeKey(key);
+        if(key == '\n')
+            pushKeyboardBuffer();
     }
     return key;
 }
 
 void keyboardIntHandler(){
     int key = readKey();
-    if(isPrintableKey(key) && !keyboardBufferIsFull()){
+    if (isControlKey(key)){
+        pushSingleKey(key);
+    } else if(!keyboardBufferIsFull()){
         printChar(key);
     }
 }

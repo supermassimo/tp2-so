@@ -175,35 +175,12 @@ static uint64_t getPrevCharAddr(int consoleIdx){
 	return (uint64_t)prevChar;
 }
 
-static int isSpecialChar(char c){
-	int res;
-	switch(c){
-		case '\n': case '\b':
-			res = 1;
-			break;
-		default:
-			res = 0;
-			break;
-	}
-	return res;
-}
-
-static void printSpecialChar(char c, uint8_t colorByte){
-	char* finalPos;
-	switch(c){
-		case '\n':
-			newLine();
-			break;
-		case '\b':
-			if(scrPos-2 >= consoles[activeConsole].startPos){			// Check if there are chars to delete
-				finalPos = getPrevCharAddr(activeConsole);
-				*finalPos = *(finalPos+2);								// Backspace functionality
-				*(finalPos+1) = getColorByte(Black, Black);				// Fill current char with next one and move cursor one place back
-				scrPos = finalPos;
-			}
-			break;
-		default:
-			break;
+void deleteKeyConsole(){
+	if(scrPos-2 >= consoles[activeConsole].startPos){			// Check if there are chars to delete
+		finalPos = getPrevCharAddr(activeConsole);
+		*finalPos = *(finalPos+2);								// Backspace functionality
+		*(finalPos+1) = getColorByte(Black, Black);				// Fill current char with next one and move cursor one place back
+		scrPos = finalPos;
 	}
 }
 
@@ -250,8 +227,8 @@ void printCharCol(char c, uint8_t foreColor, uint8_t backColor){
 	if(scrPos >= SCR_BASE_ADDR + SCR_ROWS * SCR_COLS * 2){
         scrollUpActiveConsole();
     }
-	if(isSpecialChar(c)){
-		printSpecialChar(c, colorByte);
+	if(c == '\n'){
+		newLine();
 	}
     else{
         *scrPos = c;

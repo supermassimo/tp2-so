@@ -8,8 +8,8 @@ GLOBAL clear
 GLOBAL writeCpuFeatures
 GLOBAL invalidOpcodeThrower
 GLOBAL swapConsole
-
 GLOBAL sleep
+GLOBAL delKey
 
 section .text
 
@@ -69,6 +69,12 @@ swapConsole:
 
 sleep:
     mov rax, 10
+    int 80h
+
+    ret
+
+delKey:
+    mov rax, 11
     int 80h
 
     ret
