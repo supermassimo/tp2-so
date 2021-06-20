@@ -43,13 +43,14 @@ void emptyKeyboardBuffer(){
 }
 
 // Stores a key on the keyboard buffer
-static void typeKey(int key){
+static void typeKey(int key, int print){
     if(!keyboardBufferIsFull()){
         if (getCurrentDisplay()){
             keyboard_buffer_1[nextToStore_1++] = key;
         } else {
             keyboard_buffer_0[nextToStore_0++] = key;
         }
+        if (print == 1) printChar(key);
     }
 }
 
@@ -82,7 +83,7 @@ void pushSingleKey(int c){
 
 // 0-31 and 127 are reserved ASCII control characters
 static int isControlKey(int c){
-	return c != '\n' && (c < 32 || c == 127);
+	return c < 32 || c == 127;
 }
 
 // Reads the input
@@ -94,9 +95,6 @@ static int readKey(){
     // If it´s a MAKE, a key was pressed
     if(keyCode < 127){
         key = keyTable[keyCode];
-        typeKey(key);
-        if(key == '\n')
-            pushKeyboardBuffer();
     }
     return key;
 }
@@ -104,9 +102,14 @@ static int readKey(){
 void keyboardIntHandler(){
     int key = readKey();
     if (isControlKey(key)){
-        pushSingleKey(key);
+        if(key == '\n'){
+            typeKey(key, 0);
+            pushKeyboardBuffer();
+        }
+        else
+            pushSingleKey(key);
     } else if(!keyboardBufferIsFull()){
-        printChar(key);
+        typeKey(key, 1);
     }
 }
 
