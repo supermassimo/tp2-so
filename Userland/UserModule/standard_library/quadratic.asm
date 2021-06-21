@@ -1,7 +1,7 @@
 
 GLOBAL getQuadratic
 
-%macro ftest
+%macro ftest 0
     ftst
     fstsw ax            
     sahf
@@ -23,18 +23,16 @@ getQuadratic:
     movq [b], xmm1
     movq [c], xmm2
 
-    fld qword [a]       ; stores a and 2 in the stack
-    fild word 2
-    fmulp               ; multiply 2 by a then store in memory,
-    fstp [two_a]         ; will be useful later
+    fld qword [a]       ; stores a in the stack
+    fscale              ; multiply a by 2 then store in memory,
+    fstp [two_a]        ; will be useful later
 
-    fld qword [b]       ; push b and make negative then store in memory,
-    fild word -1        ; will be useful later
-    fmulp
-    fstp [minus_b]
+    fldz                
+    fsub [b]            ; substract b from 0 then store in memory,               
+    fstp [minus_b]      ; will be useful later
 
     fld qword [b]       ; push b to the stack twice
-    fld qword [b]
+    fld
     ;[b][b]
 
     fmulp               ; multiply b by b, pops them and stores in the stack
@@ -42,7 +40,7 @@ getQuadratic:
 
     fld qword [a]       ; push a, c and -4 to the stack
     fld qword [c]
-    fild word -4
+    fild word minus_four
     ;[b*b][a][c][-4]
 
     fmulp               ; multiply the last 3 values in the stack a, c and -4
@@ -105,6 +103,9 @@ singleRoot:
     mov rax, 1          ;set rax to 1, we found 1 root
 
     jmp end
+
+section .data
+    minus_four dw -4
 
 section .bss
     a: resq 1
