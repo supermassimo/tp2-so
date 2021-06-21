@@ -18,6 +18,8 @@ GLOBAL _exception6Handler
 
 GLOBAL _sysCallHandler
 
+GLOBAL captureRegistries
+
 EXTERN sysReadInput
 EXTERN sysWrite
 EXTERN sysWriteMemContent
@@ -85,6 +87,7 @@ SECTION .text
 
 %macro irqHandlerMaster 1
 	pushState
+	mov [reg_stack_pointer], rsp
 
 	mov rdi, %1 ; pasaje de parametro
 	call irqDispatcher
@@ -153,7 +156,7 @@ _sysCallHandler:
 		jmp endSysCallHandler
 	; [RAX, RBX, RCX, RDX, RBP, RDI, RSI, R8, R9, R10, R11, R12, R13, R14, R15, RSP, RIP]
 	syscall_2:
-		mov rbx, rsp
+		mov rbx, regs_arr
 		call getRegisters
 		jmp endSysCallHandler
 	syscall_3:
@@ -188,6 +191,12 @@ _sysCallHandler:
 		mov [rsp+8], rax
 		popState
 		iretq
+
+captureRegistries:
+	mov rbx, [reg_stack_pointer]
+	mov rdi, regs_arr
+	call getRegisters
+	ret
 
 ; RBX -> Address of register stack
 ; RDI -> Address of target array
@@ -283,4 +292,5 @@ SECTION .data
 	regs_len equ 17
 SECTION .bss
 	aux resq 1
-	regs_arr resq 17
+	reg_stack_pointer resq 1
+	regs_arr resq regs_len
