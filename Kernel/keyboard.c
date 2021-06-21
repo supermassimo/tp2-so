@@ -3,6 +3,8 @@
 #include <standardIn.h>
 #include <dualDisplayManager.h>
 
+extern captureRegistries();
+
 static unsigned char keyboard_buffer_0[BUFFER_SIZE];
 static unsigned int nextToStore_0 = 0;
 
@@ -12,10 +14,10 @@ static unsigned int nextToStore_1 = 0;
 static const int keyTable[] = {
 	0, 27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\'', 168,			// 1:ESC
 	'\b', '\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 0, '+',		// 14:BACKSPACE
-	'\n', 0, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 164, '{', '|',		// 29:CTRL
+	'\n', 0, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 164, '{', '~',		// 29:CTRL
 	15, '}', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '-', 0, '*', 0, ' ',	// 42:SHIFT(izq), 54:SHIFT(der), 55:*, 56:ALT/ALTGR, 57:SPACEBAR. 53 tb es '/'
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '7',                          		// 58:BLOQ MAYUS, 59-68:F1-F10, 69:BLOQ NUM, 70:BLOQ DESPL, 71:INICIO y 7 (tecl num)
-	'↑', '9', '-', '←', '5', '→', '+', '1', '↓', '3', 0, 0, 0, 0,				// 72:↑ y 8(tecl num), 73:REPAG y 9 (tecl num), 74:- (tecl num), 75:← y 4 (tecl num), 76:5 (tecl num), 77:→ y 6 (tecl num), 78:+ (tecl num), 79:FIN y 1 (tecl num), 80:↓ y 2 (tecl num), 81:AVPAG y 3 (tecl num), 82:INS, 83:SUPR, 84:?, 85:?
+	0, '9', '-', 0, '5', 0, '+', '1', 0, '3', 0, 0, 0, 0,				        // 8 (tecl num), 73:REPAG, 9 (tecl num), 74:- (tecl num), 4 (tecl num), 76:5 (tecl num), 6 (tecl num), 78:+ (tecl num), 79:FIN, 1 (tecl num), 2 (tecl num), 81:AVPAG, 3 (tecl num), 82:INS, 83:SUPR, 84:?, 85:?
 	0, 0, 0, 0, 0, 0, 0, 0														// 86:?, 87:F11, 88:F12, 89:?, 90:?, 91:TECLA WINDOWS, 92:?, 93:CLICK IZQUIERDO
 };
 
@@ -81,9 +83,9 @@ void pushSingleKey(int c){
     setInputBuffer(str, 1);
 }
 
-// 0-31 and 127 are reserved ASCII control characters
+// 0-31, 126 and 127 are reserved ASCII control characters
 static int isControlKey(int c){
-	return c < 32 || c == 127;
+	return c < 32 || c == 126 || c == 127;
 }
 
 // Reads the input
@@ -102,7 +104,9 @@ static int readKey(){
 void keyboardIntHandler(){
     int key = readKey();
     if (isControlKey(key)){
-        if(key == '\n'){
+        if (key == '~'){ //This key must be handled by the kernel as the registry capture has to be done within the same interrupt
+            captureRegistries();
+        } else if(key == '\n'){
             typeKey(key);
             pushKeyboardBuffer();
         }
