@@ -131,26 +131,6 @@ void numToStrSized(size_t value, char* target, size_t base, size_t length){
 	}
 }
 
-void getRegistries (uint64_t* array, size_t array_size){
-	if (array_size < 16) return;
-	array[0] = (uint64_t)getRIP();
-	array[1] = (uint64_t)getRAX();
-	array[2] = (uint64_t)getRBX();
-	array[3] = (uint64_t)getRCX();
-	array[4] = (uint64_t)getRDX();
-	array[5] = (uint64_t)getRBP();
-	array[6] = (uint64_t)getRDI();
-	array[7] = (uint64_t)getRSI();
-	array[8] = (uint64_t)getR8();
-	array[9] = (uint64_t)getR9();
-	array[10] = (uint64_t)getR10();
-	array[11] = (uint64_t)getR11();
-	array[12] = (uint64_t)getR12();
-	array[13] = (uint64_t)getR13();
-	array[14] = (uint64_t)getR14();
-	array[15] = (uint64_t)getR15();
-}
-
 static int hasFeature(uint32_t features, int feature){
 	return (features >> feature) & 1;
 }

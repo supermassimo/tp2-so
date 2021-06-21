@@ -129,9 +129,9 @@ static void inforegHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmou
         printErr("Too many parameters for command 'inforeg'");
         return;
     }
-    uint64_t regs[17];
-    getRegistries(regs);
-    if (regs[16] == 0){
+    Registries regs;
+    getRegistries(&regs);
+    if (regs.RIP == 0){
         printErr("The registries have not been captured yet. press the [~] key to capture before executing 'inforeg'.");
     } else {
         printRegistries(regs);

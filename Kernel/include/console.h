@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <regStruct.h>
 
 typedef enum Color {
 	Black, Blue, Green, Cyan, Red, Purple, Brown, Gray, DarkGray, LightBlue, LightGreen, LightCyan, 
@@ -27,7 +28,7 @@ void printErr(const char *string);
 void newLine();
 void clearScreen();
 void clearActiveConsole();
-void printRegistries();
+void printRegistries(const Registries *regs);
 void printMemContent(char* startPos, size_t amount);
 void printDateTime(int utc);
 void deleteKeyConsole();

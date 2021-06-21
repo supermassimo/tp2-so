@@ -293,59 +293,32 @@ void clearActiveConsole(){
 	scrPos = consoles[activeConsole].startPos;
 }
 
-void printRegistries(uint64_t *regs){
-	print("RAX: ");
-	printInt(regs[0], 10);
-	newLine();
-	print("RBX: ");
-	printInt(regs[1], 10);
-	newLine();
-	print("RCX: ");
-	printInt(regs[2], 10);
-	newLine();
-	print("RDX: ");
-	printInt(regs[3], 10);
-	newLine();
-	print("RBP: ");
-	printInt(regs[4], 10);
-	newLine();
-	print("RDI: ");
-	printInt(regs[5], 10);
-	newLine();
-	print("RSI: ");
-	printInt(regs[6], 10);
-	newLine();
-	print("R8: ");
-	printInt(regs[7], 10);
-	newLine();
-	print("R9: ");
-	printInt(regs[8], 10);
-	newLine();
-	print("R10: ");
-	printInt(regs[9], 10);
-	newLine();
-	print("R11: ");
-	printInt(regs[10], 10);
-	newLine();
-	print("R12: ");
-	printInt(regs[11], 10);
-	newLine();
-	print("R13: ");
-	printInt(regs[12], 10);
-	newLine();
-	print("R14: ");
-	printInt(regs[13], 10);
-	newLine();
-	print("R15: ");
-	printInt(regs[14], 10);
-	newLine();
-	print("RSP: ");
-	printInt(regs[15], 10);
-	newLine();
-	print("RIP: ");
-	printInt(regs[16], 10);
-	newLine();
+static void printRegistry(const char* msg, uint64_t value){
+	print(msg);
+	printInt(value, 16);
+	print("\n");
 }
+
+void printRegistries(const Registries * regs){
+	printRegistry("RAX: ", regs -> RAX);
+	printRegistry("RBX: ", regs -> RBX);
+	printRegistry("RCX: ", regs -> RCX);
+	printRegistry("RDX: ", regs -> RDX);
+	printRegistry("RDI: ", regs -> RDI);
+	printRegistry("RSI: ", regs -> RSI);
+	printRegistry("R8: " , regs -> R8 );
+	printRegistry("R9: " , regs -> R9 );
+	printRegistry("R10: ", regs -> R10);
+	printRegistry("R11: ", regs -> R11);
+	printRegistry("R12: ", regs -> R12);
+	printRegistry("R13: ", regs -> R13);
+	printRegistry("R14: ", regs -> R14);
+	printRegistry("R15: ", regs -> R15);
+	printRegistry("RBP: ", regs -> RBP);
+	printRegistry("RSP: ", regs -> RSP);
+	printRegistry("RIP: ", regs -> RIP);
+}
+
 
 void printMemContent(char* startPos, size_t amount){
 	uint8_t memContent[amount];

@@ -38,16 +38,16 @@ size_t concatStrings(char strings[][MAX_PARAMETER_LENGTH], size_t stringAmount, 
     return outputIdx;
 }
 
-static int digitToStr(int num, int base){
-	return base > 10 ? num - 10 + 'A' : num + '0';
-}
-
 static int isDigit(int digit){
     if(digit < 0 || digit > 9){
         printErr("String sent is not a number");
         return 0;
     }
     return 1;
+}
+
+static int digitToStr(int num, int base){
+	return base > 10 && num > 9 ? num - 10 + 'A' : num + '0';
 }
 
 // Transforms an integer to string and stores it on target. Returns final string length
