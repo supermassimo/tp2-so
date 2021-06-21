@@ -20,7 +20,7 @@ section .text
 ;xmm0 = a
 ;xmm1 = b
 ;xmm2 = c
-;rdi = output*
+;rcx = output*
 getQuadratic:
     ;[a][b][c][][][][][]
 
@@ -75,8 +75,8 @@ getQuadratic:
 
     ;[a][b][c][root 1][root 2][a*2][d][]
 
-    movss [rdi], xmm3   ;set root 1 as the first value of the array in rdi
-    movss [rdi+4], xmm4 ;set root 2 as the second value of the array in rdi
+    movss [rcx], xmm3   ;set root 1 as the first value of the array in rdi
+    movss [rcx+4], xmm4 ;set root 2 as the second value of the array in rdi
 
     mov rax, 2          ;set rax to 2, we found 2 roots
 
