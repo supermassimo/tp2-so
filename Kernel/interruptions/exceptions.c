@@ -14,7 +14,6 @@ void exceptionDispatcher(int exception) {
 			invalid_op();
 			break;
 	}
-	printRegistries();
 	return;
 }
 

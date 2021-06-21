@@ -293,56 +293,57 @@ void clearActiveConsole(){
 	scrPos = consoles[activeConsole].startPos;
 }
 
-void printRegistries(){
-	uint64_t array[16];
-	getRegistries(array, 16);
-	print("RIP: ");
-	printInt(array[0], 10);
-	newLine();
+void printRegistries(uint64_t *regs){
 	print("RAX: ");
-	printInt(array[1], 10);
+	printInt(regs[0], 10);
 	newLine();
 	print("RBX: ");
-	printInt(array[2], 10);
+	printInt(regs[1], 10);
 	newLine();
 	print("RCX: ");
-	printInt(array[3], 10);
+	printInt(regs[2], 10);
 	newLine();
 	print("RDX: ");
-	printInt(array[4], 10);
+	printInt(regs[3], 10);
 	newLine();
 	print("RBP: ");
-	printInt(array[5], 10);
+	printInt(regs[4], 10);
 	newLine();
 	print("RDI: ");
-	printInt(array[6], 10);
+	printInt(regs[5], 10);
 	newLine();
 	print("RSI: ");
-	printInt(array[7], 10);
+	printInt(regs[6], 10);
 	newLine();
 	print("R8: ");
-	printInt(array[8], 10);
+	printInt(regs[7], 10);
 	newLine();
 	print("R9: ");
-	printInt(array[9], 10);
+	printInt(regs[8], 10);
 	newLine();
 	print("R10: ");
-	printInt(array[10], 10);
+	printInt(regs[9], 10);
 	newLine();
 	print("R11: ");
-	printInt(array[11], 10);
+	printInt(regs[10], 10);
 	newLine();
 	print("R12: ");
-	printInt(array[12], 10);
+	printInt(regs[11], 10);
 	newLine();
 	print("R13: ");
-	printInt(array[13], 10);
+	printInt(regs[12], 10);
 	newLine();
 	print("R14: ");
-	printInt(array[14], 10);
+	printInt(regs[13], 10);
 	newLine();
 	print("R15: ");
-	printInt(array[15], 10);
+	printInt(regs[14], 10);
+	newLine();
+	print("RIP: ");
+	printInt(regs[15], 10);
+	newLine();
+	print("RSP: ");
+	printInt(regs[16], 10);
 	newLine();
 }
 

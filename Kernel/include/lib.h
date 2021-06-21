@@ -20,24 +20,4 @@ uint32_t getCpuExtendedFeaturesECXRaw();
 int getCpuIdSupport();
 void printCpuFeatures();
 
-void* getRIP ();
-void* getRAX ();
-void* getRBX ();
-void* getRCX ();
-void* getRDX ();
-void* getRBP ();
-void* getRDI ();
-void* getRSI ();
-void* getR8 ();
-void* getR9 ();
-void* getR10 ();
-void* getR11 ();
-void* getR12 ();
-void* getR13 ();
-void* getR14 ();
-void* getR15 ();
-
-void printRegistries();
-void getRegistries (uint64_t* array, size_t array_size);
-
 #endif

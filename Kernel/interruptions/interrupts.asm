@@ -35,6 +35,7 @@ EXTERN exceptionDispatcher
 
 EXTERN sysCallDispatcher
 
+EXTERN printRegistries
 EXTERN rebootKernel
 
 EXTERN awaitForInstantInput
@@ -100,6 +101,11 @@ SECTION .text
 
 %macro exceptionHandler 1
 	pushState
+
+	mov rdi, regs_arr
+	mov rbx, rsp
+	call sysGetRegisters
+	call printRegistries
 
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
@@ -277,3 +283,4 @@ SECTION .data
 	regs_len equ 17
 SECTION .bss
 	aux resq 1
+	regs_arr resq 17

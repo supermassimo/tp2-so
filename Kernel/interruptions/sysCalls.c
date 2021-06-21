@@ -23,10 +23,6 @@ void sysWrite(int output, const char* buffer, size_t buffer_size){
     }
 }
 
-void sysWriteRegistries(){
-    printRegistries();
-}
-
 void sysWriteMemContent(char* startPos, size_t amount){
     printMemContent(startPos, amount);
 }
