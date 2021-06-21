@@ -8,14 +8,14 @@ section .text
 ;root1=(-b+d) /(2.0*a);
 ;root2=(-b-d) /(2.0*a);
 
-;MOVSS [to here], [from here] move float
-;DIVSS [div this], [by this] divide float
-;MULSS [mult this], [by this] multiply float
+;MOVQ [to here], [from here] move float
+;DIVQ [div this], [by this] divide float
+;MULQ [mult this], [by this] multiply float
 ;SQRTSS [destination], [sqrt of this] square root float
-;ADDSS [this], [plus this] add floats
-;SUBSS [this], [minus this] substract floats
+;ADDQ [this], [plus this] add floats
+;SUBQ [this], [minus this] substract floats
 ;CVTSI2SS [float reg], [int reg] moves a value from an integer register to a float one
-;XORSS [float reg 1], [float reg 2] XOR instruction for float registers
+;XORPS [float reg 1], [float reg 2] XOR instruction for float registers
 
 ;xmm0 = a
 ;xmm1 = b
@@ -24,27 +24,27 @@ section .text
 getQuadratic:
     ;[a][b][c][][][][][]
 
-    movss xmm3, xmm1    ;move b to xmm3
-    mulss xmm3, xmm1    ;multiply b by b (stored in xmm3)
+    movq xmm3, xmm1    ;move b to xmm3
+    mulq xmm3, xmm1    ;multiply b by b (stored in xmm3)
 
     ;[a][b][c][b*b][][][][]
     
-    movss xmm4, xmm0    ;move a to xmm4
-    mulss xmm4, xmm2    ;multiply a by c (stored in xmm4)
+    movq xmm4, xmm0    ;move a to xmm4
+    mulq xmm4, xmm2    ;multiply a by c (stored in xmm4)
     mov rdx, 4
     cvtsi2ss xmm6, rdx
-    mulss xmm4, xmm6       ;multiply (a*c) by 4 (stored in xmm4)
+    mulq xmm4, xmm6       ;multiply (a*c) by 4 (stored in xmm4)
 
     ;[a][b][c][b*b][a*c*4][][4][]
 
-    movss xmm5, xmm0    ;move a to xmm5
+    movq xmm5, xmm0    ;move a to xmm5
     mov rdx, 2
     cvtsi2ss xmm6, rdx
-    mulss xmm5, xmm6       ;multiply a by 2 (stored in xmm5)
+    mulq xmm5, xmm6       ;multiply a by 2 (stored in xmm5)
 
     ;[a][b][c][b*b][a*c*4][a*2][2][]
 
-    subss xmm3, xmm4    ;substract (b*b) minus (4*a*c) (stored in xmm3)
+    subq xmm3, xmm4    ;substract (b*b) minus (4*a*c) (stored in xmm3)
 
     ;[a][b][c][(b*b)-(a*c*4)][a*c*4][a*2][2][]
 
@@ -60,23 +60,23 @@ getQuadratic:
     ;[a][b][c][(b*b)-(a*c*4)][a*c*4][a*2][d][]
 
     xorps xmm3, xmm3    ;set xmm3 to 0
-    subss xmm3, xmm1    ;set xmm3 to -b
-    movss xmm4, xmm3    ;set xmm4 to -b
+    subq xmm3, xmm1    ;set xmm3 to -b
+    movq xmm4, xmm3    ;set xmm4 to -b
 
     ;[a][b][c][-b][-b][a*2][d][]
 
-    addss xmm3, xmm4    ;add sqrt((b*b)-(a*c*4)) to -b
-    subss xmm4, xmm4    ;substract sqrt((b*b)-(a*c*4)) from -b
+    addq xmm3, xmm4    ;add sqrt((b*b)-(a*c*4)) to -b
+    subq xmm4, xmm4    ;substract sqrt((b*b)-(a*c*4)) from -b
 
     ;[a][b][c][-b+d][-b-d][a*2][d][]
 
-    divss xmm3, xmm5    ;divide (-b+d) by (a*2)
-    divss xmm4, xmm5    ;divide (-b-d) by (a*2)
+    divq xmm3, xmm5    ;divide (-b+d) by (a*2)
+    divq xmm4, xmm5    ;divide (-b-d) by (a*2)
 
     ;[a][b][c][root 1][root 2][a*2][d][]
 
-    movss [rcx], xmm3   ;set root 1 as the first value of the array in rdi
-    movss [rcx+4], xmm4 ;set root 2 as the second value of the array in rdi
+    movq [rcx], xmm3   ;set root 1 as the first value of the array in rdi
+    movq [rcx+4], xmm4 ;set root 2 as the second value of the array in rdi
 
     mov rax, 2          ;set rax to 2, we found 2 roots
 
@@ -91,15 +91,15 @@ singleRoot:
     ;[a][b][c][(b*b)-(a*c*4)][a*c*4][a*2][][]
 
     xorps xmm3, xmm3    ;set xmm3 to zero
-    subss xmm3, xmm1    ;set xmm3 to -b
+    subq xmm3, xmm1    ;set xmm3 to -b
 
     ;[a][b][c][-b][a*c*4][a*2][][]
 
-    divss xmm3, xmm5    ;divide (-b) by (a*2)
+    divq xmm3, xmm5    ;divide (-b) by (a*2)
 
     ;[a][b][c][root][a*c*4][a*2][][]
 
-    movss [rdi], xmm3   ;set the root as the first value of the array in rdi
+    movq [rdi], xmm3   ;set the root as the first value of the array in rdi
 
     mov rax, 1          ;set rax to 1, we found 1 root
 
