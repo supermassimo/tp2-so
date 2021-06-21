@@ -8,15 +8,6 @@ section .text
 ;root1=(-b+d) /(2.0*a);
 ;root2=(-b-d) /(2.0*a);
 
-;MOVQ [to here], [from here] move float
-;DIVSS [div this], [by this] divide float
-;MULQ [mult this], [by this] multiply float
-;SQRTSS [destination], [sqrt of this] square root float
-;ADDSS [this], [plus this] add floats
-;SUBSS [this], [minus this] substract floats
-;CVTSI2SS [float reg], [int reg] moves a value from an integer register to a float one
-;XORPS [float reg 1], [float reg 2] XOR instruction for float registers
-
 ;xmm0 = a
 ;xmm1 = b
 ;xmm2 = c
@@ -25,22 +16,22 @@ getQuadratic:
     ;[a][b][c][][][][][]
 
     movq xmm3, xmm1    ;move b to xmm3
-    mulq xmm3, xmm1    ;multiply b by b (stored in xmm3)
+    mulss xmm3, xmm1    ;multiply b by b (stored in xmm3)
 
     ;[a][b][c][b*b][][][][]
     
     movq xmm4, xmm0    ;move a to xmm4
-    mulq xmm4, xmm2    ;multiply a by c (stored in xmm4)
+    mulss xmm4, xmm2    ;multiply a by c (stored in xmm4)
     mov rdx, 4
     cvtsi2ss xmm6, rdx
-    mulq xmm4, xmm6       ;multiply (a*c) by 4 (stored in xmm4)
+    mulss xmm4, xmm6       ;multiply (a*c) by 4 (stored in xmm4)
 
     ;[a][b][c][b*b][a*c*4][][4][]
 
     movq xmm5, xmm0    ;move a to xmm5
     mov rdx, 2
     cvtsi2ss xmm6, rdx
-    mulq xmm5, xmm6       ;multiply a by 2 (stored in xmm5)
+    mulss xmm5, xmm6       ;multiply a by 2 (stored in xmm5)
 
     ;[a][b][c][b*b][a*c*4][a*2][2][]
 
@@ -104,11 +95,3 @@ singleRoot:
     mov rax, 1          ;set rax to 1, we found 1 root
 
     jmp end
-
-section .data
-  minusFour dw 4
-
-section .bss
-a: resq 1
-  b: resq 1
-  c: resq 1
