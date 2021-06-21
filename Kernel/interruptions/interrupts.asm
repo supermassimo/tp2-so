@@ -104,7 +104,7 @@ SECTION .text
 
 	mov rdi, regs_arr
 	mov rbx, rsp
-	call sysGetRegisters
+	call getRegisters
 	call printRegistries
 
 	mov rdi, %1 ; pasaje de parametro
@@ -154,7 +154,7 @@ _sysCallHandler:
 	; [RAX, RBX, RCX, RDX, RBP, RDI, RSI, R8, R9, R10, R11, R12, R13, R14, R15, RSP, RIP]
 	syscall_2:
 		mov rbx, rsp
-		call sysGetRegisters
+		call getRegisters
 		jmp endSysCallHandler
 	syscall_3:
 		call sysWriteMemContent
@@ -191,7 +191,7 @@ _sysCallHandler:
 
 ; RBX -> Address of register stack
 ; RDI -> Address of target array
-sysGetRegisters:
+getRegisters:
 		    push rbp
 		    mov rbp, rsp
             push rcx

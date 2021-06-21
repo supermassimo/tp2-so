@@ -3,9 +3,9 @@
 *.sys
 
 #The images
-*.img
-*.qcow2
-*.vmdk
+#*.img
+#*.qcow2
+#*.vmdk
 
 #Object files
 *.o
