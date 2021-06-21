@@ -17,29 +17,30 @@ section .text
 ;xmm0 = a
 ;xmm1 = b
 ;xmm2 = c
-;rdi = output*
+;rdi = root1
+;rsi = root2
 getQuadratic:
     movq [a], xmm0
     movq [b], xmm1
     movq [c], xmm2
 
-    fld qword [a]           ; stores a in the stack
+    fld dword [a]           ; stores a in the stack
     fscale                  ; multiply a by 2 then store in memory,
-    fstp qword [two_a]      ; will be useful later
+    fstp dword [two_a]      ; will be useful later
 
     fldz                
-    fsub qword [b]          ; substract b from 0 then store in memory,               
-    fstp qword [minus_b]    ; will be useful later
+    fsub dword [b]          ; substract b from 0 then store in memory,               
+    fstp dword [minus_b]    ; will be useful later
 
-    fld qword [b]           ; push b to the stack twice
-    fld qword [b]
+    fld dword [b]           ; push b to the stack twice
+    fld dword [b]
     ;[b][b]
 
     fmulp                   ; multiply b by b, pops them and stores in the stack
     ;[b*b]
 
-    fld qword [a]           ; push a, c and -4 to the stack
-    fld qword [c]
+    fld dword [a]           ; push a, c and -4 to the stack
+    fld dword [c]
     fild word [minus_four]
     ;[b*b][a][c][-4]
 
@@ -57,26 +58,24 @@ getQuadratic:
     fsqrt                   ; square roots st0 (sqrt(b*b)+(-4*c*a))
     ;[d]
 
-    fst qword [d]           ; store d in memory, but dont pop
+    fst dword [d]           ; store d in memory, but dont pop
 
-    fadd qword [minus_b]    ; add minus b to d
+    fadd dword [minus_b]    ; add minus b to d
     ;[-b+d]
 
-    fdiv qword [two_a]
+    fdiv dword [two_a]
     ;[root1]
 
-    fstp qword [rdi]        ;set root 1 as the first value of the array 
+    fstp dword [rdi]        ;set root 1 as the first value of the array 
 
-    fld qword [minus_b]     ; push -b and substract d
-    fsub qword [d]
+    fld dword [minus_b]     ; push -b and substract d
+    fsub dword [d]
     ;[-b-d]
 
-    fdiv qword [two_a]
+    fdiv dword [two_a]
     ;[root2]
 
-    fldpi
-
-    fstp qword [rdi+4]      ;set root 2 as the second value of the array 
+    fstp dword [rsi]      ;set root 2 as the second value of the array 
 
     mov rax, 2              ;set rax to 2, we found 2 roots
 
@@ -92,15 +91,13 @@ singleRoot:
     fcomp                   ;remove value from stack
     ;
 
-    fld qword [minus_b]
+    fld dword [minus_b]
     ;[-b]
 
-    fdiv qword [two_a]      ; divide (-b) by (a*2)
+    fdiv dword [two_a]      ; divide (-b) by (a*2)
     ;[root] 
 
-    fldpi
-
-    fstp qword [rdi]        ;set the root as the first value of the array
+    fstp dword [rdi]        ;set the root as the first value of the array
 
     mov rax, 1              ;set rax to 1, we found 1 root
 

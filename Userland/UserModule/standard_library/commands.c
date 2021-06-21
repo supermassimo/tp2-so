@@ -10,7 +10,7 @@ extern void setIdle(int idle);
 extern void clear();
 extern void writeCpuFeatures();
 extern void sleep(long seconds);
-extern int getQuadratic(float a, float b, float c, float* out);
+extern int getQuadratic(float a, float b, float c, float*, float*);
 
 
 typedef struct commandStruct{
@@ -62,13 +62,14 @@ static void quadraticHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmoun
     }
 
     float a,b,c;
-    float roots[2];
+    float root1;
+    float root2;
 
     strToFloat(params[0], &a);
     strToFloat(params[1], &b);
     strToFloat(params[2], &c);
 
-    int found = getQuadratic(a, b, c, roots);
+    int found = getQuadratic(a, b, c, &root1, &root2);
 
     if (found == 0){
         printf("No roots found for function ");
@@ -77,14 +78,14 @@ static void quadraticHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmoun
         printf("Function ");
         printQuadratic(a, b, c);
         printf(" has one real root:\nx = ");
-        printFloat(roots[0], FLOAT_STRING_SIZE, QUADRATIC_PRECISION, 10);
+        printFloat(root1, FLOAT_STRING_SIZE, QUADRATIC_PRECISION, 10);
     } else if (found == 2){
         printf("Function ");
         printQuadratic(a, b, c);
         printf(" has two real roots:\nx = ");
-        printFloat(roots[0], FLOAT_STRING_SIZE, QUADRATIC_PRECISION, 10);
+        printFloat(root1, FLOAT_STRING_SIZE, QUADRATIC_PRECISION, 10);
         printf("\nx = ");
-        printFloat(roots[1], FLOAT_STRING_SIZE, QUADRATIC_PRECISION, 10);
+        printFloat(root2, FLOAT_STRING_SIZE, QUADRATIC_PRECISION, 10);
     }
     printf("\n");
 
