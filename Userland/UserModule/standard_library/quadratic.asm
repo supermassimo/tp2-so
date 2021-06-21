@@ -25,7 +25,7 @@ getQuadratic:
 
     fld qword [a]       ; stores a in the stack
     fscale              ; multiply a by 2 then store in memory,
-    fstp qword [two_a]        ; will be useful later
+    fstp qword [two_a]       ; will be useful later
 
     fldz                
     fsub qword [b]            ; substract b from 0 then store in memory,               
@@ -90,9 +90,7 @@ singleRoot:
     fcomp               ;remove value from stack
     ;
 
-    fld qword [b]       ; push b and make negative
-    fild word -1
-    fmulp
+    fld qword [minus_b]
     ;[-b]
 
     fdiv qword [two_a]        ; divide (-b) by (a*2)
