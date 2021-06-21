@@ -124,7 +124,7 @@ static void inforegHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmou
         printErr("Too many parameters for command 'inforeg'");
         return;
     }
-    uint64_t regs[15];
+    uint64_t regs[17];
     getRegistries(regs);
     printRegistries(regs);
 }

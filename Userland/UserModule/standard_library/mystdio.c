@@ -40,9 +40,6 @@ void printFloat (float num, size_t string_size, size_t precision, uint8_t base){
 }
 
 void printRegistries(uint64_t *regs){
-	// printf("RIP: ");
-	// printInt(regs[0], 10, 10);
-	// printf("\n");
 	printf("RAX: ");
 	printInt(regs[0], 10, 10);
 	printf("\n");
@@ -87,6 +84,12 @@ void printRegistries(uint64_t *regs){
 	printf("\n");
 	printf("R15: ");
 	printInt(regs[14], 10, 10);
+	printf("\n");
+	printf("RSP: ");
+	printInt(regs[15], 10, 10);
+	printf("\n");
+	printf("RIP: ");
+	printInt(regs[16], 10, 10);
 	printf("\n");
 }
 

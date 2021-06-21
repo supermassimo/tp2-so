@@ -43,8 +43,9 @@ USER_MODULE_ADDRESS EQU 0x400000
 
 SECTION .text
 
-
+; RIP is value in ret, so no need to push it in register stack
 %macro pushState 0
+	push rsp
 	push r15
 	push r14
 	push r13
@@ -78,6 +79,7 @@ SECTION .text
 	pop r13
 	pop r14
 	pop r15
+	pop rsp
 %endmacro
 
 %macro irqHandlerMaster 1
@@ -272,6 +274,6 @@ haltcpu:
 	ret
 
 SECTION .data
-	regs_len equ 15
+	regs_len equ 17
 SECTION .bss
 	aux resq 1
