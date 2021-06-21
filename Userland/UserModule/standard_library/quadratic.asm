@@ -20,9 +20,9 @@ section .text
 ;rdi = root1
 ;rsi = root2
 getQuadratic:
-    movq [a], xmm0
-    movq [b], xmm1
-    movq [c], xmm2
+    movd [a], xmm0
+    movd [b], xmm1
+    movd [c], xmm2
 
     fld dword [a]           ; stores a in the stack
     fscale                  ; multiply a by 2 then store in memory,
@@ -107,9 +107,9 @@ section .data
     minus_four dw -4
 
 section .bss
-    a: resq 1
-    b: resq 1
-    c: resq 1
-    two_a: resq 1
-    minus_b: resq 1
-    d: resq 1
+    a: resd 1
+    b: resd 1
+    c: resd 1
+    two_a: resd 1
+    minus_b: resd 1
+    d: resd 1

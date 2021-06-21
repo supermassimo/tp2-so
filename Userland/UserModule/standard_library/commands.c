@@ -37,18 +37,13 @@ static const size_t exceptionAmount = 2;
 static void printQuadratic(float a, float b, float c){
     if (a != 0){
         printFloat(a, FLOAT_STRING_SIZE, QUADRATIC_PRECISION, 10);
-        printf("*x^2");
+        printf("*x^2 + ");
     }
-    if (a != 0 && (b != 0 || c != 0))
-        printf(" + ");
     if (b != 0){
         printFloat(b, FLOAT_STRING_SIZE, QUADRATIC_PRECISION, 10);
-        printf("*x");
+        printf("*x + ");
     }
-    if (b != 0 && c != 0)
-        printf(" + ");
-    if (c != 0)
-        printFloat(c, FLOAT_STRING_SIZE, QUADRATIC_PRECISION, 10);
+    printFloat(c, FLOAT_STRING_SIZE, QUADRATIC_PRECISION, 10);
 }
 
 static void quadraticHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmount){
