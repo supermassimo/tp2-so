@@ -1,6 +1,12 @@
 
 GLOBAL getQuadratic
 
+%macro ftest
+    ftst
+    fstsw ax            
+    sahf
+%endmacro
+
 section .text
 
 ;de=(b*b)-4*(a*c);
@@ -13,61 +19,64 @@ section .text
 ;xmm2 = c
 ;rcx = output*
 getQuadratic:
-    ;[a][b][c][][][][][]
+    movq [a], xmm0
+    movq [b], xmm1
+    movq [c], xmm2
 
-    movq xmm3, xmm1    ;move b to xmm3
-    mulss xmm3, xmm1    ;multiply b by b (stored in xmm3)
+    fld qword [a]       ; stores a and 2 in the stack
+    fild word 2
+    fmulp               ; multiply 2 by a then store in memory,
+    fstp [two_a]         ; will be useful later
 
-    ;[a][b][c][b*b][][][][]
-    
-    movq xmm4, xmm0    ;move a to xmm4
-    mulss xmm4, xmm2    ;multiply a by c (stored in xmm4)
-    mov rdx, 4
-    cvtsi2ss xmm6, rdx
-    mulss xmm4, xmm6       ;multiply (a*c) by 4 (stored in xmm4)
+    fld qword [b]       ; push b and make negative then store in memory,
+    fild word -1        ; will be useful later
+    fmulp
+    fstp [minus_b]
 
-    ;[a][b][c][b*b][a*c*4][][4][]
+    fld qword [b]       ; push b to the stack twice
+    fld qword [b]
+    ;[b][b]
 
-    movq xmm5, xmm0    ;move a to xmm5
-    mov rdx, 2
-    cvtsi2ss xmm6, rdx
-    mulss xmm5, xmm6       ;multiply a by 2 (stored in xmm5)
+    fmulp               ; multiply b by b, pops them and stores in the stack
+    ;[b*b]
 
-    ;[a][b][c][b*b][a*c*4][a*2][2][]
+    fld qword [a]       ; push a, c and -4 to the stack
+    fld qword [c]
+    fild word -4
+    ;[b*b][a][c][-4]
 
-    subss xmm3, xmm4    ;substract (b*b) minus (4*a*c) (stored in xmm3)
+    fmulp               ; multiply the last 3 values in the stack a, c and -4
+    fmulp
+    ;[b*b][-4*c*a]
 
-    ;[a][b][c][(b*b)-(a*c*4)][a*c*4][a*2][2][]
+    faddp               ; add the last two values in the stack
+    ;[(b*b)+(-4*c*a)]
 
-    mov rdx, 0          ;set rdx to 0 then transform it into a float to compare with
-    cvtsi2ss xmm6, rdx
-    ucomiss xmm3, xmm6  ;if ((b*b)-(4*a*c)) is negative, roots are imaginary
-    jl rootsAreImaginary
-    ucomiss xmm3, xmm6  ;if ((b*b)-(4*a*c)) is negative, roots are imaginary
-    je singleRoot
+    ftest               ; tests the value in st0 ((b*b)+(-4*c*a))
+    jl rootsAreImaginary; if its negative, the roots are imaginary
+    je singleRoot       ; if its zero then its a single root
 
-    sqrtss xmm6, xmm3   ;sqrt of ((b*b)-(4*a*c)) (stored in xmm4)
+    fsqrt               ; square roots st0 (sqrt(b*b)+(-4*c*a))
+    ;[d]
 
-    ;[a][b][c][(b*b)-(a*c*4)][a*c*4][a*2][d][]
+    movq [d], st0       ; store d in memory, but dont pop
 
-    xorps xmm3, xmm3    ;set xmm3 to 0
-    subss xmm3, xmm1    ;set xmm3 to -b
-    movq xmm4, xmm3    ;set xmm4 to -b
+    fadd [minus_b]      ; add minus b to d
+    ;[-b+d]
 
-    ;[a][b][c][-b][-b][a*2][d][]
+    fdiv [two_a]
+    ;[root1]
 
-    addss xmm3, xmm4    ;add sqrt((b*b)-(a*c*4)) to -b
-    subss xmm4, xmm4    ;substract sqrt((b*b)-(a*c*4)) from -b
+    fstp [rcx]          ;set root 1 as the first value of the array 
 
-    ;[a][b][c][-b+d][-b-d][a*2][d][]
+    fld qword [minus_b] ; push -b and substract d
+    fsub [d]
+    ;[-b-d]
 
-    divss xmm3, xmm5    ;divide (-b+d) by (a*2)
-    divss xmm4, xmm5    ;divide (-b-d) by (a*2)
+    fdiv [two_a]
+    ;[root2]
 
-    ;[a][b][c][root 1][root 2][a*2][d][]
-
-    movq [rcx], xmm3   ;set root 1 as the first value of the array in rdi
-    movq [rcx+4], xmm4 ;set root 2 as the second value of the array in rdi
+    fstp [rcx+4]        ;set root 2 as the second value of the array 
 
     mov rax, 2          ;set rax to 2, we found 2 roots
 
@@ -75,23 +84,32 @@ end:
     ret
 
 rootsAreImaginary:
-    mov rax, 0x0
+    mov rax, 0x0        ; no roots so we return 0
     jmp end
 
 singleRoot:
-    ;[a][b][c][(b*b)-(a*c*4)][a*c*4][a*2][][]
+    ;[(b*b)+(-4*c*a)]
+    fcomp               ;remove value from stack
+    ;
 
-    xorps xmm3, xmm3    ;set xmm3 to zero
-    subss xmm3, xmm1    ;set xmm3 to -b
+    fld qword [b]       ; push b and make negative
+    fild word -1
+    fmulp
+    ;[-b]
 
-    ;[a][b][c][-b][a*c*4][a*2][][]
+    fdiv [two_a]        ; divide (-b) by (a*2)
+    ;[root] 
 
-    divss xmm3, xmm5    ;divide (-b) by (a*2)
-
-    ;[a][b][c][root][a*c*4][a*2][][]
-
-    movq [rdi], xmm3   ;set the root as the first value of the array in rdi
+    fstp [rcx]          ;set the root as the first value of the array
 
     mov rax, 1          ;set rax to 1, we found 1 root
 
     jmp end
+
+section .bss
+    a: resq 1
+    b: resq 1
+    c: resq 1
+    two_a: resq 1
+    minus_b: resq 1
+    d: resq 1
