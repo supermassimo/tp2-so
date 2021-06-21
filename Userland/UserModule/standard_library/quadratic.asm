@@ -98,6 +98,8 @@ singleRoot:
     fdiv qword [two_a]      ; divide (-b) by (a*2)
     ;[root] 
 
+    fldpi
+
     fstp qword [rcx]        ;set the root as the first value of the array
 
     mov rax, 1              ;set rax to 1, we found 1 root
