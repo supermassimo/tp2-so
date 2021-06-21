@@ -4,14 +4,14 @@
 #include <standardIn.h>
 #include <keyboard.h>
 #include <dualDisplayManager.h>
+#include <sysCalls.h>
 
 void sysReadInput(char* buffer, size_t buffer_size){
     getBufferContent(buffer, buffer_size);
 }
 
 void sysWrite(int output, const char* buffer, size_t buffer_size){
-    switch (output)
-    {
+    switch (output) {
         case 0:
             print(buffer);
             break;

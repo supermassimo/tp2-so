@@ -2,7 +2,7 @@
 #include "./include/mystdio.h"
 #include "./include/mystdlib.h"
 
-extern void writeRegistries();
+extern void getRegistries(uint64_t *regs);
 extern void writeMemContent(char* startPos, size_t amount);
 extern void writeDateTime(int utc);
 extern void invalidOpcodeThrower();
@@ -124,7 +124,9 @@ static void inforegHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmou
         printErr("Too many parameters for command 'inforeg'");
         return;
     }
-    writeRegistries();
+    uint64_t regs[15];
+    getRegistries(regs);
+    printRegistries(regs);
 }
 
 static void printmemHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
@@ -294,7 +296,7 @@ static int getCommandAndParams(char* command, char params[][MAX_PARAMETER_LENGTH
 
 void commandHandler(char* string){
     char commandName[MAX_COMMAND_LENGTH+1] = "";
-    char params[MAX_PARAMETER_AMOUNT][MAX_PARAMETER_LENGTH+1];
+    char params[MAX_PARAMETER_AMOUNT][MAX_PARAMETER_LENGTH];
     int paramAmount = getCommandAndParams(commandName, params, string);
     for(int i=0 ; i < commandAmount ; i++){
         if(strcmp(commands[i].name, commandName) == 0){

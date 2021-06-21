@@ -3,8 +3,16 @@
 
 #include <stddef.h>
 
-void sysCallHandler();
-void readInput(char* buffer, size_t buffer_size);
-void write(int output, const char* buffer, size_t buffer_size);
+void sysReadInput(char* buffer, size_t buffer_size);
+void sysWrite(int output, const char* buffer, size_t buffer_size);
+void sysWriteMemContent(char* startPos, size_t amount);
+void sysWriteDateTime(int utc);
+void sysSetIdle(int isIdle);
+void sysClear();
+int sysGetActiveDisplay();
+void sysWriteCpuFeatures();
+void sysSwapActiveDisplay();
+void sysSleep(long seconds);
+void sysDelKey();
 
 #endif

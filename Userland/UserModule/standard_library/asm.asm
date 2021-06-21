@@ -1,6 +1,6 @@
 GLOBAL readInput
 GLOBAL write
-GLOBAL writeRegistries
+GLOBAL getRegistries
 GLOBAL writeMemContent
 GLOBAL writeDateTime
 GLOBAL setIdle
@@ -25,7 +25,7 @@ write:
 
     ret
 
-writeRegistries:
+getRegistries:
     mov rax, 2 ; pasaje de parametro
 	int 80h
 

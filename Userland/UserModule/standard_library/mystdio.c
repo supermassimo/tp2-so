@@ -39,6 +39,57 @@ void printFloat (float num, size_t string_size, size_t precision, uint8_t base){
     write (0, final_string, string_size);
 }
 
+void printRegistries(uint64_t *regs){
+	// printf("RIP: ");
+	// printInt(regs[0], 10, 10);
+	// printf("\n");
+	printf("RAX: ");
+	printInt(regs[0], 10, 10);
+	printf("\n");
+	printf("RBX: ");
+	printInt(regs[1], 10, 10);
+	printf("\n");
+	printf("RCX: ");
+	printInt(regs[2], 10, 10);
+	printf("\n");
+	printf("RDX: ");
+	printInt(regs[3], 10, 10);
+	printf("\n");
+	printf("RBP: ");
+	printInt(regs[4], 10, 10);
+	printf("\n");
+	printf("RDI: ");
+	printInt(regs[5], 10, 10);
+	printf("\n");
+	printf("RSI: ");
+	printInt(regs[6], 10, 10);
+	printf("\n");
+	printf("R8: ");
+	printInt(regs[7], 10, 10);
+	printf("\n");
+	printf("R9: ");
+	printInt(regs[8], 10, 10);
+	printf("\n");
+	printf("R10: ");
+	printInt(regs[9], 10, 10);
+	printf("\n");
+	printf("R11: ");
+	printInt(regs[10], 10, 10);
+	printf("\n");
+	printf("R12: ");
+	printInt(regs[11], 10, 10);
+	printf("\n");
+	printf("R13: ");
+	printInt(regs[12], 10, 10);
+	printf("\n");
+	printf("R14: ");
+	printInt(regs[13], 10, 10);
+	printf("\n");
+	printf("R15: ");
+	printInt(regs[14], 10, 10);
+	printf("\n");
+}
+
 void scanf (char* string, size_t string_size){
     readInput (string, string_size);
 }

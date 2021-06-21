@@ -59,7 +59,7 @@ getQuadratic:
 
     ;[a][b][c][(b*b)-(a*c*4)][a*c*4][a*2][d][]
 
-    xorss xmm3, xmm3    ;set xmm3 to 0
+    xorps xmm3, xmm3    ;set xmm3 to 0
     subss xmm3, xmm1    ;set xmm3 to -b
     movss xmm4, xmm3    ;set xmm4 to -b
 
@@ -90,7 +90,7 @@ rootsAreImaginary:
 singleRoot:
     ;[a][b][c][(b*b)-(a*c*4)][a*c*4][a*2][][]
 
-    xorss xmm3, xmm3    ;set xmm3 to zero
+    xorps xmm3, xmm3    ;set xmm3 to zero
     subss xmm3, xmm1    ;set xmm3 to -b
 
     ;[a][b][c][-b][a*c*4][a*2][][]

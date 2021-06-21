@@ -20,7 +20,6 @@ GLOBAL _sysCallHandler
 
 EXTERN sysReadInput
 EXTERN sysWrite
-EXTERN sysWriteRegistries
 EXTERN sysWriteMemContent
 EXTERN sysWriteDateTime
 EXTERN sysSetIdle
@@ -46,39 +45,39 @@ SECTION .text
 
 
 %macro pushState 0
-	push rax
-	push rbx
-	push rcx
-	push rdx
-	push rbp
-	push rdi
-	push rsi
-	push r8
-	push r9
-	push r10
-	push r11
-	push r12
-	push r13
-	push r14
 	push r15
+	push r14
+	push r13
+	push r12
+	push r11
+	push r10
+	push r9
+	push r8
+	push rsi
+	push rdi
+	push rbp
+	push rdx
+	push rcx
+	push rbx
+	push rax
 %endmacro
 
 %macro popState 0
-	pop r15
-	pop r14
-	pop r13
-	pop r12
-	pop r11
-	pop r10
-	pop r9
-	pop r8
-	pop rsi
-	pop rdi
-	pop rbp
-	pop rdx
-	pop rcx
-	pop rbx
 	pop rax
+	pop rbx
+	pop rcx
+	pop rdx
+	pop rbp
+	pop rdi
+	pop rsi
+	pop r8
+	pop r9
+	pop r10
+	pop r11
+	pop r12
+	pop r13
+	pop r14
+	pop r15
 %endmacro
 
 %macro irqHandlerMaster 1
@@ -144,14 +143,16 @@ _sysCallHandler:
 	syscall_1:
 		call sysWrite
 		jmp endSysCallHandler
+	; [RAX, RBX, RCX, RDX, RBP, RDI, RSI, R8, R9, R10, R11, R12, R13, R14, R15, RSP, RIP]
 	syscall_2:
-		call sysWriteRegistries
+		mov rbx, rsp
+		call sysGetRegisters
 		jmp endSysCallHandler
 	syscall_3:
 		call sysWriteMemContent
 		jmp endSysCallHandler
 	syscall_4:
-		call sysWriteMemContent
+		call sysWriteDateTime
 		jmp endSysCallHandler
 	syscall_5:
 		call sysSetIdle
@@ -179,6 +180,27 @@ _sysCallHandler:
 		mov [rsp+8], rax
 		popState
 		iretq
+
+; RBX -> Address of register stack
+; RDI -> Address of target array
+sysGetRegisters:
+		    push rbp
+		    mov rbp, rsp
+            push rcx
+            mov rcx, 0
+        getRegLoop:
+            cmp rcx, regs_len
+            je getRegEnd
+			mov rax, [rbx]
+			mov [rdi], rax
+			add rcx, 1
+			add rdi, 8
+			add rbx, 8
+			jmp getRegLoop
+        getRegEnd:
+            pop rcx
+		    leave
+		    ret
 
 _hlt:
 	sti
@@ -249,8 +271,7 @@ haltcpu:
 	hlt
 	ret
 
-
-
+SECTION .data
+	regs_len equ 15
 SECTION .bss
 	aux resq 1
-	regs resq 15
