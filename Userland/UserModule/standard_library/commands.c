@@ -126,7 +126,11 @@ static void inforegHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmou
     }
     uint64_t regs[17];
     getRegistries(regs);
-    printRegistries(regs);
+    if (regs[16] == 0){
+        printErr("The registries have not been captured yet. press the [~] key to capture before executing 'inforeg'.");
+    } else {
+        printRegistries(regs);
+    }
 }
 
 static void printmemHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
