@@ -17,7 +17,7 @@ section .text
 ;xmm0 = a
 ;xmm1 = b
 ;xmm2 = c
-;rcx = output*
+;rdi = output*
 getQuadratic:
     movq [a], xmm0
     movq [b], xmm1
@@ -65,7 +65,7 @@ getQuadratic:
     fdiv qword [two_a]
     ;[root1]
 
-    fstp qword [rcx]        ;set root 1 as the first value of the array 
+    fstp qword [rdi]        ;set root 1 as the first value of the array 
 
     fld qword [minus_b]     ; push -b and substract d
     fsub qword [d]
@@ -76,7 +76,7 @@ getQuadratic:
 
     fldpi
 
-    fstp qword [rcx+4]      ;set root 2 as the second value of the array 
+    fstp qword [rdi+4]      ;set root 2 as the second value of the array 
 
     mov rax, 2              ;set rax to 2, we found 2 roots
 
@@ -100,7 +100,7 @@ singleRoot:
 
     fldpi
 
-    fstp qword [rcx]        ;set the root as the first value of the array
+    fstp qword [rdi]        ;set the root as the first value of the array
 
     mov rax, 1              ;set rax to 1, we found 1 root
 
