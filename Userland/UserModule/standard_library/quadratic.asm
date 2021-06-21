@@ -52,7 +52,6 @@ getQuadratic:
 
     ftest                   ; tests the value in st0 ((b*b)+(-4*c*a))
     jl rootsAreImaginary    ; if its negative, the roots are imaginary
-    ftest
     je singleRoot           ; if its zero then its a single root
 
     fsqrt                   ; square roots st0 (sqrt(b*b)+(-4*c*a))
@@ -74,6 +73,8 @@ getQuadratic:
 
     fdiv qword [two_a]
     ;[root2]
+
+    fldpi
 
     fstp qword [rcx+4]      ;set root 2 as the second value of the array 
 
