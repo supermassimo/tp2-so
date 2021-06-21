@@ -234,7 +234,6 @@ static void sleepHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount
 
 static void divByZeroThrower(){
     int value = 1/0;
-    return;
 }
 
 static exceptionTestStruct exceptions[] = {

@@ -25,11 +25,11 @@ getQuadratic:
 
     fld qword [a]       ; stores a in the stack
     fscale              ; multiply a by 2 then store in memory,
-    fstp [two_a]        ; will be useful later
+    fstp qword [two_a]        ; will be useful later
 
     fldz                
-    fsub [b]            ; substract b from 0 then store in memory,               
-    fstp [minus_b]      ; will be useful later
+    fsub qword [b]            ; substract b from 0 then store in memory,               
+    fstp qword [minus_b]      ; will be useful later
 
     fld qword [b]       ; push b to the stack twice
     fld
@@ -40,7 +40,7 @@ getQuadratic:
 
     fld qword [a]       ; push a, c and -4 to the stack
     fld qword [c]
-    fild word minus_four
+    fild word [minus_four]
     ;[b*b][a][c][-4]
 
     fmulp               ; multiply the last 3 values in the stack a, c and -4
@@ -57,24 +57,24 @@ getQuadratic:
     fsqrt               ; square roots st0 (sqrt(b*b)+(-4*c*a))
     ;[d]
 
-    movq [d], st0       ; store d in memory, but dont pop
+    fst qword [d]       ; store d in memory, but dont pop
 
-    fadd [minus_b]      ; add minus b to d
+    fadd qword [minus_b]      ; add minus b to d
     ;[-b+d]
 
-    fdiv [two_a]
+    fdiv qword [two_a]
     ;[root1]
 
-    fstp [rcx]          ;set root 1 as the first value of the array 
+    fstp qword [rcx]          ;set root 1 as the first value of the array 
 
     fld qword [minus_b] ; push -b and substract d
-    fsub [d]
+    fsub qword [d]
     ;[-b-d]
 
-    fdiv [two_a]
+    fdiv qword [two_a]
     ;[root2]
 
-    fstp [rcx+4]        ;set root 2 as the second value of the array 
+    fstp qword [rcx+4]        ;set root 2 as the second value of the array 
 
     mov rax, 2          ;set rax to 2, we found 2 roots
 
@@ -95,10 +95,10 @@ singleRoot:
     fmulp
     ;[-b]
 
-    fdiv [two_a]        ; divide (-b) by (a*2)
+    fdiv qword [two_a]        ; divide (-b) by (a*2)
     ;[root] 
 
-    fstp [rcx]          ;set the root as the first value of the array
+    fstp qword [rcx]          ;set the root as the first value of the array
 
     mov rax, 1          ;set rax to 1, we found 1 root
 

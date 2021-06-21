@@ -16,7 +16,7 @@ $(MODULE): $(SOURCES) $(ALL_LIB_OBJECTS)
 	$(GCC) $(GCCFLAGS) -T userModule.ld _loader.c $(SOURCES) -o ../$(MODULE) $(ALL_LIB_OBJECTS)
 
 %.o: %.c
-	$(GCC) $(GCCFLAGS) -I$(LIB_INC_DIR) -c $< -o $@
+	$(GCC) $(GCCFLAGS) -I$(LIB_INC_DIR) -lstring -c $< -o $@
 
 %.o : %.asm
 	$(ASM) $(ASMFLAGS) $< -o $@
