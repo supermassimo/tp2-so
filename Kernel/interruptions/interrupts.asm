@@ -105,17 +105,12 @@ SECTION .text
 %macro exceptionHandler 1
 	pushState
 
-	mov rdi, regs_arr
-	mov rbx, rsp
-	call getRegisters
+	mov rdi, rsp
 	call printRegistries
 
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
 
-	call _hlt
-	call awaitForInstantInput
-	;call rebootKernel
 	popState
 	add rsp, 8
 	push USER_MODULE_ADDRESS

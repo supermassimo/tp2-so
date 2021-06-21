@@ -339,10 +339,10 @@ void printRegistries(uint64_t *regs){
 	print("R15: ");
 	printInt(regs[14], 10);
 	newLine();
-	print("RIP: ");
+	print("RSP: ");
 	printInt(regs[15], 10);
 	newLine();
-	print("RSP: ");
+	print("RIP: ");
 	printInt(regs[16], 10);
 	newLine();
 }
