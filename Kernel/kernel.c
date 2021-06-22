@@ -57,8 +57,6 @@ int main()
 	clearScreen();
 	load_idt();
 
-	initializeConsole();
-
 	loadUserModuleAdress();
 	return 0;
 }

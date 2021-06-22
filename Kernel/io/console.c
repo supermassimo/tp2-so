@@ -9,12 +9,13 @@
 #define SCR_SIDE_COLS	39
 #define LIMITER_GIRTH	2
 
-static char* scrPos = SCR_BASE_ADDR; 		// Current position on the screen
-static uint8_t foreColor = White;			// Default Forecolor
-static uint8_t backColor = Black;			// Default Backcolor
-static uint8_t errorColor = Red;
+static ConsoleParameters parameters  = {	// Default parameters
+		'>','|',
+		Green,Blue,Black,Black,White,White,DarkGray,DarkGray,Red,Red,Brown,Brown,
+		'~','\n','\b'
+	};
 
-static uint8_t delimiterColor = Green;
+static char* scrPos = SCR_BASE_ADDR; 		// Current position on the screen
 
 static int activeConsole = 0;
 
@@ -29,6 +30,7 @@ typedef struct Console
 	uint8_t backColor;
 	uint8_t inactiveErrorColor;
 	uint8_t errorColor;
+	uint8_t delimiterColor;
 } Console;
 
 /* 
@@ -39,17 +41,14 @@ typedef struct Console
 --------||--------
 */
 
-static Console consoles[] = {
-	{(const char*)SCR_BASE_ADDR, (const char*)SCR_BASE_ADDR, SCR_ROWS, SCR_SIDE_COLS, White, DarkGray, Black, Brown, Red},
-	{(const char*)SCR_BASE_ADDR+(SCR_SIDE_COLS+LIMITER_GIRTH)*2, (const char*)SCR_BASE_ADDR+(SCR_SIDE_COLS+LIMITER_GIRTH)*2, SCR_ROWS, SCR_SIDE_COLS, White, DarkGray, Black, Brown, Red}
-};
-
 static const int consoleAmount = 2;
+
+static Console consoles[consoleAmount];
 
 static void drawDelimiterInRow(size_t col, size_t row, size_t girth, uint8_t colorByte){
 	char* delim = SCR_BASE_ADDR + col*2 + row*SCR_COLS*2 - 2;
 	for (int x=0; x<girth; x++){
-		*(delim+(x*2)) = '|';
+		*(delim+(x*2)) = parameters.delimiterSymbol;
         *(delim+1+(x*2)) = colorByte;
 	}
 		
@@ -109,15 +108,7 @@ void changeConsoleSide(int targetConsole){
 		else
 			setInactive(i);
 	}
-	switch (targetConsole){
-		case 0:
-			delimiterColor = Green;
-			break;
-		case 1:
-			delimiterColor = Blue;
-			break;
-	}
-	drawDelimiter(SCR_SIDE_COLS+1, LIMITER_GIRTH, delimiterColor);
+	drawDelimiter(SCR_SIDE_COLS+1, LIMITER_GIRTH, consoles[targetConsole].delimiterColor);
 }
 
 void newLine(){
@@ -203,7 +194,7 @@ static void scrollUpActiveConsole(){
 }
 
 void printChar(char c){
-	printCharCol(c, foreColor, backColor);
+	printCharCol(c, consoles[activeConsole].activeForeColor, consoles[activeConsole].backColor);
 }
 
 int isLastConsoleActive(){
@@ -225,7 +216,7 @@ void printCharCol(char c, uint8_t foreColor, uint8_t backColor){
 	if(scrPos >= SCR_BASE_ADDR + SCR_ROWS * SCR_COLS * 2){
         scrollUpActiveConsole();
     }
-	if(c == '\n'){
+	if(c == '\n'){ //not the "enterKey" parameter, specifically new line
 		newLine();
 	}
     else{
@@ -242,30 +233,30 @@ void printCol(const char* msg, uint8_t foreColor, uint8_t backColor){
 }
 
 void print(const char* msg){
-	printCol(msg, foreColor, backColor);
+	printCol(msg, consoles[activeConsole].activeForeColor, consoles[activeConsole].backColor);
 }
 
-void printlnCol(const char* msg, uint8_t foreColor, uint8_t backColor){
-	printCol(msg, foreColor, backColor);
+void printlnCol(const char* msg, uint8_t foreCol, uint8_t backCol){
+	printCol(msg, foreCol, backCol);
 	newLine();
 }
 
 void println(const char* msg){
-	printlnCol(msg, foreColor, backColor);
+	printlnCol(msg, consoles[activeConsole].activeForeColor, consoles[activeConsole].backColor);
 }
 
 void printInt(long num, size_t base){
-	printIntCol(num, base, foreColor, backColor);
+	printIntCol(num, base, consoles[activeConsole].activeForeColor, consoles[activeConsole].backColor);
 }
 
-void printIntCol(long num, size_t base, uint8_t foreColor, uint8_t backColor){
+void printIntCol(long num, size_t base, uint8_t foreCol, uint8_t backCol){
 	char strNum[BUFFER_SIZE];
 	numToStr(num, strNum, base);
-	printCol(strNum, foreColor, backColor);
+	printCol(strNum, foreCol, backCol);
 }
 
 void printErr(const char* msg){
-	printlnCol(msg, errorColor, backColor);
+	printlnCol(msg, consoles[activeConsole].errorColor, consoles[activeConsole].backColor);
 }
 
 void clearScreen(){
@@ -319,6 +310,20 @@ void printRegistries(const Registries * regs){
 	printRegistry("RIP: ", regs -> RIP);
 }
 
-void initializeConsole (){
-	drawDelimiter(SCR_SIDE_COLS+1, LIMITER_GIRTH, delimiterColor);
+void initializeConsole (ConsoleParameters params){
+	parameters = params;
+
+	consoles[] = {
+	{(const char*)SCR_BASE_ADDR, (const char*)SCR_BASE_ADDR, SCR_ROWS, SCR_SIDE_COLS, parameters.leftActiveTextColor, parameters.leftInactiveTextColor, parameters.leftBackgroundColor, parameters.leftInactiveTextColor, parameters.leftActiveErrorColor, parameters.leftDelimiterColor},
+	{(const char*)SCR_BASE_ADDR+(SCR_SIDE_COLS+LIMITER_GIRTH)*2, (const char*)SCR_BASE_ADDR+(SCR_SIDE_COLS+LIMITER_GIRTH)*2, SCR_ROWS, SCR_SIDE_COLS, parameters.rightActiveTextColor, parameters.rightInactiveTextColor, parameters.rightBackgroundColor, parameters.rightInactiveTextColor, parameters.rightActiveErrorColor, parameters.rightDelimiterColor}
+	};
+	
+	drawDelimiter(SCR_SIDE_COLS+1, LIMITER_GIRTH, parameters.leftDelimiterColor);
+
+	char cursor[] = "  ";
+	cursor[0] = parameters.cursorSymbol;
+	print(cursor);
+	swapDisplay();
+	print(cursor);
+	swapDisplay();
 }
