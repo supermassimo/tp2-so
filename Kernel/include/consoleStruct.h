@@ -1,0 +1,19 @@
+typedef struct consoleParameters {
+    int cursorSymbol;
+    int delimiterSymbol;
+    int leftDelimeterColor;
+    int rightDelimeterColor;
+    int leftBackgroundColor;
+    int rightBackgroundColor;
+    int leftActiveTextColor;
+    int rightActiveTextColor;
+    int leftInactiveTextColor;
+    int rightInactiveTextColor;
+    int leftActiveErrorColor;
+    int rightActiveErrorColor;
+    int leftInactiveErrorColor;
+    int rightInactiveErrorColor;
+    int registryCaptureKey;
+    int enterKey;
+    int deleteKey;
+} consoleParameters;
