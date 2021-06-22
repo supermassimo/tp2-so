@@ -225,8 +225,7 @@ static void cpufeaturesHandler(char params[][MAX_PARAMETER_LENGTH], size_t param
     }
     CommonFeatures commonFeatures;
     ExtendedFeatures extendedFeatures;
-    int result = getCpuFeatures(&commonFeatures, &extendedFeatures);
-    if(!result){
+    if(!getCpuFeatures(&commonFeatures, &extendedFeatures)){
         printErr("cpuid instruction not supported");
         return;
     }
