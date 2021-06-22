@@ -2,7 +2,7 @@ GLOBAL readInput
 GLOBAL write
 GLOBAL getRegistries
 GLOBAL getMemContent
-GLOBAL writeDateTime
+GLOBAL getDateTime
 GLOBAL setIdle
 GLOBAL clear
 GLOBAL getCpuFeatures
@@ -37,7 +37,7 @@ getMemContent:
 
     ret
 
-writeDateTime:
+getDateTime:
     mov rax, 4
     int 80h
 

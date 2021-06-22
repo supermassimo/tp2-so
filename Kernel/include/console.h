@@ -28,8 +28,6 @@ void printErr(const char *string);
 void newLine();
 void clearScreen();
 void clearActiveConsole();
-void printRegistries(const Registries *regs);
-void printDateTime(int utc);
 void deleteKeyConsole();
 
 #endif

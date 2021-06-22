@@ -8,5 +8,7 @@ void keyboardIntHandler();
 void awaitForInstantInput();
 void keyboardDeleteKey();
 void pushKeyboardBuffer();
+void enableKeyboardInt();
+void disableKeyboardInt();
 
 #endif

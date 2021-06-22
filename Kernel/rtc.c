@@ -90,6 +90,7 @@ void getDate(Date *date){
 	date -> year = getRtc(Year) + 2000;
 }
 
+// Gets current date adding daySkip or not as indicated
 void getDateChanged(Date *date, int daySkip){
 	getDate(date);
 	switch(daySkip){

@@ -11,6 +11,8 @@ static unsigned int nextToStore_0 = 0;
 static unsigned char keyboard_buffer_1[BUFFER_SIZE];
 static unsigned int nextToStore_1 = 0;
 
+static int isEnabled = 1;
+
 static const int keyTable[] = {
 	0, 27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\'', 168,			// 1:ESC
 	'\b', '\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 0, '+',		// 14:BACKSPACE
@@ -22,6 +24,14 @@ static const int keyTable[] = {
 };
 
 extern uint8_t pollKeyRaw();
+
+void enableKeyboardInt(){
+    isEnabled = 1;
+}
+
+void disableKeyboardInt(){
+    isEnabled = 0;
+}
 
 static int keyboardBufferIsFull(int offset){
     if (getCurrentDisplay())
@@ -102,18 +112,20 @@ static int readKey(){
 }
 
 void keyboardIntHandler(){
-    int key = readKey();
-    if (isControlKey(key)){
-        if (key == '~'){ //This key must be handled by the kernel as the registry capture has to be done within the same interrupt
-            captureRegistries();
-        } else if(key == '\n'){
+    if(isEnabled){
+        int key = readKey();
+        if (isControlKey(key)){
+            if (key == '~'){ //This key must be handled by the kernel as the registry capture has to be done within the same interrupt
+                captureRegistries();
+            } else if(key == '\n'){
+                typeKey(key);
+                pushKeyboardBuffer();
+            }
+            else
+                pushSingleKey(key);
+        } else if(!keyboardBufferIsFull(1)){
             typeKey(key);
-            pushKeyboardBuffer();
         }
-        else
-            pushSingleKey(key);
-    } else if(!keyboardBufferIsFull(1)){
-        typeKey(key);
     }
 }
 

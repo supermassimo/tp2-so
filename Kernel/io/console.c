@@ -319,46 +319,6 @@ void printRegistries(const Registries * regs){
 	printRegistry("RIP: ", regs -> RIP);
 }
 
-// Prints daytime in format HH:MM:SS (24hs)
-static void printTime(Time dayTime){
-	char hours[3], minutes[3], seconds[3];
-	numToStrSized(dayTime.hours, hours, 10, 2);
-	numToStrSized(dayTime.minutes, minutes, 10, 2);
-	numToStrSized(dayTime.seconds, seconds, 10, 2);
-	print("Time: ");
-	print(hours);
-	print(":");
-	print(minutes);
-	print(":");
-	println(seconds);
-}
-
-// Prints date in format DD/MM/YYYY
-static void printDate(Date date){
-	char day[3], month[3], year[5];
-	numToStrSized(date.day, day, 10, 2);
-	numToStrSized(date.month, month, 10, 2);
-	numToStrSized(date.year, year, 10, 4);
-	print("Date: ");
-	print(day);
-	print("/");
-	print(month);
-	print("/");
-	println(year);
-}
-
-void printDateTime(int utc){
-	Time currentTime;
-	Date currentDate;
-	int dateChanged = getTime(&currentTime, utc);
-	getDateChanged(&currentDate, dateChanged);
-	print("UTC: ");
-	printInt(utc, 10);
-	newLine();
-	printDate(currentDate);
-	printTime(currentTime);
-}
-
 void initializeConsole (){
 	drawDelimiter(SCR_SIDE_COLS+1, LIMITER_GIRTH, delimiterColor);
 }

@@ -1,4 +1,5 @@
 #include <time.h>
+#include <keyboard.h>
 
 extern void _hlt();
 
@@ -11,10 +12,12 @@ void timer_handler() {
 void timerTickSleep(long seconds){
 	long currentSeconds = seconds_elapsed();
 	long finalSeconds = currentSeconds + seconds;
+	disableKeyboardInt();
 	while(currentSeconds < finalSeconds){
 		_hlt();
 		currentSeconds = seconds_elapsed();
 	}
+	enableKeyboardInt();
 }
 
 int ticks_elapsed() {

@@ -141,6 +141,45 @@ void printMemContent(uint64_t startPos, uint8_t* memContent, size_t amount){
 	}
 }
 
+// Prints daytime in format HH:MM:SS (24hs)
+void printTime(Time dayTime){
+	char hours[3], minutes[3], seconds[3];
+	numToStrSized(dayTime.hours, hours, 10, 2);
+	numToStrSized(dayTime.minutes, minutes, 10, 2);
+	numToStrSized(dayTime.seconds, seconds, 10, 2);
+	printf("Time: ");
+	printf(hours);
+	printf(":");
+	printf(minutes);
+	printf(":");
+	printf(seconds);
+	printf("\n");
+}
+
+// Prints date in format DD/MM/YYYY
+void printDate(Date date){
+	char day[3], month[3], year[5];
+	numToStrSized(date.day, day, 10, 2);
+	numToStrSized(date.month, month, 10, 2);
+	numToStrSized(date.year, year, 10, 4);
+	printf("Date: ");
+	printf(day);
+	printf("/");
+	printf(month);
+	printf("/");
+	printf(year);
+	printf("\n");
+}
+
+// Prints date and time in formats DD/MM/YYYY and HH:MM:SS (24hs) respectively
+void printDateTime(const Date date, const Time time, const int utc){
+	printf("UTC: ");
+	printInt(utc, 2, 10);
+	printf("\n");
+	printDate(date);
+	printTime(time);
+}
+
 void scanf (char* string, size_t string_size){
     readInput (string, string_size);
 }

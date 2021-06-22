@@ -4,13 +4,13 @@
 
 extern void getRegistries(uint64_t *regs);
 extern void getMemContent(uint64_t startPos, uint8_t* target, size_t amount);
-extern void writeDateTime(int utc);
 extern void invalidOpcodeThrower();
 extern void setIdle(int idle);
 extern void clear();
 extern bool getCpuFeatures(CommonFeatures* commonFeatures, ExtendedFeatures* extendedFeatures);
 extern void sleep(long seconds);
 extern int getQuadratic(float a, float b, float c, float*, float*);
+extern void getDateTime(Date* date, Time* time, int utc);
 
 #define PRINTMEM_BYTES 32
 
@@ -170,7 +170,10 @@ static void datetimeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmo
         printErr("Invalid utc value");
         return;
     }
-    writeDateTime(utc);
+    Date date;
+    Time time;
+    getDateTime(&date, &time, utc);
+    printDateTime(date, time, utc);
 }
 
 static void clearHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
@@ -215,7 +218,10 @@ static void localDateTimeHandler(char params[][MAX_PARAMETER_LENGTH], size_t par
         printErr("Too many parameters for command 'localdatetime'");
         return;
     }
-    writeDateTime(LOCAL_UTC);
+    Date currentDate;
+    Time currentTime;
+    getDateTime(&currentDate, &currentTime, LOCAL_UTC);
+    printDateTime(currentDate, currentTime, LOCAL_UTC);
 }
 
 static void cpufeaturesHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){

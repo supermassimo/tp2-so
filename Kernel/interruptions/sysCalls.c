@@ -27,8 +27,8 @@ void sysGetMemContent(uint64_t startPos, uint8_t* target, size_t amount){
     getMemContent(startPos, target, amount);
 }
 
-void sysWriteDateTime(int utc){
-    printDateTime(utc);
+void sysGetDateTime(Date* date, Time* time, int utc){
+    getDateChanged(date, getTime(time, utc));
 }
 
 void sysSetIdle(int isIdle){
