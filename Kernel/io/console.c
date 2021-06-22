@@ -319,24 +319,6 @@ void printRegistries(const Registries * regs){
 	printRegistry("RIP: ", regs -> RIP);
 }
 
-
-void printMemContent(char* startPos, size_t amount){
-	uint8_t memContent[amount];
-	char numStr[3];
-	getMemContent(startPos, memContent, amount);
-	for(int i=0 ; i < amount ; i++){
-		if(i%8 == 0){
-			printInt(startPos+i, 16);
-			print("h: ");
-		}
-		numToStrSized((size_t)memContent[i], numStr, 16, 2);
-		print(numStr);
-		print(" ");
-		if((i+1)%8 == 0)
-			newLine();
-	}
-}
-
 // Prints daytime in format HH:MM:SS (24hs)
 static void printTime(Time dayTime){
 	char hours[3], minutes[3], seconds[3];

@@ -22,7 +22,7 @@ GLOBAL captureRegistries
 
 EXTERN sysReadInput
 EXTERN sysWrite
-EXTERN sysWriteMemContent
+EXTERN sysGetMemContent
 EXTERN sysWriteDateTime
 EXTERN sysSetIdle
 EXTERN sysClear
@@ -155,7 +155,7 @@ _sysCallHandler:
 		call getRegisters
 		jmp endSysCallHandler
 	syscall_3:
-		call sysWriteMemContent
+		call sysGetMemContent
 		jmp endSysCallHandler
 	syscall_4:
 		call sysWriteDateTime

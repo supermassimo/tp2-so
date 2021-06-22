@@ -3,7 +3,7 @@
 #include "./include/mystdlib.h"
 
 extern void getRegistries(uint64_t *regs);
-extern void writeMemContent(char* startPos, size_t amount);
+extern void getMemContent(uint64_t startPos, uint8_t* target, size_t amount);
 extern void writeDateTime(int utc);
 extern void invalidOpcodeThrower();
 extern void setIdle(int idle);
@@ -12,6 +12,7 @@ extern void writeCpuFeatures();
 extern void sleep(long seconds);
 extern int getQuadratic(float a, float b, float c, float*, float*);
 
+#define PRINTMEM_BYTES 32
 
 typedef struct commandStruct{
     char* name;
@@ -147,10 +148,12 @@ static void printmemHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmo
         printErr("Too many parameters for command 'printmem'");
         return;
     }
-    char *memPos = strToNumPos(params[0]);
+    uint64_t memPos = strToNumPos(params[0]);
     if((int64_t)memPos == -1)
         return;
-    writeMemContent(memPos, 32);
+    char memContent[PRINTMEM_BYTES];
+    getMemContent(memPos, memContent, PRINTMEM_BYTES);
+    printMemContent(memPos, memContent, PRINTMEM_BYTES);
 }
 
 static void datetimeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){

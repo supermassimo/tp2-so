@@ -10,7 +10,7 @@ void * memcpy(void * destination, const void * source, uint64_t length);
 size_t strlen(char* string);
 size_t numToStr(long value, char* target, size_t base);
 void numToStrSized(size_t value, char* target, size_t base, size_t length);
-void getMemContent(char* startPos, uint8_t* target, size_t count);
+void getMemContent(uint64_t startPos, uint8_t* target, size_t count);
 
 char *cpuVendor(char *result);
 uint32_t getCpuFeaturesEDXRaw();

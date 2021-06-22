@@ -76,6 +76,22 @@ size_t numToStr(long value, char* target, size_t base){
 	return j;
 }
 
+// Left-fills the number with zeros until required length is met
+void numToStrSized(long value, char* target, size_t base, size_t length){
+	int currLen = numToStr(value, target, base);
+    int difference = length - currLen;
+	if(difference > 0){
+		for(int i=length-1 ; i >= 0 ; i--){
+			if(i >= difference)
+				target[i] = target[i-difference];
+			else
+				target[i] = '0';
+		}
+		target[length] = 0;
+	}
+}
+
+// Transforms string to unsigned number. Returns -1 if number sent was negative
 long strToNumPos(char* string){
     size_t num = 0, digit, i=0;
     size_t length = strlen(string);

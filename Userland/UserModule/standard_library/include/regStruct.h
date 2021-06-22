@@ -17,5 +17,5 @@ typedef struct Registries {
     uint64_t R15;
     uint64_t RBP;
     uint64_t RSP;
-    uint64_t RIP
+    uint64_t RIP;
 } Registries;

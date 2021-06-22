@@ -29,7 +29,6 @@ void newLine();
 void clearScreen();
 void clearActiveConsole();
 void printRegistries(const Registries *regs);
-void printMemContent(char* startPos, size_t amount);
 void printDateTime(int utc);
 void deleteKeyConsole();
 

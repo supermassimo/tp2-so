@@ -5,7 +5,7 @@
 
 void sysReadInput(char* buffer, size_t buffer_size);
 void sysWrite(int output, const char* buffer, size_t buffer_size);
-void sysWriteMemContent(char* startPos, size_t amount);
+void sysGetMemContent(uint64_t startPos, uint8_t* memContent, size_t amount);
 void sysWriteDateTime(int utc);
 void sysSetIdle(int isIdle);
 void sysClear();

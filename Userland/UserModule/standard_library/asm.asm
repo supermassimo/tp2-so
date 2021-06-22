@@ -1,7 +1,7 @@
 GLOBAL readInput
 GLOBAL write
 GLOBAL getRegistries
-GLOBAL writeMemContent
+GLOBAL getMemContent
 GLOBAL writeDateTime
 GLOBAL setIdle
 GLOBAL clear
@@ -31,7 +31,7 @@ getRegistries:
 
     ret
 
-writeMemContent:
+getMemContent:
     mov rax, 3
     int 80h
 

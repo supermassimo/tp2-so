@@ -65,6 +65,22 @@ void printRegistries(const Registries regs){
 	printRegistry("RIP: ", regs.RIP);
 }
 
+void printMemContent(uint64_t startPos, uint8_t* memContent, size_t amount){
+	char numStr[3];
+	for(size_t i=0 ; i < amount ; i++){
+		if(i%8 == 0){
+			printInt(startPos+i, 2, 16);
+			printf("h: ");
+		}
+		// printInt(memContent[i], 2, 16);
+		numToStrSized((long)*(memContent+i), numStr, 16, 2);
+		printf(numStr);
+		printf(" ");
+		if((i+1)%8 == 0)
+			printf("\n");
+	}
+}
+
 void scanf (char* string, size_t string_size){
     readInput (string, string_size);
 }

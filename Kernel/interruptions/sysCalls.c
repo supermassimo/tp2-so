@@ -23,8 +23,8 @@ void sysWrite(int output, const char* buffer, size_t buffer_size){
     }
 }
 
-void sysWriteMemContent(char* startPos, size_t amount){
-    printMemContent(startPos, amount);
+void sysGetMemContent(uint64_t startPos, uint8_t* target, size_t amount){
+    getMemContent(startPos, target, amount);
 }
 
 void sysWriteDateTime(int utc){
