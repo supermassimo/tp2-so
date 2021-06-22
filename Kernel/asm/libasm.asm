@@ -115,8 +115,3 @@ _noCpuId:
 	mov rax, 0
 	leave
 	ret
-
-
-
-
-	

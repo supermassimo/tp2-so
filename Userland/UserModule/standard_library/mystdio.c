@@ -65,6 +65,66 @@ void printRegistries(const Registries regs){
 	printRegistry("RIP: ", regs.RIP);
 }
 
+void printFeatures(const CommonFeatures commonFeatures, const ExtendedFeatures extendedFeatures){
+	char* auxMsg;
+	printf("mmx_support: ");
+	auxMsg = commonFeatures.mmx ? "Yes" : "No";
+	printf(auxMsg);
+	printf("\n");
+	printf("sse_support: ");
+	auxMsg = commonFeatures.sse ? "Yes" : "No";
+	printf(auxMsg);
+	printf("\n");
+	printf("sse2_support: ");
+	auxMsg = commonFeatures.sse2 ? "Yes" : "No";
+	printf(auxMsg);
+	printf("\n");
+	printf("sse3_support: ");
+	auxMsg = commonFeatures.sse3 ? "Yes" : "No";
+	printf(auxMsg);
+	printf("\n");
+	printf("sse41_support: ");
+	auxMsg = commonFeatures.sse41 ? "Yes" : "No";
+	printf(auxMsg);
+	printf("\n");
+	printf("sse42_support: ");
+	auxMsg = commonFeatures.sse42 ? "Yes" : "No";
+	printf(auxMsg);
+	printf("\n");
+	printf("aesni_support: ");
+	auxMsg = commonFeatures.aes ? "Yes" : "No";
+	printf(auxMsg);
+	printf("\n");
+	printf("pclmulqdq_support: ");
+	auxMsg = commonFeatures.pclmulqdq ? "Yes" : "No";
+	printf(auxMsg);
+	printf("\n");
+	printf("avx_support: ");
+	auxMsg = commonFeatures.avx ? "Yes" : "No";
+	printf(auxMsg);
+	printf("\n");
+	printf("vaesni_support: ");
+	auxMsg = extendedFeatures.vaes ? "Yes" : "No";
+	printf(auxMsg);
+	printf("\n");
+	printf("vpclmulqdq_support: ");
+	auxMsg = extendedFeatures.vpclmulqdq ? "Yes" : "No";
+	printf(auxMsg);
+	printf("\n");
+	printf("f16c_support: ");
+	auxMsg = commonFeatures.f16c ? "Yes" : "No";
+	printf(auxMsg);
+	printf("\n");
+	printf("fma_support: ");
+	auxMsg = commonFeatures.fma ? "Yes" : "No";
+	printf(auxMsg);
+	printf("\n");
+	printf("avx2_support: ");
+	auxMsg = extendedFeatures.avx2? "Yes" : "No";
+	printf(auxMsg);
+	printf("\n");
+}
+
 void printMemContent(uint64_t startPos, uint8_t* memContent, size_t amount){
 	char numStr[3];
 	for(size_t i=0 ; i < amount ; i++){

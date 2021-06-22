@@ -27,7 +27,7 @@ EXTERN sysWriteDateTime
 EXTERN sysSetIdle
 EXTERN sysClear
 EXTERN sysGetActiveDisplay
-EXTERN sysWriteCpuFeatures
+EXTERN sysGetCpuFeatures
 EXTERN sysSwapActiveDisplay
 EXTERN sysSleep
 EXTERN sysDelKey
@@ -119,6 +119,7 @@ SECTION .text
 
 _sysCallHandler:
 		pushState
+		mov [reg_stack_pointer], rsp
 		cmp rax, 0
 		je syscall_0
 		cmp rax, 1
@@ -170,7 +171,7 @@ _sysCallHandler:
 		call sysGetActiveDisplay
 		jmp endSysCallHandler
 	syscall_8:
-		call sysWriteCpuFeatures
+		call sysGetCpuFeatures
 		jmp endSysCallHandler
 	syscall_9:
 		call sysSwapActiveDisplay
@@ -183,7 +184,8 @@ _sysCallHandler:
 		jmp endSysCallHandler
 		
 	endSysCallHandler:
-		mov [rsp+8], rax
+		mov rbx, [reg_stack_pointer]
+		mov [rbx], rax
 		popState
 		iretq
 

@@ -43,8 +43,8 @@ int sysGetActiveDisplay(){
     return getCurrentDisplay();
 }
 
-void sysWriteCpuFeatures(){
-    printCpuFeatures();
+bool sysGetCpuFeatures(CommonFeatures* commonFeatures, ExtendedFeatures* extendedFeatures){
+    return getCpuFeatures(commonFeatures, extendedFeatures);
 }
 
 void sysSwapActiveDisplay(){

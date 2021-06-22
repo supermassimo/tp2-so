@@ -8,7 +8,7 @@ extern void writeDateTime(int utc);
 extern void invalidOpcodeThrower();
 extern void setIdle(int idle);
 extern void clear();
-extern void writeCpuFeatures();
+extern bool getCpuFeatures(CommonFeatures* commonFeatures, ExtendedFeatures* extendedFeatures);
 extern void sleep(long seconds);
 extern int getQuadratic(float a, float b, float c, float*, float*);
 
@@ -223,7 +223,14 @@ static void cpufeaturesHandler(char params[][MAX_PARAMETER_LENGTH], size_t param
         printErr("Too many parameters for command 'cpufeatures'");
         return;
     }
-    writeCpuFeatures();
+    CommonFeatures commonFeatures;
+    ExtendedFeatures extendedFeatures;
+    int result = getCpuFeatures(&commonFeatures, &extendedFeatures);
+    if(!result){
+        printErr("cpuid instruction not supported");
+        return;
+    }
+    printFeatures(commonFeatures, extendedFeatures);
 }
 
 static void sleepHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){

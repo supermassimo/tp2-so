@@ -10,7 +10,7 @@ void sysWriteDateTime(int utc);
 void sysSetIdle(int isIdle);
 void sysClear();
 int sysGetActiveDisplay();
-void sysWriteCpuFeatures();
+bool sysGetCpuFeatures(CommonFeatures* commonFeatures, ExtendedFeatures* extendedFeatures);
 void sysSwapActiveDisplay();
 void sysSleep(long seconds);
 void sysDelKey();

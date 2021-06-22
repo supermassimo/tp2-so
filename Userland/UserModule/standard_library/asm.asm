@@ -5,7 +5,7 @@ GLOBAL getMemContent
 GLOBAL writeDateTime
 GLOBAL setIdle
 GLOBAL clear
-GLOBAL writeCpuFeatures
+GLOBAL getCpuFeatures
 GLOBAL invalidOpcodeThrower
 GLOBAL swapConsole
 GLOBAL sleep
@@ -55,7 +55,7 @@ clear:
 
     ret
 
-writeCpuFeatures:
+getCpuFeatures:
     mov rax, 8
     int 80h
 

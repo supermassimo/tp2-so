@@ -131,63 +131,39 @@ void numToStrSized(size_t value, char* target, size_t base, size_t length){
 	}
 }
 
-static int hasFeature(uint32_t features, int feature){
+static bool hasFeature(uint32_t features, int feature){
 	return (features >> feature) & 1;
 }
 
-void printCpuFeatures(){
-	char* auxMsg;
+static void fillCommonFeatures(CommonFeatures* features, uint32_t featuresEDX, uint32_t featuresECX){
+	features -> mmx = hasFeature(featuresEDX, mmx);
+	features -> sse = hasFeature(featuresEDX, sse);
+	features -> sse2 = hasFeature(featuresEDX, sse2);
+	features -> sse3 = hasFeature(featuresECX, sse3);
+	features -> sse41 = hasFeature(featuresECX, sse41);
+	features -> sse42 = hasFeature(featuresECX, sse42);
+	features -> aes = hasFeature(featuresECX, aes);
+	features -> pclmulqdq = hasFeature(featuresECX, pclmulqdq);
+	features -> avx = hasFeature(featuresECX, avx);
+	features -> f16c = hasFeature(featuresECX, f16c);
+	features -> fma = hasFeature(featuresECX, fma);
+}
+
+static void fillExtendedFeatures(ExtendedFeatures* features, uint32_t featuresEBX, uint32_t featuresECX){
+	features -> vaes = hasFeature(featuresECX, vaes);
+	features -> vpclmulqdq = hasFeature(featuresECX, vpclmulqdq);
+	features -> avx2 = hasFeature(featuresEBX, avx2);
+}
+
+bool getCpuFeatures(CommonFeatures* commonFeatures, ExtendedFeatures* extendedFeatures){
+	if(!getCpuIdSupport()){
+		return 0;
+	}
 	uint32_t featuresEDX = getCpuFeaturesEDXRaw();
 	uint32_t featuresECX = getCpuFeaturesECXRaw();
 	uint32_t extendedFeaturesEBX = getCpuExtendedFeaturesEBXRaw();
 	uint32_t extendedFeaturesECX = getCpuExtendedFeaturesECXRaw();
-	int cpuidSupport;
-	print("cpuid_support: ");
-	auxMsg = (cpuidSupport = getCpuIdSupport()) == 1? "Yes" : "No";
-	println(auxMsg);
-	// Calling cpuid without cpu support would generate an invalid opcode exception
-	if(cpuidSupport){
-		print("mmx_support: ");
-		auxMsg = (hasFeature(featuresEDX, mmx))? "Yes" : "No";
-		println(auxMsg);
-		print("sse_support: ");
-		auxMsg = (hasFeature(featuresEDX, sse))? "Yes" : "No";
-		println(auxMsg);
-		print("sse2_support: ");
-		auxMsg = (hasFeature(featuresEDX, sse2))? "Yes" : "No";
-		println(auxMsg);
-		print("sse3_support: ");
-		auxMsg = (hasFeature(featuresECX, sse3))? "Yes" : "No";
-		println(auxMsg);
-		print("sse41_support: ");
-		auxMsg = (hasFeature(featuresECX, sse41))? "Yes" : "No";
-		println(auxMsg);
-		print("sse42_support: ");
-		auxMsg = (hasFeature(featuresECX, sse42))? "Yes" : "No";
-		println(auxMsg);
-		print("aesni_support: ");
-		auxMsg = (hasFeature(featuresECX, aes))? "Yes" : "No";
-		println(auxMsg);
-		print("pclmulqdq_support: ");
-		auxMsg = (hasFeature(featuresECX, pclmulqdq))? "Yes" : "No";
-		println(auxMsg);
-		print("avx_support: ");
-		auxMsg = (hasFeature(featuresECX, avx))? "Yes" : "No";
-		println(auxMsg);
-		print("vaesni_support: ");
-		auxMsg = (hasFeature(extendedFeaturesECX, vaes))? "Yes" : "No";
-		println(auxMsg);
-		print("vpclmulqdq_support: ");
-		auxMsg = (hasFeature(extendedFeaturesECX, vpclmulqdq))? "Yes" : "No";
-		println(auxMsg);
-		print("f16c_support: ");
-		auxMsg = (hasFeature(featuresECX, f16c))? "Yes" : "No";
-		println(auxMsg);
-		print("fma_support: ");
-		auxMsg = (hasFeature(featuresECX, fma))? "Yes" : "No";
-		println(auxMsg);
-		print("avx2_support: ");
-		auxMsg = (hasFeature(extendedFeaturesEBX, avx2))? "Yes" : "No";
-		println(auxMsg);
-	}
+	fillCommonFeatures(commonFeatures, featuresEDX, featuresECX);
+	fillExtendedFeatures(extendedFeatures, extendedFeaturesEBX, extendedFeaturesECX);
+	return 1;
 }
