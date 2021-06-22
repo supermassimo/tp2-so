@@ -3,12 +3,12 @@
 #include <standardIn.h>
 #include <dualDisplayManager.h>
 
-extern captureRegistries();
+extern void captureRegistries();
 
-static unsigned char keyboard_buffer_0[BUFFER_SIZE];
+static char keyboard_buffer_0[BUFFER_SIZE];
 static unsigned int nextToStore_0 = 0;
 
-static unsigned char keyboard_buffer_1[BUFFER_SIZE];
+static char keyboard_buffer_1[BUFFER_SIZE];
 static unsigned int nextToStore_1 = 0;
 
 static int isEnabled = 1;

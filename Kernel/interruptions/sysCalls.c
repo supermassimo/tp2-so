@@ -1,9 +1,3 @@
-#include <lib.h>
-#include <time.h>
-#include <console.h>
-#include <standardIn.h>
-#include <keyboard.h>
-#include <dualDisplayManager.h>
 #include <sysCalls.h>
 
 void sysReadInput(char* buffer, size_t buffer_size){

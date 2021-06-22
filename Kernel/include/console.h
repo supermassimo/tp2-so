@@ -25,6 +25,7 @@ void printCharCol(const char character, uint8_t foreColor, uint8_t backColor);
 void printInt(long num, size_t base);
 void printIntCol(long num, size_t base, uint8_t foreColor, uint8_t backColor);
 void printErr(const char *string);
+void printRegistries(const Registries * regs);
 void newLine();
 void clearScreen();
 void clearActiveConsole();

@@ -20,6 +20,8 @@ GLOBAL _sysCallHandler
 
 GLOBAL captureRegistries
 
+EXTERN setIdle
+
 EXTERN sysReadInput
 EXTERN sysWrite
 EXTERN sysGetMemContent
@@ -114,6 +116,8 @@ SECTION .text
 	popState
 	add rsp, 8
 	push USER_MODULE_ADDRESS
+	mov rdi, 1
+	call setIdle
 	iretq
 %endmacro
 

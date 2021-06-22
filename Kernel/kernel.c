@@ -1,11 +1,7 @@
 #include <stdint.h>
 #include <moduleLoader.h>
-#include <naiveConsole.h>
 #include <lib.h>
-#include <rtc.h>
 #include <console.h>
-#include <sysCalls.h>
-#include <standardIn.h>
 
 extern uint8_t text;
 extern uint8_t rodata;

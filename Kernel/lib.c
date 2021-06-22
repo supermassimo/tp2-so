@@ -72,7 +72,7 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 
 // Fills target array with #count bytes of memory starting from startPos
 void getMemContent(uint64_t startPos, uint8_t* target, size_t count){
-	char *pos = startPos;
+	char *pos = (char*)startPos;
 	for(size_t i=0 ; i < count ; i++){
 		target[i] = pos[i];
 	}
