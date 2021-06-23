@@ -2,9 +2,6 @@
 #include "./standard_library/include/mystdio.h"
 #include "./standard_library/include/mystdlib.h"
 #include "./standard_library/include/commands.h"
-#include "./standard_library/include/consoleStruct.h"
-
-extern void setupConsole(ConsoleParameters* setupValues);
 
 void waitForInput(){
 	char input[120];
@@ -21,26 +18,11 @@ void waitForInput(){
 }
 
 int main() {
-	ConsoleParameters setupValues = {
-		'>',
-		'|',
-		Green,
-		Blue,
-		Black,
-		Black,
-		White,
-		White,
-		DarkGray,
-		DarkGray,
-		Red,
-		Red,
-		Brown,
-		Brown,
-		'~',
-		'\n',
-		'\b'
-	};
-	setupConsole(&setupValues);
+	consoleSwap();
+	printf("> ");
+	consoleSwap();
+	printf("> ");
+	
 	waitForInput();
 	return 0xDEADBEEF;
 }

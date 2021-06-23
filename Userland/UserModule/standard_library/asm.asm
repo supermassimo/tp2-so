@@ -10,7 +10,6 @@ GLOBAL invalidOpcodeThrower
 GLOBAL swapConsole
 GLOBAL sleep
 GLOBAL delKey
-GLOBAL setupConsole
 
 section .text
 
@@ -80,11 +79,6 @@ delKey:
 
     ret
 
-setupConsole:
-    mov rax, 12
-    int 80h
-
-    ret
 invalidOpcodeThrower:
     ud2
     ret
