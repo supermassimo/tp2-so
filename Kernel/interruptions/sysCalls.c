@@ -45,10 +45,14 @@ void sysSwapActiveDisplay(){
     swapDisplay();
 }
 
-void sysSleep(long seconds){
+void sysSleep(size_t seconds){
     timerTickSleep(seconds);
 }
 
 void sysDelKey(){
     keyboardDeleteKey();
+}
+
+void sysSetupConsole(const ConsoleParameters consoleValues){
+
 }

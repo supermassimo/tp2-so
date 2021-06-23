@@ -1,19 +1,24 @@
-typedef struct consoleParameters {
+typedef enum Color {
+	Black, Blue, Green, Cyan, Red, Purple, Brown, Gray, DarkGray, LightBlue, LightGreen, LightCyan, 
+	LightRed, LightPurple, Yellow, White
+} Color;
+
+typedef struct ConsoleParameters {
     int cursorSymbol;
     int delimiterSymbol;
-    int leftDelimeterColor;
-    int rightDelimeterColor;
-    int leftBackgroundColor;
-    int rightBackgroundColor;
-    int leftActiveTextColor;
-    int rightActiveTextColor;
-    int leftInactiveTextColor;
-    int rightInactiveTextColor;
-    int leftActiveErrorColor;
-    int rightActiveErrorColor;
-    int leftInactiveErrorColor;
-    int rightInactiveErrorColor;
+    Color leftDelimeterColor;
+    Color rightDelimeterColor;
+    Color leftBackgroundColor;
+    Color rightBackgroundColor;
+    Color leftActiveTextColor;
+    Color rightActiveTextColor;
+    Color leftInactiveTextColor;
+    Color rightInactiveTextColor;
+    Color leftActiveErrorColor;
+    Color rightActiveErrorColor;
+    Color leftInactiveErrorColor;
+    Color rightInactiveErrorColor;
     int registryCaptureKey;
     int enterKey;
     int deleteKey;
-} consoleParameters;
+} ConsoleParameters
