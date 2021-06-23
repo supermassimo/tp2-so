@@ -43,7 +43,7 @@ typedef struct Console
 
 static const int consoleAmount = 2;
 
-static Console consoles[2];
+static Console consoles[consoleAmount];
 
 static void drawDelimiterInRow(size_t col, size_t row, size_t girth, uint8_t colorByte){
 	char* delim = SCR_BASE_ADDR + col*2 + row*SCR_COLS*2 - 2;
@@ -310,10 +310,7 @@ void printRegistries(const Registries * regs){
 	printRegistry("RIP: ", regs -> RIP);
 }
 
-static int wasInitialized = 0;
-
 void initializeConsole (ConsoleParameters params){
-	if (wasInitialized == 1) return;
 	parameters = params;
 
 	Console cons0 = {(const char*)SCR_BASE_ADDR, (const char*)SCR_BASE_ADDR, SCR_ROWS, SCR_SIDE_COLS, parameters.leftActiveTextColor, parameters.leftInactiveTextColor, parameters.leftBackgroundColor, parameters.leftInactiveTextColor, parameters.leftActiveErrorColor, parameters.leftDelimeterColor};
@@ -330,6 +327,4 @@ void initializeConsole (ConsoleParameters params){
 	swapDisplay();
 	print(cursor);
 	swapDisplay();
-
-	wasInitialized = 1;
 }
