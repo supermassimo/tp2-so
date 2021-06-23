@@ -17,11 +17,16 @@ void waitForInput(){
 	};
 }
 
+static int initialized = 0;
+
 int main() {
-	consoleSwap();
-	printf("> ");
-	consoleSwap();
-	printf("> ");
+	of (initialized != 1){ //initialization routine for first time, can put anything here that needs to only run once on startup
+		consoleSwap();
+		printf("> ");
+		consoleSwap();
+		printf("> ");
+		initialized = 1;
+	}
 	
 	waitForInput();
 	return 0xDEADBEEF;
