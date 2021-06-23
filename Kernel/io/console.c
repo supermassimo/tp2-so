@@ -313,13 +313,12 @@ void printRegistries(const Registries * regs){
 void initializeConsole (ConsoleParameters params){
 	parameters = params;
 
-	Console cons0 = {(const char*)SCR_BASE_ADDR, (const char*)SCR_BASE_ADDR, SCR_ROWS, SCR_SIDE_COLS, parameters.leftActiveTextColor, parameters.leftInactiveTextColor, parameters.leftBackgroundColor, parameters.leftInactiveTextColor, parameters.leftActiveErrorColor, parameters.leftDelimeterColor};
-	Console cons1 = {(const char*)SCR_BASE_ADDR+(SCR_SIDE_COLS+LIMITER_GIRTH)*2, (const char*)SCR_BASE_ADDR+(SCR_SIDE_COLS+LIMITER_GIRTH)*2, SCR_ROWS, SCR_SIDE_COLS, parameters.rightActiveTextColor, parameters.rightInactiveTextColor, parameters.rightBackgroundColor, parameters.rightInactiveTextColor, parameters.rightActiveErrorColor, parameters.rightDelimeterColor};
-
-	consoles[0] = cons0;
-	consoles[1] = cons1;
+	consoles[] = {
+	{(const char*)SCR_BASE_ADDR, (const char*)SCR_BASE_ADDR, SCR_ROWS, SCR_SIDE_COLS, parameters.leftActiveTextColor, parameters.leftInactiveTextColor, parameters.leftBackgroundColor, parameters.leftInactiveTextColor, parameters.leftActiveErrorColor, parameters.leftDelimiterColor},
+	{(const char*)SCR_BASE_ADDR+(SCR_SIDE_COLS+LIMITER_GIRTH)*2, (const char*)SCR_BASE_ADDR+(SCR_SIDE_COLS+LIMITER_GIRTH)*2, SCR_ROWS, SCR_SIDE_COLS, parameters.rightActiveTextColor, parameters.rightInactiveTextColor, parameters.rightBackgroundColor, parameters.rightInactiveTextColor, parameters.rightActiveErrorColor, parameters.rightDelimiterColor}
+	};
 	
-	drawDelimiter(SCR_SIDE_COLS+1, LIMITER_GIRTH, parameters.leftDelimeterColor);
+	drawDelimiter(SCR_SIDE_COLS+1, LIMITER_GIRTH, parameters.leftDelimiterColor);
 
 	char cursor[] = "  ";
 	cursor[0] = parameters.cursorSymbol;

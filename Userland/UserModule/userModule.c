@@ -4,7 +4,7 @@
 #include "./standard_library/include/commands.h"
 #include "./standard_library/include/consoleStruct.h"
 
-extern void setupConsole(ConsoleParameters setupValues);
+extern void setupConsole(ConsoleParameters* setupValues);
 
 void waitForInput(){
 	char input[120];
@@ -38,7 +38,7 @@ int main() {
 		'\n',
 		'\b'
 	};
-	setupConsole(setupValues);
+	setupConsole(&setupValues);
 	waitForInput();
 	return 0xDEADBEEF;
 }

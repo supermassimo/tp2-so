@@ -148,8 +148,6 @@ _sysCallHandler:
 		je syscall_10
 		cmp rax, 11
 		je syscall_11
-		cmp rax, 12
-		je syscall_12
 	syscall_0:
 		call sysReadInput
 		jmp endSysCallHandler
@@ -187,9 +185,6 @@ _sysCallHandler:
 		jmp endSysCallHandler
 	syscall_11:
 		call sysDelKey
-		jmp endSysCallHandler
-	syscall_12:
-		call sysSetupConsole
 		jmp endSysCallHandler
 		
 	endSysCallHandler:

@@ -19,8 +19,7 @@ void sysClear();
 int sysGetActiveDisplay();
 bool sysGetCpuFeatures(CommonFeatures* commonFeatures, ExtendedFeatures* extendedFeatures);
 void sysSwapActiveDisplay();
-void sysSleep(size_t seconds);
+void sysSleep(long seconds);
 void sysDelKey();
-void setupConsole(const ConsoleParameters consoleValues);
 
 #endif
