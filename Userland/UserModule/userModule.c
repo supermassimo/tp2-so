@@ -20,7 +20,7 @@ void waitForInput(){
 static int initialized = 0;
 
 int main() {
-	of (initialized != 1){ //initialization routine for first time, can put anything here that needs to only run once on startup
+	if (initialized != 1){ //initialization routine for first time, can put anything here that needs to only run once on startup
 		consoleSwap();
 		printf("> ");
 		consoleSwap();
