@@ -5,11 +5,6 @@
 #include <stddef.h>
 #include <regStruct.h>
 
-typedef enum Color {
-	Black, Blue, Green, Cyan, Red, Purple, Brown, Gray, DarkGray, LightBlue, LightGreen, LightCyan, 
-	LightRed, LightPurple, Yellow, White
-} Color;
-
 typedef struct ConsoleParameters {
     int cursorSymbol;
     int delimiterSymbol;
@@ -30,7 +25,12 @@ typedef struct ConsoleParameters {
     int deleteKey;
 } ConsoleParameters;
 
-void initializeConsole(ConsoleParameters parameters);
+typedef enum Color {
+	Black, Blue, Green, Cyan, Red, Purple, Brown, Gray, DarkGray, LightBlue, LightGreen, LightCyan, 
+	LightRed, LightPurple, Yellow, White
+} Color;
+
+void initializeConsole();
 void changeConsoleSide(int targetConsole);
 void setActiveForeColor(int consoleIdx, Color foreColor);
 void setInactiveForeColor(int consoleIdx, Color foreColor);
@@ -50,6 +50,5 @@ void newLine();
 void clearScreen();
 void clearActiveConsole();
 void deleteKeyConsole();
-ConsoleParameters getParameters();
 
 #endif

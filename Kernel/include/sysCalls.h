@@ -21,6 +21,6 @@ bool sysGetCpuFeatures(CommonFeatures* commonFeatures, ExtendedFeatures* extende
 void sysSwapActiveDisplay();
 void sysSleep(size_t seconds);
 void sysDelKey();
-void sysSetupConsole(ConsoleParameters consoleValues);
+void setupConsole(const ConsoleParameters consoleValues);
 
 #endif
