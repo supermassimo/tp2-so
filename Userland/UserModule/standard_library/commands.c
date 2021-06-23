@@ -2,7 +2,7 @@
 #include "./include/mystdio.h"
 #include "./include/mystdlib.h"
 
-extern void getRegistries(uint64_t *regs);
+extern void getRegistries(Registries* regs);
 extern void getMemContent(uint64_t startPos, uint8_t* target, size_t amount);
 extern void invalidOpcodeThrower();
 extern void setIdle(int idle);
@@ -152,8 +152,8 @@ static void printmemHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmo
     if((int64_t)memPos == -1)
         return;
     char memContent[PRINTMEM_BYTES];
-    getMemContent(memPos, memContent, PRINTMEM_BYTES);
-    printMemContent(memPos, memContent, PRINTMEM_BYTES);
+    getMemContent(memPos, (uint8_t*)memContent, PRINTMEM_BYTES);
+    printMemContent(memPos, (uint8_t*)memContent, PRINTMEM_BYTES);
 }
 
 static void datetimeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
