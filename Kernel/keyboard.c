@@ -96,6 +96,7 @@ void pushSingleKey(int c){
 // 0-31, 127 are reserved ASCII control characters
 // we also check for the special keys in case they were set to something that isnt an ascii control key
 static int isControlKey(int c){
+    ConsoleParameters parameters = getParameters();
 	return (c < 32 || c == 127) ||
     (c == parameters.registryCaptureKey || c == parameters.enterKey || c == parameters.deleteKey);
 }
@@ -115,6 +116,7 @@ static int readKey(){
 
 void keyboardIntHandler(){
     if(isEnabled){
+        ConsoleParameters parameters = getParameters();
         int key = readKey();
         if (isControlKey(key)){
             if (key == parameters.registryCaptureKey){ 

@@ -53,6 +53,6 @@ void sysDelKey(){
     keyboardDeleteKey();
 }
 
-void sysSetupConsole(const ConsoleParameters consoleValues){
-
+void sysSetupConsole(ConsoleParameters parameters){
+    initializeConsole(parameters);
 }

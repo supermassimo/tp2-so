@@ -33,6 +33,7 @@ EXTERN sysGetCpuFeatures
 EXTERN sysSwapActiveDisplay
 EXTERN sysSleep
 EXTERN sysDelKey
+EXTERN sysSetupConsole
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher

@@ -9,7 +9,7 @@
 #define SCR_SIDE_COLS	39
 #define LIMITER_GIRTH	2
 
-static ConsoleParameters parameters  = {	// Default parameters
+ConsoleParameters parameters  = {	// Default parameters
 		'>','|',
 		Green,Blue,Black,Black,White,White,DarkGray,DarkGray,Red,Red,Brown,Brown,
 		'~','\n','\b'
@@ -43,7 +43,11 @@ typedef struct Console
 
 static const int consoleAmount = 2;
 
-static Console consoles[2];
+static Console consoles[2] = {{0,0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0,0}};
+
+ConsoleParameters getParameters(){
+	return parameters;
+}
 
 static void drawDelimiterInRow(size_t col, size_t row, size_t girth, uint8_t colorByte){
 	char* delim = SCR_BASE_ADDR + col*2 + row*SCR_COLS*2 - 2;
