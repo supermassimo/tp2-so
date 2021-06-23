@@ -93,11 +93,9 @@ void pushSingleKey(int c){
     setInputBuffer(str, 1);
 }
 
-// 0-31, 127 are reserved ASCII control characters
-// we also check for the special keys in case they were set to something that isnt an ascii control key
+// 0-31, 126 and 127 are reserved ASCII control characters
 static int isControlKey(int c){
-	return (c < 32 || c == 127) ||
-    (c == parameters.registryCaptureKey || c == parameters.enterKey || c == parameters.deleteKey);
+	return c < 32 || c == 126 || c == 127;
 }
 
 // Reads the input
@@ -117,14 +115,11 @@ void keyboardIntHandler(){
     if(isEnabled){
         int key = readKey();
         if (isControlKey(key)){
-            if (key == parameters.registryCaptureKey){ 
+            if (key == '~'){ //This key must be handled by the kernel as the registry capture has to be done within the same interrupt
                 captureRegistries();
-            } else if(key == parameters.enterKey){
+            } else if(key == '\n'){
                 typeKey(key);
                 pushKeyboardBuffer();
-            } else if(key == parameters.deleteKey){
-                typeKey(key);
-                keyboardDeleteKey();
             }
             else
                 pushSingleKey(key);
