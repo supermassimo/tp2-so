@@ -27,7 +27,6 @@ int main() {
 		printf("> ");
 		initialized = 1;
 	}
-	
 	waitForInput();
 	return 0xDEADBEEF;
 }

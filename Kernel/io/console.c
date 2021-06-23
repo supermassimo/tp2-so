@@ -3,13 +3,13 @@
 #include <rtc.h>
 #include <standardIn.h>
 
-#define SCR_BASE_ADDR 	0xB8000
+#define SCR_BASE_ADDR 	(char*)0xB8000
 #define SCR_ROWS 		25
 #define SCR_COLS 		80
 #define SCR_SIDE_COLS	39
 #define LIMITER_GIRTH	2
 
-static char* scrPos = SCR_BASE_ADDR; 		// Current position on the screen
+static char* scrPos = (char*) SCR_BASE_ADDR; 		// Current position on the screen
 static uint8_t foreColor = White;			// Default Forecolor
 static uint8_t backColor = Black;			// Default Backcolor
 static uint8_t errorColor = Red;
@@ -40,14 +40,14 @@ typedef struct Console
 */
 
 static Console consoles[] = {
-	{(const char*)SCR_BASE_ADDR, (const char*)SCR_BASE_ADDR, SCR_ROWS, SCR_SIDE_COLS, White, DarkGray, Black, Brown, Red},
-	{(const char*)SCR_BASE_ADDR+(SCR_SIDE_COLS+LIMITER_GIRTH)*2, (const char*)SCR_BASE_ADDR+(SCR_SIDE_COLS+LIMITER_GIRTH)*2, SCR_ROWS, SCR_SIDE_COLS, White, DarkGray, Black, Brown, Red}
+	{(const char*)SCR_BASE_ADDR, (char*)SCR_BASE_ADDR, SCR_ROWS, SCR_SIDE_COLS, White, DarkGray, Black, Brown, Red},
+	{(const char*)SCR_BASE_ADDR+(SCR_SIDE_COLS+LIMITER_GIRTH)*2, (char*)SCR_BASE_ADDR+(SCR_SIDE_COLS+LIMITER_GIRTH)*2, SCR_ROWS, SCR_SIDE_COLS, White, DarkGray, Black, Brown, Red}
 };
 
 static const int consoleAmount = 2;
 
 static void drawDelimiterInRow(size_t col, size_t row, size_t girth, uint8_t colorByte){
-	char* delim = SCR_BASE_ADDR + col*2 + row*SCR_COLS*2 - 2;
+	char* delim = (char*)SCR_BASE_ADDR + col*2 + row*SCR_COLS*2 - 2;
 	for (int x=0; x<girth; x++){
 		*(delim+(x*2)) = '|';
         *(delim+1+(x*2)) = colorByte;
@@ -77,13 +77,12 @@ static uint8_t getColorForFillScreen(int consoleIdx, uint8_t thisColor, int enab
 }
 
 static void fillScreen(int consoleIdx, uint8_t backColor, int enabled){
-	char *current = consoles[consoleIdx].startPos;
-	size_t extraSpaces = (SCR_SIDE_COLS + LIMITER_GIRTH) * (consoleAmount-1);
+	char *current = (char*)consoles[consoleIdx].startPos;
 	for(int i=1 ; i <= consoles[consoleIdx].rows ; i++){
 		for(int j=1 ; j < consoles[consoleIdx].cols*2 ; j+=2){
 			*(current+j) = getColorByte(getColorForFillScreen(consoleIdx, *(current+j), enabled), backColor);
 		}
-		current = consoles[consoleIdx].startPos + SCR_COLS*2*i;
+		current = (char*)consoles[consoleIdx].startPos + SCR_COLS*2*i;
 	}
 }
 
@@ -121,9 +120,9 @@ void changeConsoleSide(int targetConsole){
 }
 
 void newLine(){
-	int current = scrPos - SCR_BASE_ADDR;
+	int current = (char*)scrPos - SCR_BASE_ADDR;
 	current /= SCR_COLS * 2;
-	scrPos = consoles[activeConsole].startPos + (current+1) * SCR_COLS * 2;
+	scrPos = (char*)consoles[activeConsole].startPos + (current+1) * SCR_COLS * 2;
 }
 
 void setActiveErrorColor(int consoleIdx, Color foreColor){
@@ -175,7 +174,7 @@ static uint64_t getPrevCharAddr(int consoleIdx){
 void deleteKeyConsole(){
 	char* finalPos;
 	if(scrPos-2 >= consoles[activeConsole].startPos){			// Check if there are chars to delete
-		finalPos = getPrevCharAddr(activeConsole);
+		finalPos = (char*)getPrevCharAddr(activeConsole);
 		*finalPos = *(finalPos+2);								// Backspace functionality
 		*(finalPos+1) = getColorByte(Black, Black);				// Fill current char with next one and move cursor one place back
 		scrPos = finalPos;
@@ -183,7 +182,7 @@ void deleteKeyConsole(){
 }
 
 static void scrollUpActiveConsole(){
-	char* current = consoles[activeConsole].startPos;
+	char* current = (char*)consoles[activeConsole].startPos;
 	// Muevo todos los caracteres  de la consola activa una posicion hacia arriba
 	for(int i=1 ; i < consoles[activeConsole].rows ; i++){
 		for(int j=0 ; j < consoles[activeConsole].cols ; j++){
@@ -191,7 +190,7 @@ static void scrollUpActiveConsole(){
 			*(current+1) = *(current+SCR_COLS*2+1);
 			current += 2;
 		}
-		current = consoles[activeConsole].startPos + SCR_COLS*2*i;
+		current = (char*)consoles[activeConsole].startPos + SCR_COLS*2*i;
 	}
 	// Limpio la última línea, dejando el color previamente usado
 	for(int j=0 ; j < consoles[activeConsole].cols ; j++){
@@ -199,7 +198,7 @@ static void scrollUpActiveConsole(){
 		current += 2;
 	}
 	// Resetting the cursor to first char of last row
-	scrPos = consoles[activeConsole].startPos + (consoles[activeConsole].rows-1)*SCR_COLS*2;
+	scrPos = (char*)consoles[activeConsole].startPos + (consoles[activeConsole].rows-1)*SCR_COLS*2;
 }
 
 void printChar(char c){
@@ -219,10 +218,10 @@ void printCharCol(char c, uint8_t foreColor, uint8_t backColor){
 			newLine();
 		else{
 			size_t prevRow = offset / (SCR_COLS*2);
-			scrPos = consoles[activeConsole].startPos + SCR_COLS*2*(prevRow+1);
+			scrPos = (char*)consoles[activeConsole].startPos + SCR_COLS*2*(prevRow+1);
 		}
 	}
-	if(scrPos >= SCR_BASE_ADDR + SCR_ROWS * SCR_COLS * 2){
+	if(scrPos >= (char*)(SCR_BASE_ADDR + SCR_ROWS * SCR_COLS * 2)){
         scrollUpActiveConsole();
     }
 	if(c == '\n'){
@@ -281,16 +280,16 @@ void clearScreen(){
 }
 
 void clearActiveConsole(){
-	char *current = consoles[activeConsole].startPos;
+	char *current = (char*)consoles[activeConsole].startPos;
 	for(int i=1 ; i <= consoles[activeConsole].rows ; i++){
 		for(int j=0 ; j < consoles[activeConsole].cols ; j++){
 			*current = 0;
 			*(current+1) = 0;
 			current += 2;
 		}
-		current = consoles[activeConsole].startPos + SCR_COLS*2*i;
+		current = (char*)consoles[activeConsole].startPos + SCR_COLS*2*i;
 	}
-	scrPos = consoles[activeConsole].startPos;
+	scrPos = (char*)consoles[activeConsole].startPos;
 }
 
 static void printRegistry(const char* msg, uint64_t value){
