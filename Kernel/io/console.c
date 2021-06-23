@@ -43,7 +43,10 @@ typedef struct Console
 
 static const int consoleAmount = 2;
 
-static Console consoles[2] = {{0,0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0,0}};
+static Console consoles[] = {
+	{(const char*)SCR_BASE_ADDR, (const char*)SCR_BASE_ADDR, SCR_ROWS, SCR_SIDE_COLS, White, DarkGray, Black, Brown, Red},
+	{(const char*)SCR_BASE_ADDR+(SCR_SIDE_COLS+LIMITER_GIRTH)*2, (const char*)SCR_BASE_ADDR+(SCR_SIDE_COLS+LIMITER_GIRTH)*2, SCR_ROWS, SCR_SIDE_COLS, White, DarkGray, Black, Brown, Red}
+};
 
 ConsoleParameters getParameters(){
 	return parameters;
@@ -323,8 +326,20 @@ void initializeConsole (ConsoleParameters params){
 	Console cons0 = {(const char*)SCR_BASE_ADDR, (const char*)SCR_BASE_ADDR, SCR_ROWS, SCR_SIDE_COLS, parameters.leftActiveTextColor, parameters.leftInactiveTextColor, parameters.leftBackgroundColor, parameters.leftInactiveTextColor, parameters.leftActiveErrorColor, parameters.leftDelimeterColor};
 	Console cons1 = {(const char*)SCR_BASE_ADDR+(SCR_SIDE_COLS+LIMITER_GIRTH)*2, (const char*)SCR_BASE_ADDR+(SCR_SIDE_COLS+LIMITER_GIRTH)*2, SCR_ROWS, SCR_SIDE_COLS, parameters.rightActiveTextColor, parameters.rightInactiveTextColor, parameters.rightBackgroundColor, parameters.rightInactiveTextColor, parameters.rightActiveErrorColor, parameters.rightDelimeterColor};
 
-	consoles[0] = cons0;
-	consoles[1] = cons1;
+
+
+	consoles[0].activeForeColor = parameters.leftActiveTextColor;
+	consoles[0].inactiveForeColor = parameters.leftInactiveTextColor;
+	consoles[0].backColor = parameters.leftBackgroundColor;
+	consoles[0].inactiveErrorColor = parameters.leftInactiveErrorColor;
+	consoles[0].errorColor = parameters.leftActiveErrorColor;
+	consoles[0].delimiterColor = parameters.leftDelimeterColor;
+	consoles[1].activeForeColor = parameters.rightActiveTextColor;
+	consoles[1].inactiveForeColor = parameters.rightInactiveTextColor;
+	consoles[1].backColor = parameters.rightBackgroundColor;
+	consoles[1].inactiveErrorColor = parameters.rightInactiveErrorColor;
+	consoles[1].errorColor = parameters.rightActiveErrorColor;
+	consoles[1].delimiterColor = parameters.rightDelimeterColor;
 	
 	drawDelimiter(SCR_SIDE_COLS+1, LIMITER_GIRTH, parameters.leftDelimeterColor);
 
@@ -337,3 +352,10 @@ void initializeConsole (ConsoleParameters params){
 
 	wasInitialized = 1;
 }
+
+	// uint8_t activeForeColor;
+	// uint8_t inactiveForeColor;
+	// uint8_t backColor;
+	// uint8_t inactiveErrorColor;
+	// uint8_t errorColor;
+	// uint8_t delimiterColor;
