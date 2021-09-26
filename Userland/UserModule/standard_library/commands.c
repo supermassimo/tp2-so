@@ -1,6 +1,7 @@
 #include "./include/commands.h"
 #include "./include/mystdio.h"
 #include "./include/mystdlib.h"
+#include <stdlib.h>
 
 extern void getRegistries(Registries* regs);
 extern void getMemContent(uint64_t startPos, uint8_t* target, size_t amount);
@@ -106,6 +107,27 @@ static void echofloatHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmoun
     }
 }
 
+// for testing purposes
+static void testallocHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmount){
+    if(paramAmount < 1){
+        printErr("Missing parameter for command 'testalloc'");
+        return;
+    }
+    if(paramAmount > 2){
+        printErr("Too many parameters for command 'testalloc'");
+        return;
+    }
+    int num = atoi(params[0]);
+    void* mem = malloc(sizeof(int));
+    *((int*)mem) = num;
+
+    int num2 = *((int*)mem);
+    printInt(num2, 10, 10);
+    printf("\nMemory allocated at: ");
+    printInt((long)mem, 16, 16);
+    printf("\n");
+}
+
 static void echoHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmount){
     if(paramAmount < 1){
         printErr("Missing parameter for command 'echo'");
@@ -195,8 +217,9 @@ static helpStruct help_messages[] = {
     {"cpufeatures", "'cpufeatures': Print cpu support for key features like mmx, sse, avx, etc\nUse: 'cpufeatures'\n"},
     {"sleep", "'sleep': Causes the system to sleep for the seconds specified\nUse: 'sleep' [seconds]\n'seconds': Number of seconds for the system to sleep\n"},
     {"test", "'test': Throws the provided exception\nUse: 'test [exception]'\n'exception': Type of exception to be thrown\nAvailable exceptions:\ndiv-by-zero\ninvalid-opcode\n"},
-    {"clear", "'clear': Clears the current console\nUse: 'clear'\n"}
-    ,{"quadratic", "'quadratic': Calculates the roots of a quadratic ecuation\nUse: 'quadratic [a] [b] [c]'\n'a': Quadratic coeficient\n'b': Lineal coeficient\n'c': Independent coeficient\n"}
+    {"clear", "'clear': Clears the current console\nUse: 'clear'\n"},
+    //{"quadratic", "'quadratic': Calculates the roots of a quadratic ecuation\nUse: 'quadratic [a] [b] [c]'\n'a': Quadratic coeficient\n'b': Lineal coeficient\n'c': Independent coeficient\n"},
+    {"testalloc", "'testalloc': Tests the functionality of memory allocation\nUse: 'testalloc' [test num]\n'test num': A test integer number that will be saved in memory and then read\n"}
 };
 
 static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
@@ -285,8 +308,9 @@ static commandStruct commands[] = {
     {"cpufeatures", &cpufeaturesHandler},
     {"sleep", &sleepHandler},
     {"test", &testHandler},
-    {"clear", &clearHandler}
-    ,{"quadratic", &quadraticHandler}
+    {"clear", &clearHandler},
+    //{"quadratic", &quadraticHandler},
+    {"testalloc", &testallocHandler}
 };
 
 static int isEnd(int c){
