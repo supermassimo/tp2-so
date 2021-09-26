@@ -4,6 +4,7 @@
 #include <dualDisplayManager.h>
 #include <memManager.h>                 // For testing purposes. DO NOT DELETE
 #include <lib.h>                        // For testing purposes. DO NOT DELETE
+#include <sysCalls.h>                   // For testing purposes. DO NOT DELETE
 
 extern void captureRegistries();
 
@@ -120,7 +121,7 @@ void keyboardIntHandler(){
         if (isControlKey(key)){
             if (key == '~'){    // This key must be handled by the kernel as the registry capture has to be done within the same interrupt
                 // print("Reservo hasta ");                        // For testing purposes. DO NOT DELETE
-                // numToStr((size_t)memalloc(0x200), msg, 16);     // For testing purposes. DO NOT DELETE
+                // numToStr((size_t)sysMemAlloc(0x200), msg, 16);     // For testing purposes. DO NOT DELETE
                 // println(msg);                                   // For testing purposes. DO NOT DELETE
                 captureRegistries();
             } else if(key == '\n'){

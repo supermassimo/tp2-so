@@ -54,5 +54,5 @@ void sysDelKey(){
 }
 
 void* sysMemAlloc(size_t size){
-    return memalloc(size);
+    return memAlloc(size);
 }
