@@ -16,5 +16,7 @@ size_t strlen(char *string);
 size_t concatStrings(char strings[][MAX_PARAMETER_LENGTH], size_t stringAmount, char* output);
 size_t floatToStr(float value, char* target, size_t precision, size_t base);
 int strToFloat(char* string, float* target);
+void* malloc(size_t size);
+void free(void* ptr);
 
 #endif

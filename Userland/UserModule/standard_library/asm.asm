@@ -10,7 +10,7 @@ GLOBAL invalidOpcodeThrower
 GLOBAL swapConsole
 GLOBAL sleep
 GLOBAL delKey
-GLOBAL memAlloc
+GLOBAL memMap
 
 section .text
 
@@ -80,7 +80,7 @@ delKey:
 
     ret
 
-memAlloc:
+memMap:
     mov rax, 12
     int 80h
 

@@ -9,7 +9,7 @@
 #include <dualDisplayManager.h>
 #include <stddef.h>
 #include <rtc.h>
-#include <memManager.h>
+#include <naiveMemManager.h>
 
 void sysReadInput(char* buffer, size_t buffer_size);
 void sysWrite(int output, const char* buffer, size_t buffer_size);
@@ -22,6 +22,6 @@ bool sysGetCpuFeatures(CommonFeatures* commonFeatures, ExtendedFeatures* extende
 void sysSwapActiveDisplay();
 void sysSleep(long seconds);
 void sysDelKey();
-void* sysMemAlloc(size_t size);
+void* sysMemMap(size_t size);
 
 #endif

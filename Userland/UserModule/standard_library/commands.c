@@ -11,7 +11,6 @@ extern bool getCpuFeatures(CommonFeatures* commonFeatures, ExtendedFeatures* ext
 extern void sleep(long seconds);
 extern int getQuadratic(float a, float b, float c, float*, float*);
 extern void getDateTime(Date* date, Time* time, int utc);
-extern void* memAlloc(size_t size);
 
 #define PRINTMEM_BYTES 32
 

@@ -53,6 +53,6 @@ void sysDelKey(){
     keyboardDeleteKey();
 }
 
-void* sysMemAlloc(size_t size){
-    return memAlloc(size);
+void* sysMemMap(size_t size){
+    return memMap(size);
 }
