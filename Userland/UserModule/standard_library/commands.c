@@ -1,7 +1,6 @@
 #include "./include/commands.h"
 #include "./include/mystdio.h"
 #include "./include/mystdlib.h"
-#include <stdlib.h>
 
 extern void getRegistries(Registries* regs);
 extern void getMemContent(uint64_t startPos, uint8_t* target, size_t amount);
@@ -113,11 +112,11 @@ static void testallocHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmoun
         printErr("Missing parameter for command 'testalloc'");
         return;
     }
-    if(paramAmount > 2){
+    if(paramAmount > 1){
         printErr("Too many parameters for command 'testalloc'");
         return;
     }
-    int num = atoi(params[0]);
+    int num = strToNum(params[0]);
     void* mem = malloc(sizeof(int));
     *((int*)mem) = num;
 

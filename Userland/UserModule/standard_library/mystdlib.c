@@ -16,25 +16,25 @@ typedef struct MemHeader {
 static MemHeader baseHeader;
 static MemHeader* freeList = NULL;
 
-void free(void *ap){
-    MemHeader *bp, *p;
+void free(void *ptr){
+    MemHeader *blockp, *p;
 
-    bp = (MemHeader*)ap - 1;
-    for(p = freeList ; !(bp > p && bp < p->next) ; p = p->next)
-        if(p >= p->next && (bp > p || bp < p->next))
+    blockp = (MemHeader*)ptr - 1;
+    for(p = freeList ; !(blockp > p && blockp < p->next) ; p = p->next)
+        if(p >= p->next && (blockp > p || blockp < p->next))
             break;
     
-    if(bp + bp->size == p->next){
-        bp->size += p->next->size;
-        bp->next = bp->next->next;
+    if(blockp + blockp->size == p->next){
+        blockp->size += p->next->size;
+        blockp->next = blockp->next->next;
     } else {
-        bp->next = p->next;
+        blockp->next = p->next;
     }
-    if(p + p->size == bp){
-        p->size += bp->size;
-        p->next = bp->next;
+    if(p + p->size == blockp){
+        p->size += blockp->size;
+        p->next = blockp->next;
     } else {
-        p->next = bp;
+        p->next = blockp;
     }
     freeList = p;
 }
