@@ -52,3 +52,7 @@ void sysSleep(long seconds){
 void sysDelKey(){
     keyboardDeleteKey();
 }
+
+void* sysMemAlloc(size_t size){
+    return memalloc(size);
+}

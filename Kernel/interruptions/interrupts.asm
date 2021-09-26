@@ -33,7 +33,7 @@ EXTERN sysGetCpuFeatures
 EXTERN sysSwapActiveDisplay
 EXTERN sysSleep
 EXTERN sysDelKey
-
+EXTERN sysMemAlloc
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 
@@ -186,7 +186,9 @@ _sysCallHandler:
 	syscall_11:
 		call sysDelKey
 		jmp endSysCallHandler
-		
+	syscall_12:
+		call sysMemAlloc
+		jmp endSysCallHandler
 	endSysCallHandler:
 		mov rbx, [reg_stack_pointer]
 		mov [rbx], rax
