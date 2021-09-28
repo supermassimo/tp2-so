@@ -1,85 +1,19 @@
 #include "include/mystdlib.h"
 #include "include/mystdio.h"
 
-#define PAGE_SIZE 0x1000
-
-typedef unsigned long size_t;           // Added to bypass vscode not detecting size_t declaration
-
-extern void* memMap(size_t size);
-
-// TODO: Make sure struct is aligned
-typedef struct MemHeader {
-    struct MemHeader* next;
-    size_t size;
-} MemHeader;
-
-static MemHeader baseHeader;
-static MemHeader* freeList = NULL;
-
-void free(void *ptr){
-    MemHeader *blockp, *p;
-
-    blockp = (MemHeader*)ptr - 1;
-    for(p = freeList ; !(blockp > p && blockp < p->next) ; p = p->next)
-        if(p >= p->next && (blockp > p || blockp < p->next))
-            break;
-    
-    if(blockp + blockp->size == p->next){
-        blockp->size += p->next->size;
-        blockp->next = blockp->next->next;
-    } else {
-        blockp->next = p->next;
-    }
-    if(p + p->size == blockp){
-        p->size += blockp->size;
-        p->next = blockp->next;
-    } else {
-        p->next = blockp;
-    }
-    freeList = p;
-}
-
-static MemHeader* getMem(size_t blockAmount){
-    uint8_t *auxp;
-    MemHeader *newHeader;
-    size_t bytes = blockAmount * sizeof(MemHeader);
-    
-    if(bytes < PAGE_SIZE)           // Always ask for at least a page of memory
-        bytes = PAGE_SIZE;
-    if((auxp = memMap(bytes)) == NULL){
-        return NULL;
-    }
-    newHeader = (MemHeader*)auxp;
-    newHeader->size = bytes;
-    free((void*)(newHeader+1));
-    return freeList;        // returns block added to free list
-}
+extern void* memAlloc(size_t size, int options);
+extern int memFree(void* blockp);
 
 void* malloc(size_t size){
-    MemHeader *p, *prevp;
-    size_t headerBlocks = (size + sizeof(MemHeader) - 1)/sizeof(MemHeader) + 1;
+    return memAlloc(size, NO_ACTION);
+}
 
-    if((prevp = freeList) == NULL){     /* No free blocks to asign yet*/
-        baseHeader.next = freeList = prevp = &baseHeader;
-        baseHeader.size = 0;
-    }
+void* calloc(size_t nmemb, size_t size){
+    return memAlloc(nmemb*size, SET_ZERO);
+}
 
-    for(p = prevp->next ;  ; prevp = p, p = p->next){
-        if(p->size >= headerBlocks){
-            if(p->size == headerBlocks)
-                prevp->next = p->next;
-            else {
-                p->size -= headerBlocks;
-                p += p->size;
-                p->size = headerBlocks;
-            }
-            freeList = prevp;
-            return (void*)(p+1);
-        }
-        if(p == freeList)
-            if((p = getMem(headerBlocks)) == NULL)
-                return NULL;                        // If system has no more free memory, return NULL
-    }
+int free(void* blockp){
+    return memFree(blockp);
 }
 
 int strcmp(char* s1, char* s2){
@@ -98,7 +32,6 @@ size_t strlen(char *string){
     }
     return c;
 }
-
 
 // Concatenates all the strings sent and returns output string length
 size_t concatStrings(char strings[][MAX_PARAMETER_LENGTH], size_t stringAmount, char* output){

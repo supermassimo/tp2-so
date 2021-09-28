@@ -125,6 +125,21 @@ static void testallocHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmoun
     printf("\nMemory allocated at: ");
     printInt((long)mem, 16, 16);
     printf("\n");
+    /* calloc test */
+    /*
+        uint8_t* mem = (uint8_t*)calloc(10, 10);
+        for(int i=0 ;  ; i++){
+            if(i == 100){
+                printf("All of memory was initialized to zero\n");
+                break;
+            }
+            if(*mem != 0){
+                printf("Memory was not fully initialized to zero\n");
+                break;
+            }
+        }
+    */
+    free(mem);
 }
 
 static void echoHandler(char params[][MAX_PARAMETER_LENGTH], int paramAmount){

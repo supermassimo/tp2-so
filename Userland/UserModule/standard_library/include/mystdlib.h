@@ -7,6 +7,10 @@
 #include <stdint.h>
 #include "commands.h"
 
+/* memAlloc options*/
+#define NO_ACTION   0
+#define SET_ZERO    1
+
 size_t numToStr(long value, char* target, size_t base);
 void numToStrSized(long value, char* target, size_t base, size_t length);
 long strToNum(char* string);
@@ -17,6 +21,7 @@ size_t concatStrings(char strings[][MAX_PARAMETER_LENGTH], size_t stringAmount, 
 size_t floatToStr(float value, char* target, size_t precision, size_t base);
 int strToFloat(char* string, float* target);
 void* malloc(size_t size);
-void free(void* ptr);
+void* calloc(size_t nmemb, size_t size);
+int free(void* blockp);
 
 #endif

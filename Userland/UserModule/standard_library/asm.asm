@@ -10,7 +10,8 @@ GLOBAL invalidOpcodeThrower
 GLOBAL swapConsole
 GLOBAL sleep
 GLOBAL delKey
-GLOBAL memMap
+GLOBAL memAlloc
+GLOBAL memFree
 
 section .text
 
@@ -80,8 +81,14 @@ delKey:
 
     ret
 
-memMap:
+memAlloc:
     mov rax, 12
+    int 80h
+
+    ret
+
+memFree:
+    mov rax, 13
     int 80h
 
     ret
