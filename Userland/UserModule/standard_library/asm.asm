@@ -12,6 +12,7 @@ GLOBAL sleep
 GLOBAL delKey
 GLOBAL memAlloc
 GLOBAL memFree
+GLOBAL getMemInfo
 
 section .text
 
@@ -89,6 +90,12 @@ memAlloc:
 
 memFree:
     mov rax, 13
+    int 80h
+
+    ret
+
+getMemInfo:
+    mov rax, 14
     int 80h
 
     ret

@@ -11,6 +11,7 @@ extern bool getCpuFeatures(CommonFeatures* commonFeatures, ExtendedFeatures* ext
 extern void sleep(long seconds);
 extern int getQuadratic(float a, float b, float c, float*, float*);
 extern void getDateTime(Date* date, Time* time, int utc);
+extern void getMemInfo(MemoryInfo* meminfo);
 
 #define PRINTMEM_BYTES 32
 
@@ -49,7 +50,7 @@ static helpStruct help_messages[] = {
     {"clear", "'clear': Clears the current console\nUse: 'clear'\n"},
     //{"quadratic", "'quadratic': Calculates the roots of a quadratic ecuation\nUse: 'quadratic [a] [b] [c]'\n'a': Quadratic coeficient\n'b': Lineal coeficient\n'c': Independent coeficient\n"},
     {"testalloc", "'testalloc': Tests the functionality of memory allocation\nUse: 'testalloc' [test num]\n'test num': A test integer number that will be saved in memory and then read\n"},
-    {"meminfo", "'meminfo': Displays memory info\nUse: 'meminfo' [units]\n'units': Determines which unit the info will be displayed on\nOptions:\n-k: Kilobytes (Default)\n-m: Megabytes\n"}
+    {"meminfo", "'meminfo': Displays memory info\nUse: 'meminfo' [units]\n'units': Determines which unit the info will be displayed on\nOptions:\n-b: Bytes (Default)\n-k: Kilobytes\n"}
 };
 
 static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
@@ -171,7 +172,7 @@ static void testallocHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAm
             }
         }
     */
-    free(mem);
+    // free(mem);
 }
 
 static void echoHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
@@ -296,7 +297,9 @@ static void meminfoHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmou
         printErr("Too many parameters for command 'meminfo'");
         return;
     }
-    //syscall
+    MemoryInfo meminfo;
+    getMemInfo(&meminfo);
+    printMemInfo(meminfo, params[0]);
 }
 
 static void divByZeroThrower(){

@@ -24,5 +24,6 @@ void sysSleep(long seconds);
 void sysDelKey();
 void* sysMemAlloc(size_t size, int options);
 int sysMemFree(void *blockp);
+void sysGetMemInfo(MemoryInfo* meminfo);
 
 #endif

@@ -180,6 +180,22 @@ void printDateTime(const Date date, const Time time, const int utc){
 	printTime(time);
 }
 
+void printMemInfo(MemoryInfo meminfo, char* option){
+	int iskB;
+	if((iskB = strcmp(option, "-k")) == 0){
+		meminfo.totalMemory /= 1000;
+		meminfo.occupiedMemory /= 1000;
+	}
+	printf("MemTotal: ");
+	printInt(meminfo.totalMemory, 30, 10);	// 30 is more than enough for 64 bytes
+	printf(iskB?" B" : " kB");
+	printf("\n");
+	printf("MemOccupied: ");
+	printInt(meminfo.occupiedMemory, 30, 10);	// 30 is more than enough for 64 bytes
+	printf(iskB?" B" : " kB");
+	printf("\n");
+}
+
 void scanf (char* string, size_t string_size){
     readInput (string, string_size);
 }

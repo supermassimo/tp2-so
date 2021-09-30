@@ -60,3 +60,7 @@ void* sysMemAlloc(size_t size, int options){
 int sysMemFree(void *blockp){
     return memFree(blockp);
 }
+
+void sysGetMemInfo(MemoryInfo* meminfo){
+    return getMemInfo(meminfo);
+}

@@ -2,6 +2,7 @@
 
 #define PAGE_SIZE 0x1000
 #define MEM_LIMIT 536870912             // 512MB
+#define MEM_BASE 9437184
 
 typedef struct MemHeader {
     struct MemHeader* next;
@@ -10,13 +11,15 @@ typedef struct MemHeader {
 
 static MemHeader baseHeader;
 static MemHeader* freeList = NULL;
-static uint8_t* nextToMap= (uint8_t*)0x900000;
+static uint8_t* nextToMap= (uint8_t*)MEM_BASE;
+static long occupiedMemory;
 
-void* memMap(size_t size){
+static void* memMap(size_t size){
     if((size_t)nextToMap + size > MEM_LIMIT)
         return NULL;
     void* blockp = nextToMap;
     nextToMap += size;
+    occupiedMemory += size;
     return blockp;
 }
 
@@ -66,6 +69,7 @@ void* memAlloc(size_t size, int options){
             }
             freeList = currentBlock;
             applyOptions(auxp, options);
+            occupiedMemory += headerBlocks * sizeof(MemHeader);
             return (void*)(auxp+1);
         }
         if(auxp == freeList)
@@ -82,6 +86,7 @@ int memFree(void *blockp){
         if(auxp >= auxp->next && (headp > auxp || headp < auxp->next))
             break;
     
+    occupiedMemory -= headp->size;
     if(headp + headp->size == auxp->next){
         headp->size += auxp->next->size;
         headp->next = headp->next->next;
@@ -96,4 +101,9 @@ int memFree(void *blockp){
     }
     freeList = auxp;
     return 0;
+}
+
+void getMemInfo(MemoryInfo *meminfo){
+    meminfo->totalMemory = MEM_LIMIT - MEM_BASE;
+    meminfo->occupiedMemory = occupiedMemory;
 }
