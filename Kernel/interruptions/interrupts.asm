@@ -189,7 +189,7 @@ _sysCallHandler:
 		call sysSwapActiveDisplay
 		jmp endSysCallHandler
 	syscall_10:
-		// call sysSleep
+		; call sysSleep
 		jmp endSysCallHandler
 	syscall_11:
 		call sysDelKey
