@@ -123,19 +123,6 @@ SECTION .text
 	iretq
 %endmacro
 
-schedulerHandler:
-	pushState
-
-	mov rdi, rsp
-	call schedule
-	mov rsp, rax
-
-	mov al, 20h
-	out 20h, al
-
-	popState
-	iretq
-
 _sysCallHandler:
 		pushState
 		mov [reg_stack_pointer], rsp
@@ -202,7 +189,7 @@ _sysCallHandler:
 		call sysSwapActiveDisplay
 		jmp endSysCallHandler
 	syscall_10:
-		call sysSleep
+		// call sysSleep
 		jmp endSysCallHandler
 	syscall_11:
 		call sysDelKey

@@ -2,7 +2,6 @@
 #include <console.h>
 #include <standardIn.h>
 #include <dualDisplayManager.h>
-#include <memManager.h>                 // For testing purposes. DO NOT DELETE
 #include <lib.h>                        // For testing purposes. DO NOT DELETE
 #include <sysCalls.h>                   // For testing purposes. DO NOT DELETE
 

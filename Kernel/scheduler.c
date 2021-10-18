@@ -25,27 +25,20 @@ typedef struct {
     uint64_t r13;
     uint64_t r14;
     uint64_t r15;
-    uint64_t rsp;
 } PCB;
 
 typedef struct {
-    PCB pcb;
+    size_t id;
     State state;
+    PCB pcb;
 } Process;
 
-static Process *processes;
-static int activeProcessIdx;
+static Process processes[MAX_PROCESSES] = {0};
+static int activeProcessIdx = 0;
 
-void createFirstProcess(void* entryPoint){
-    processes = (Process*) memAlloc(sizeof(Process)*MAX_PROCESSES, SET_ZERO);
-    processes[0].pcb.rflags = 0x202;
-    processes[0].pcb.rip = &entryPoint;
-    processes[0].state = READY;
-    activeProcessIdx = 0;
-}
-
-uint64_t schedule (uint64_t pcb){
-    for(int i=activeProcessIdx+1 ; i % MAX_PROCESSES != activeProcessIdx ; i++){
-        if(processes[i%MAX_PROCESSES].state == READY)
-    }
+void createProcess(void* entryPoint){
+    processes[activeProcessIdx].pcb.rflags = 0x202;
+    processes[activeProcessIdx].pcb.rip = &entryPoint;
+    processes[activeProcessIdx].state = READY;
+    activeProcessIdx++;
 }
