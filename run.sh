@@ -1,2 +1,6 @@
 #!/bin/bash
-qemu-system-x86_64 -cpu qemu64,mmx=on,sse=on,sse2=on,sse3=on,sse4.1=on,sse4.2=on,aes=on,pclmulqdq=on,avx=on,vaes=on,vpclmulqdq=on,f16c=on,fma=on,avx2=on -hda Image/x64BareBonesImage.qcow2 -m 512 
+if [[ "$1" = "gdb" ]]; then
+    qemu-system-x86_64 -curses -s -S -cpu kvm64,+mmx,+sse,+sse2,+sse3,+sse4.1,+sse4.2,+aes,+pclmulqdq,+avx,+vaes,+vpclmulqdq,+f16c,+fma,+avx2 -hda Image/x64BareBonesImage.qcow2 -m 512 -d int
+else
+    qemu-system-x86_64 -curses -cpu kvm64,+mmx,+sse,+sse2,+sse3,+sse4.1,+sse4.2,+aes,+pclmulqdq,+avx,+vaes,+vpclmulqdq,+f16c,+fma,+avx2 -hda Image/x64BareBonesImage.qcow2 -m 512
+fi

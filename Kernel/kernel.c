@@ -17,6 +17,7 @@ static const uint64_t PageSize = 0x1000;
 
 static void * const userCodeModuleAddress = (void*)0x400000;
 static void * const dataModuleAddress = (void*)0x500000;
+static int enableScheduler = 0;
 
 typedef int (*EntryPoint)();
 
@@ -53,8 +54,11 @@ void loadUserModuleAdress(){
 	((EntryPoint)userCodeModuleAddress)();
 }
 
-int main()
-{
+int isSchedulerEnabled(){
+	return enableScheduler;
+}
+
+void mainWrapper(){
 	clearScreen();
 	load_idt();
 
@@ -62,6 +66,14 @@ int main()
 
 	// loadUserModuleAdress();
 	createProcess();
-	while(1);
+	enableScheduler = 1;
+	while(1){
+		
+	};
 	return 0;
+}
+
+int main()
+{
+	mainWrapper();
 }

@@ -38,14 +38,14 @@ GLOBAL createPCB
 	pop rsp
 %endmacro
 
-; createPCB(void* entryPoint)
+; createPCB(void* entryPoint, void* pcbAddr)
 createPCB:
     push rbp
     mov rbp, rsp
 
-    mov rsp, 0x1000000
-    push 0                  ; ss
-    push 0x1000000          ; rsp
+    mov rsp, rsi
+    push 0x0                ; ss
+    push rsi          		; rsp
     push 0x202              ; rflags
     push 0x8                ; cs
     push rdi                ; rip
