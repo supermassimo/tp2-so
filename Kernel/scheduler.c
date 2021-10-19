@@ -5,40 +5,44 @@
 typedef enum State {READY, BLOCKED, TERMINATED} State;
 
 typedef struct {
-    uint64_t ss;
-    uint64_t rsp;
-    uint64_t rflags;
-    uint64_t cs;
-    uint64_t rip;
-    uint64_t rax;
-    uint64_t rbx;
-    uint64_t rcx;
-    uint64_t rdx;
-    uint64_t rbp;
-    uint64_t rdi;
-    uint64_t rsi;
-    uint64_t r8;
-    uint64_t r9;
-    uint64_t r10;
-    uint64_t r11;
-    uint64_t r12;
-    uint64_t r13;
-    uint64_t r14;
-    uint64_t r15;
-} PCB;
-
-typedef struct {
-    size_t id;
     State state;
-    PCB pcb;
+    uint64_t* pcb;
 } Process;
+
+extern uint64_t* createPCB(void* entryPoint);
 
 static Process processes[MAX_PROCESSES] = {0};
 static int activeProcessIdx = 0;
+static size_t iterations = 0;
+static size_t printsMade = 0;
+static size_t printing = 0;
 
-void createProcess(void* entryPoint){
-    processes[activeProcessIdx].pcb.rflags = 0x202;
-    processes[activeProcessIdx].pcb.rip = &entryPoint;
-    processes[activeProcessIdx].state = READY;
-    activeProcessIdx++;
+static void testProcess(){
+    while(1){
+        print("Print: ");
+        printInt(printsMade++, 10);
+        print("\n");
+    }
+}
+
+void createProcess(){
+    processes[0].pcb = createPCB(testProcess);
+    printing = 1;
+}
+
+uint64_t* schedule(uint64_t* currentProcPCB){
+    if(iterations % 2 == 0){
+        processes[0].pcb = currentProcPCB;
+        changeConsoleSide(1);
+        print("\nCAMBIO con iterations:");
+        printInt(iterations, 10);
+        print(" en print:");
+        printInt(printsMade, 10);
+        print(" ");
+        printInt(printing, 10);
+        print("\n");
+        changeConsoleSide(0);
+    }
+    iterations++;
+    return processes[0].pcb;
 }

@@ -45,6 +45,7 @@ EXTERN printRegistries
 EXTERN rebootKernel
 
 EXTERN awaitForInstantInput
+EXTERN schedule
 
 USER_MODULE_ADDRESS EQU 0x400000
 
@@ -269,8 +270,19 @@ picSlaveMask:
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
-	irqHandlerMaster 0
+	pushState
+	mov [reg_stack_pointer], rsp
 
+	mov rdi, rsp
+	call schedule
+	mov rsp, rax
+
+	mov al, 20h
+	out 20h, al
+
+	popState
+	iretq
+	
 ;Keyboard
 _irq01Handler:
 	irqHandlerMaster 1

@@ -14,6 +14,7 @@ all: $(MODULE)
 
 $(MODULE): $(SOURCES) $(ALL_LIB_OBJECTS)
 	$(GCC) $(GCCFLAGS) -T userModule.ld _loader.c $(SOURCES) -o ../$(MODULE) $(ALL_LIB_OBJECTS)
+	$(GCC) $(GCCFLAGS) -T userModule.ld -Wl,--oformat=elf64-x86-64 _loader.c $(SOURCES) -o ../0000-userModule.elf $(ALL_LIB_OBJECTS)
 
 %.o: %.c
 	$(GCC) $(GCCFLAGS) -I$(LIB_INC_DIR) -lstring -c $< -o $@

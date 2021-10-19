@@ -2,6 +2,7 @@
 #include <moduleLoader.h>
 #include <lib.h>
 #include <console.h>
+#include <scheduler.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -59,7 +60,8 @@ int main()
 
 	initializeConsole();
 
-	loadUserModuleAdress();
+	// loadUserModuleAdress();
+	createProcess();
+	while(1);
 	return 0;
 }
-
