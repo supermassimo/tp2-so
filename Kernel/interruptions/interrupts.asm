@@ -22,6 +22,7 @@ GLOBAL captureRegistries
 
 EXTERN setIdle
 
+; Syscalls
 EXTERN sysReadInput
 EXTERN sysWrite
 EXTERN sysGetMemContent
@@ -37,6 +38,8 @@ EXTERN sysMemAlloc
 EXTERN sysMemFree
 EXTERN sysGetMemInfo
 EXTERN sysCreateProcess
+EXTERN sysKillCurrentProcess
+
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 
@@ -160,6 +163,8 @@ _sysCallHandler:
 		je syscall_14
 		cmp rax, 15
 		je syscall_15
+		cmp rax, 16
+		je syscall_16
 	syscall_0:
 		call sysReadInput
 		jmp endSysCallHandler
@@ -209,6 +214,9 @@ _sysCallHandler:
 		jmp endSysCallHandler
 	syscall_15:
 		call sysCreateProcess
+		jmp endSysCallHandler
+	syscall_16:
+		call sysKillCurrentProcess
 		jmp endSysCallHandler
 	endSysCallHandler:
 		mov rbx, [reg_stack_pointer]
@@ -279,6 +287,11 @@ _irq00Handler:
 	pushState
 	mov [reg_stack_pointer], rsp
 
+	; Timer
+	mov rdi, 0
+	call irqDispatcher
+
+	; Scheduler
 	mov rdi, rsp
 	call schedule
 	mov rsp, rax

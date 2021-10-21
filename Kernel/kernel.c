@@ -62,7 +62,7 @@ int main()
 
 	//loadUserModuleAdress();
 	char** args;
-	createProcess(userCodeModuleAddress, 0, args);
+	createProcess(userCodeModuleAddress, SYSTEM, 0, args);
 	enableScheduler();
 
 	while(1);

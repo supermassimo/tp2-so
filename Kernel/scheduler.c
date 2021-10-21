@@ -4,18 +4,19 @@
 #define PCB_REGISTERS  21
 #define PROCESS_STACK  400
 
-typedef enum State {READY, BLOCKED, SUSPENDED, TERMINATED} State;
+typedef enum State {TERMINATED, READY, BLOCKED, SUSPENDED} State;
 
 typedef struct {
     State state;
-    int priority;
-    uint64_t* pcb;
+    Priority priority;
+    uint64_t *pcb;
+    uint64_t *stack;
 } Process;
 
-extern uint64_t* createPCB(uint64_t* entryPoint, uint64_t* pcbAddr);
+extern uint64_t* createPCB(uint64_t* entryPoint, uint64_t* pcbAddr, uint64_t* stackAddr, int argc, char** argv);
+extern void scheduleNext();
 
-static Process processes[MAX_PROCESSES];
-static int activeProcesses = 0;
+static Process processes[MAX_PROCESSES] = {0};
 static int currentProcess = -1;
 static int isSchedulerEnabled = 0;
 
@@ -67,15 +68,37 @@ void enableScheduler(){
     isSchedulerEnabled = 1;
 }
 
-int createProcess(void* entryPoint, int argc, char** argv){
-    uint64_t* pcbAddr = memAlloc(sizeof(uint64_t) * (PCB_REGISTERS + PROCESS_STACK), SET_ZERO);
-    processes[0].pcb = createPCB(entryPoint, pcbAddr);
-    activeProcesses++;
-    return 0;
+static int getFirstFree(){
+    for(int i=0 ; i < MAX_PROCESSES ; i++){
+        if(processes[i].state == TERMINATED)
+            return i;
+    }
+    return -1;
 }
 
-void killProcess(){
-    
+int createProcess(void* entryPoint, Priority priority, int argc, char** argv){
+    int processIdx = getFirstFree();
+    if(processIdx == -1)
+        return processIdx;
+    uint64_t* pcbAddr = memAlloc(sizeof(uint64_t) * PROCESS_STACK, SET_ZERO);
+    uint64_t* stackAddr = memAlloc(sizeof(uint64_t) * PROCESS_STACK, SET_ZERO);
+    processes[processIdx].pcb = createPCB(entryPoint, pcbAddr, stackAddr, argc, argv);
+    processes[processIdx].stack = stackAddr;
+    processes[processIdx].state = READY;
+    processes[processIdx].priority = priority;
+    return processIdx;
+}
+
+void killCurrentProcess(){
+    processes[currentProcess].state = TERMINATED;
+    memFree(processes[currentProcess].stack);
+    memFree(processes[currentProcess].pcb);
+    scheduleNext();
+}
+
+// TODO
+void killRandomProcess(){
+
 }
 
 void printProcess(uint64_t* currentProcPCB) {
@@ -87,19 +110,22 @@ void printProcess(uint64_t* currentProcPCB) {
     }
     print("\n");
     print("\n");
+    print("\n");
     changeConsoleSide(0);
 }
 
 uint64_t* schedule(uint64_t* currentProcPCB){
     if(isSchedulerEnabled){
-        if(currentProcess != -1){
+        if(currentProcess != -1 && processes[currentProcess].state != TERMINATED){
             processes[currentProcess].pcb = currentProcPCB;
         }
-        if(currentProcess+1 == activeProcesses){
-            currentProcess = -1;
+        while(processes[currentProcess+1].state != READY){
+            currentProcess++;
+            if(currentProcess+1 == MAX_PROCESSES)
+                currentProcess = -1;
         }
         currentProcPCB = processes[++currentProcess].pcb;
-        // printProcess(currentProcPCB);
+        // printProcess(processes[0].pcb);
     }
     return currentProcPCB;
 }

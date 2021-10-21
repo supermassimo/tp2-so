@@ -14,6 +14,7 @@ GLOBAL memAlloc
 GLOBAL memFree
 GLOBAL getMemInfo
 GLOBAL createProcess
+GLOBAL killCurrentProcess
 
 section .text
 
@@ -103,6 +104,12 @@ getMemInfo:
 
 createProcess
     mov rax, 15
+    int 80h
+
+    ret
+
+killCurrentProcess:
+    mov rax, 16
     int 80h
 
     ret

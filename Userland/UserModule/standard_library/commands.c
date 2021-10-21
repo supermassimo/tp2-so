@@ -12,6 +12,8 @@ extern void sleep(long seconds);
 extern int getQuadratic(float a, float b, float c, float*, float*);
 extern void getDateTime(Date* date, Time* time, int utc);
 extern void getMemInfo(MemoryInfo* meminfo);
+extern int createProcess(void* entryPoint, UserPriority priority, int argc, char** argv);
+extern void killCurrentProcess();
 
 #define PRINTMEM_BYTES 32
 
@@ -30,7 +32,7 @@ typedef struct exceptionTestStruct{
     void* thrower;
 } exceptionTestStruct;
 
-static const size_t commandAmount = 13;
+static const size_t commandAmount = 14;
 static const size_t exceptionAmount = 2;
 
 #define QUADRATIC_PRECISION 2
@@ -324,6 +326,26 @@ static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
     }
 }
 
+static void testProcess(int argc, char** argv){
+    for(int i=0 ; i < 100 ; i++){
+        /*
+        printf("Estoy vivo: ");
+        printInt(i, 10, 10);
+        printf("\n");
+        */
+    }
+    printf("Me muero\n");
+    killCurrentProcess();
+}
+
+static void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount != 0){
+        printErr("Too many parameters for command 'test'");
+    }
+    char **msg = {"Estoy vivo\n", "Me muero\n"};
+    createProcess(testProcess, MEDIUM, 2, msg);
+}
+
 static commandStruct commands[] = {
     {"help", &helpHandler},
     {"echo", &echoHandler},
@@ -338,7 +360,8 @@ static commandStruct commands[] = {
     {"clear", &clearHandler},
     //{"quadratic", &quadraticHandler},
     {"testalloc", &testallocHandler},
-    {"meminfo", &meminfoHandler}
+    {"meminfo", &meminfoHandler},
+    {"testprocess", &testProcessHandler}
 };
 
 static int isEnd(int c){
