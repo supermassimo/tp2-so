@@ -13,6 +13,7 @@ GLOBAL delKey
 GLOBAL memAlloc
 GLOBAL memFree
 GLOBAL getMemInfo
+GLOBAL createProcess
 
 section .text
 
@@ -96,6 +97,12 @@ memFree:
 
 getMemInfo:
     mov rax, 14
+    int 80h
+
+    ret
+
+createProcess
+    mov rax, 15
     int 80h
 
     ret

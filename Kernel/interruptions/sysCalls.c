@@ -64,3 +64,7 @@ int sysMemFree(void *blockp){
 void sysGetMemInfo(MemoryInfo* meminfo){
     return getMemInfo(meminfo);
 }
+
+int sysCreateProcess(void* entryPoint, int argc, char* argv[]){
+    return createProcess(entryPoint, argc, argv);
+}

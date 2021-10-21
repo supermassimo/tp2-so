@@ -3,5 +3,5 @@
 #include <memManager.h>
 
 void enableScheduler();
-void createProcess();
+int createProcess(void* entryPoint, int argc, char** argv);
 uint64_t* schedule(uint64_t* currentProcPCB);

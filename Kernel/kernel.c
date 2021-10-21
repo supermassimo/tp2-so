@@ -53,22 +53,19 @@ void loadUserModuleAdress(){
 	((EntryPoint)userCodeModuleAddress)();
 }
 
-void mainWrapper(){
+int main()
+{
 	clearScreen();
 	load_idt();
 
 	initializeConsole();
 
 	//loadUserModuleAdress();
-	createProcess();
+	char** args;
+	createProcess(userCodeModuleAddress, 0, args);
 	enableScheduler();
 
 	while(1);
-	
-	return 0;
-}
 
-int main()
-{
-	mainWrapper();
+	return 0;
 }

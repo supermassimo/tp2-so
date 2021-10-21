@@ -9,7 +9,7 @@
 #include <dualDisplayManager.h>
 #include <stddef.h>
 #include <rtc.h>
-#include <memManager.h>
+#include <scheduler.h>
 
 void sysReadInput(char* buffer, size_t buffer_size);
 void sysWrite(int output, const char* buffer, size_t buffer_size);
@@ -25,5 +25,6 @@ void sysDelKey();
 void* sysMemAlloc(size_t size, int options);
 int sysMemFree(void *blockp);
 void sysGetMemInfo(MemoryInfo* meminfo);
+int sysCreateProcess(void* entryPoint, int argc, char* argv[]);
 
 #endif
