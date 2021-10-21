@@ -17,7 +17,6 @@ static const uint64_t PageSize = 0x1000;
 
 static void * const userCodeModuleAddress = (void*)0x400000;
 static void * const dataModuleAddress = (void*)0x500000;
-static int enableScheduler = 0;
 
 typedef int (*EntryPoint)();
 
@@ -54,10 +53,6 @@ void loadUserModuleAdress(){
 	((EntryPoint)userCodeModuleAddress)();
 }
 
-int isSchedulerEnabled(){
-	return enableScheduler;
-}
-
 void mainWrapper(){
 	clearScreen();
 	load_idt();
@@ -66,15 +61,10 @@ void mainWrapper(){
 
 	//loadUserModuleAdress();
 	createProcess();
-	enableScheduler = 1;
+	enableScheduler();
 
-	int var = 0;
-	while(1){
-		if(var % 500000 == 0) {
-			print("Kernel is running\n");
-		}
-		var++;
-	};
+	while(1);
+	
 	return 0;
 }
 
