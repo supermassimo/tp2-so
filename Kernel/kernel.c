@@ -64,11 +64,16 @@ void mainWrapper(){
 
 	initializeConsole();
 
-	// loadUserModuleAdress();
+	//loadUserModuleAdress();
 	createProcess();
 	enableScheduler = 1;
+
+	int var = 0;
 	while(1){
-		
+		if(var % 500000 == 0) {
+			print("Kernel is running\n");
+		}
+		var++;
 	};
 	return 0;
 }

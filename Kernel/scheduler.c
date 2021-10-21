@@ -9,51 +9,103 @@ typedef struct {
     uint64_t* pcb;
 } Process;
 
-extern uint64_t* createPCB(uint64_t* entryPoint, uint64_t pcbAddr);
+extern uint64_t* createPCB(uint64_t* entryPoint, uint64_t* pcbAddr);
 
-static Process processes[MAX_PROCESSES] = {0};
+static Process processes[MAX_PROCESSES];
 static int activeProcessIdx = 0;
-static size_t iterations = 0;
-static size_t printsMade = 0;
-static int wasCreated = 0;
+
+//-------------------------------------------------------------------------------------------------------
+//Testing process
+static size_t var1 = 0;
+static size_t var2 = 0;
+static size_t var3 = 0;
+
 
 void testProcess(){
-    while(1){
-        print("Print: ");
-        printInt(printsMade++, 10);
-        print("\n");
+    while(1) {
+        if(var1 % 1000000 == 0) {
+            print("Process [1] is running\n");
+        }
+        var1++;
     }
 }
 
+void testProcess2(){
+    while(1) {
+        if(var2 % 1000000 == 0) {
+            print("Process [2] is running\n");
+        }
+        var2++;
+    }
+}
+
+void testProcess3(){
+    while(1) {
+        if(var3 % 1000000 == 0) {
+            print("Process [3] is running\n");
+        }
+        var3++;
+    }
+}
+//-------------------------------------------------------------------------------------------------------
+
 void createProcess(){
     uint64_t* pcbAddr = memAlloc(sizeof(uint64_t) * 21, NO_ACTION);
-    processes[0].pcb = createPCB(testProcess, pcbAddr);
-    /*
-    print("CREANDO PCB\n");
-    for(int i=0 ; i < 21 ; i++){
-        printInt(processes[0].pcb[i], 16);
-        print("\n");
-    }
-    wasCreated = 1;
-    */
+    processes[1].pcb = createPCB(testProcess, pcbAddr);
+
+    uint64_t* pcbAddr2 = memAlloc(sizeof(uint64_t) * 21, NO_ACTION);
+    processes[2].pcb = createPCB(testProcess2, pcbAddr2);
+
+    uint64_t* pcbAddr3 = memAlloc(sizeof(uint64_t) * 21, NO_ACTION);
+    processes[3].pcb = createPCB(testProcess3, pcbAddr3);
+}
+
+void printProcess(uint64_t* currentProcPCB) {
+    changeConsoleSide(1);
+    print("PCB ACTUAL: ");
+    printInt((long int)currentProcPCB, 16);
+    print("\n");    
+    print("Kernel: ");
+    printInt((long int)processes[0].pcb, 16);
+    print("\n");
+    print("PCB[1]: ");
+    printInt((long int)processes[1].pcb, 16);
+    print("\n");
+    print("PCB[2]: ");
+    printInt((long int)processes[2].pcb, 16);
+    print("\n");
+    print("PCB[3]: ");
+    printInt((long int)processes[3].pcb, 16);
+    print("\n");
+    print("\n");    
+    print("\n"); 
+    changeConsoleSide(0);
 }
 
 uint64_t* schedule(uint64_t* currentProcPCB){
     if(isSchedulerEnabled()){
-        changeConsoleSide(1);
-        print("PCB ACTUAL: ");
-        printInt(iterations, 10);
-        print(" iterations\n");
-        for(int i=0 ; i < 21 ; i++){
-            printInt(processes[0].pcb[i], 16);
-            print("\n");
+        if(activeProcessIdx == 0) {
+            processes[0].pcb = currentProcPCB;
+            printProcess(currentProcPCB);
+            activeProcessIdx++;
+            return processes[1].pcb;   
         }
-        print("\n");
-        print("\n");
-        print("\n");
-        changeConsoleSide(0);
-        iterations++;
-        return processes[0].pcb;
+        if(activeProcessIdx == 1) {
+            printProcess(currentProcPCB);
+            processes[1].pcb = currentProcPCB;
+            activeProcessIdx++;
+            return processes[0].pcb;   
+        }
+        if(activeProcessIdx == 2) {
+            printProcess(currentProcPCB);
+            processes[0].pcb = currentProcPCB;
+            activeProcessIdx--;
+            return processes[1].pcb;   
+        }
     }
     return currentProcPCB;
 }
+
+        
+        
+    
