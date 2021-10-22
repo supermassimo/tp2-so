@@ -3,21 +3,21 @@ GLOBAL scheduleNext
 
 %macro pushState 0
 	push rsp
-	push r15
-	push r14
-	push r13
-	push r12
-	push r11
-	push r10
-	push r9
-	push r8
-	push r8		; rsi: argv
-	push rcx	; rdi: argc
-	push rbp
-	push rdx
-	push rcx
-	push rbx
-	push rax
+	push 0x0	; r15
+	push 0x1	; r14
+	push 0x2	; r13
+	push 0x3	; r12
+	push 0x4	; r11
+	push 0x5	; r10
+	push 0x6	; r9
+	push 0x7	; r8
+	push 0x8	; rsi
+	push 0x9	; rdi
+	push 0xA	; rbp
+	push 0xB	; rdx
+	push 0xC	; rcx
+	push 0xD	; rbx
+	push 0xE	; rax
 %endmacro
 
 %macro popState 0
@@ -46,7 +46,7 @@ createPCB:
 
     mov rsp, rsi
     push 0x0                ; ss
-    push rdx          		; rsp
+    push rsi          		; rsp
     push 0x202              ; rflags
     push 0x8                ; cs
     push rdi                ; rip

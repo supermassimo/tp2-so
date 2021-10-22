@@ -327,14 +327,18 @@ static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
 }
 
 static void testProcess(int argc, char** argv){
-    for(int i=0 ; i < 100 ; i++){
+    for(int i=0 ; i < 10000000000 ; i++){
+        if(i % 10000000000 == 0)
+            printf("A");
         /*
         printf("Estoy vivo: ");
         printInt(i, 10, 10);
         printf("\n");
         */
     }
-    printf("Me muero\n");
+    printf("RECIBIDA: ");
+    printInt(argv[0], 100, 16);
+    printf("\n");
     killCurrentProcess();
 }
 
@@ -343,6 +347,9 @@ static void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t param
         printErr("Too many parameters for command 'test'");
     }
     char **msg = {"Estoy vivo\n", "Me muero\n"};
+    printf("MANDADA: ");
+    printInt(msg, 100, 16);
+    printf("\n");
     createProcess(testProcess, MEDIUM, 2, msg);
 }
 

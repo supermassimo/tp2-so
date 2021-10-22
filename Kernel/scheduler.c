@@ -10,10 +10,9 @@ typedef struct {
     State state;
     Priority priority;
     uint64_t *pcb;
-    uint64_t *stack;
 } Process;
 
-extern uint64_t* createPCB(uint64_t* entryPoint, uint64_t* pcbAddr, uint64_t* stackAddr, int argc, char** argv);
+extern uint64_t* createPCB(uint64_t* entryPoint, uint64_t* pcbAddr, int argc, char** argv);
 extern void scheduleNext();
 
 static Process processes[MAX_PROCESSES] = {0};
@@ -77,13 +76,14 @@ static int getFirstFree(){
 }
 
 int createProcess(void* entryPoint, Priority priority, int argc, char** argv){
+    print("RECIBIDA (K): ");
+    printInt(argv, 16);
+    print("\n");
     int processIdx = getFirstFree();
     if(processIdx == -1)
         return processIdx;
-    uint64_t* pcbAddr = memAlloc(sizeof(uint64_t) * PROCESS_STACK, SET_ZERO);
-    uint64_t* stackAddr = memAlloc(sizeof(uint64_t) * PROCESS_STACK, SET_ZERO);
-    processes[processIdx].pcb = createPCB(entryPoint, pcbAddr, stackAddr, argc, argv);
-    processes[processIdx].stack = stackAddr;
+    uint64_t* pcbAddr = memAlloc(sizeof(uint64_t) * (PCB_REGISTERS + PROCESS_STACK), SET_ZERO);
+    processes[processIdx].pcb = createPCB(entryPoint, pcbAddr, argc, argv);
     processes[processIdx].state = READY;
     processes[processIdx].priority = priority;
     return processIdx;
@@ -91,7 +91,6 @@ int createProcess(void* entryPoint, Priority priority, int argc, char** argv){
 
 void killCurrentProcess(){
     processes[currentProcess].state = TERMINATED;
-    memFree(processes[currentProcess].stack);
     memFree(processes[currentProcess].pcb);
     scheduleNext();
 }
@@ -116,7 +115,7 @@ void printProcess(uint64_t* currentProcPCB) {
 
 uint64_t* schedule(uint64_t* currentProcPCB){
     if(isSchedulerEnabled){
-        if(currentProcess != -1 && processes[currentProcess].state != TERMINATED){
+        if(processes[currentProcess].state != TERMINATED){
             processes[currentProcess].pcb = currentProcPCB;
         }
         while(processes[currentProcess+1].state != READY){
@@ -125,7 +124,7 @@ uint64_t* schedule(uint64_t* currentProcPCB){
                 currentProcess = -1;
         }
         currentProcPCB = processes[++currentProcess].pcb;
-        // printProcess(processes[0].pcb);
+        // printProcess(processes[currentProcess].pcb);
     }
     return currentProcPCB;
 }
