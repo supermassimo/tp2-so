@@ -7,4 +7,5 @@ typedef enum Priority {LOW, MEDIUM, HIGH, SYSTEM} Priority;
 
 void enableScheduler();
 int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], char* name);
+void exit(int status);
 uint64_t* schedule(uint64_t* currentProcPCB);

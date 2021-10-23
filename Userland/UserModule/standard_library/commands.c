@@ -13,7 +13,7 @@ extern int getQuadratic(float a, float b, float c, float*, float*);
 extern void getDateTime(Date* date, Time* time, int utc);
 extern void getMemInfo(MemoryInfo* meminfo);
 extern int createProcess(void* entryPoint, UserPriority priority, int argc, char* argv[], char* name);
-extern void killCurrentProcess();
+extern void exit(int status);
 
 #define PRINTMEM_BYTES 32
 
@@ -376,7 +376,7 @@ void testProcess(int argc, char* argv[]){
     printf("\n");
     printf("VALOR: ");
     printf(argv[0]);
-    killCurrentProcess();
+    exit(0);
 };
 
 void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){

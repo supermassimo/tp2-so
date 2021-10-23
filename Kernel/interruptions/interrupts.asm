@@ -38,7 +38,7 @@ EXTERN sysMemAlloc
 EXTERN sysMemFree
 EXTERN sysGetMemInfo
 EXTERN sysCreateProcess
-EXTERN sysKillCurrentProcess
+EXTERN sysExit
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
@@ -163,8 +163,8 @@ _sysCallHandler:
 		je syscall_14
 		cmp rax, 15
 		je syscall_15
-		cmp rax, 16
-		je syscall_16
+		cmp rax, 60
+		je syscall_60
 	syscall_0:
 		call sysReadInput
 		jmp endSysCallHandler
@@ -215,8 +215,8 @@ _sysCallHandler:
 	syscall_15:
 		call sysCreateProcess
 		jmp endSysCallHandler
-	syscall_16:
-		call sysKillCurrentProcess
+	syscall_60:
+		call sysExit
 		jmp endSysCallHandler
 	endSysCallHandler:
 		mov rbx, [reg_stack_pointer]

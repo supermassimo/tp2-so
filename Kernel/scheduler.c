@@ -112,7 +112,7 @@ int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], c
     return processIdx;
 }
 
-void killCurrentProcess(){
+void exit(int status){
     processes[currentProcess].state = TERMINATED;
     memFree(processes[currentProcess].base);
     memFree(processes[currentProcess].argv);
