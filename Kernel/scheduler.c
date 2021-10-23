@@ -12,7 +12,7 @@ typedef struct {
     uint64_t *pcb;
 } Process;
 
-extern uint64_t* createPCB(uint64_t* entryPoint, uint64_t* pcbAddr, int argc, char** argv);
+extern uint64_t* createPCB(uint64_t* entryPoint, uint64_t* pcbAddr, int argc, char* argv[]);
 extern void scheduleNext();
 
 static Process processes[MAX_PROCESSES] = {0};
@@ -77,9 +77,9 @@ static int getFirstFree(){
     return -1;
 }
 
-int createProcess(void* entryPoint, Priority priority, int argc, char** argv){
+int createProcess(void* entryPoint, Priority priority, int argc, char* argv[]){
     print("RECIBIDA (K): ");
-    printInt(argv, 16);
+    printInt(argv[0], 16);
     print("\n");
     int processIdx = getFirstFree();
     if(processIdx == -1)
@@ -118,7 +118,7 @@ void printProcess(uint64_t* currentProcPCB) {
 }
 
 static int getNextReady(int current){
-    if(activeProcesses == 1)
+    if(activeProcesses == 1)            // Assumes there´s always one process ready -> 'halt' process
         return current;
     while(processes[current+1].state != READY){
         current++;

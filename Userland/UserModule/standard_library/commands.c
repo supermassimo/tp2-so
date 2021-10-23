@@ -326,31 +326,30 @@ static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
     }
 }
 
-static void testProcessA(int argc, char** argv){
-    printf("A");
-    for(size_t i=0 ; i < 100 ; i++){
-        if(i % 10 == 0)
-            printInt(i/10, 10, 10);
-    }
+static void testProcessA(int argc, char* argv[]){
     /*
+    for(size_t i=0 ; i < 100000000 ; i++){
+        if(i % 1000000 == 0)
+            printf("A");
+    }
+    */
     printf("RECIBIDA: ");
     printInt(argv[0], 100, 16);
     printf("\n");
-    */
+    printf("VALOR: ");
+    printf(argv[0]);
+    printf("\n");
     killCurrentProcess();
 }
 
-static void testProcessB(int argc, char** argv){
-    printf("B");
-    for(size_t i=0 ; i < 10000 ; i++){
-        if(i % 1000 == 0)
-            printInt(i/1000, 100, 10);
+static void testProcessB(int argc, char* argv[]){
+    for(size_t i=0 ; i < 1000000000 ; i++){
+        if(i % 1000000 == 0)
+            printf("B");
     }
-    /*
     printf("RECIBIDA: ");
     printInt(argv[0], 100, 16);
     printf("\n");
-    */
     killCurrentProcess();
 }
 
@@ -358,12 +357,12 @@ static void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t param
     if(paramAmount != 0){
         printErr("Too many parameters for command 'test'");
     }
-    char **msg = {"Estoy vivo\n", "Me muero\n"};
+    char* msg[] = {"Estoy vivo\n", "Me muero\n"};
     printf("MANDADA: ");
-    printInt(msg, 100, 16);
+    printInt(msg[0], 100, 16);
     printf("\n");
     createProcess(testProcessA, HIGH, 2, msg);
-    createProcess(testProcessB, LOW, 2, msg);
+    // createProcess(testProcessB, LOW, 2, msg);
 }
 
 static commandStruct commands[] = {
