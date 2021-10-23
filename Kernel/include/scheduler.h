@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <memManager.h>
+#include <lib.h>
 
 typedef enum Priority {LOW, MEDIUM, HIGH, SYSTEM} Priority;
 

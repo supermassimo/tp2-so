@@ -38,6 +38,44 @@ static const size_t exceptionAmount = 2;
 #define QUADRATIC_PRECISION 2
 #define FLOAT_STRING_SIZE 100
 
+void * memcpy(void * destination, const void * source, uint64_t length)
+{
+	/*
+	* memcpy does not support overlapping buffers, so always do it
+	* forwards. (Don't change this without adjusting memmove.)
+	*
+	* For speedy copying, optimize the common case where both pointers
+	* and the length are word-aligned, and copy word-at-a-time instead
+	* of byte-at-a-time. Otherwise, copy by bytes.
+	*
+	* The alignment logic below should be portable. We rely on
+	* the compiler to be reasonably intelligent about optimizing
+	* the divides and modulos out. Fortunately, it is.
+	*/
+	uint64_t i;
+
+	if ((uint64_t)destination % sizeof(uint32_t) == 0 &&
+		(uint64_t)source % sizeof(uint32_t) == 0 &&
+		length % sizeof(uint32_t) == 0)
+	{
+		uint32_t *d = (uint32_t *) destination;
+		const uint32_t *s = (const uint32_t *)source;
+
+		for (i = 0; i < length / sizeof(uint32_t); i++)
+			d[i] = s[i];
+	}
+	else
+	{
+		uint8_t * d = (uint8_t*)destination;
+		const uint8_t * s = (const uint8_t*)source;
+
+		for (i = 0; i < length; i++)
+			d[i] = s[i];
+	}
+
+	return destination;
+}
+
 static helpStruct help_messages[] = {
     {"help", "'help': Get information on how to use commands\nUse: 'help [command]'\n'command': Command to get use information about\n"},
     {"echo", "'echo': Print a message on the console\nUse: 'echo [message]'\n'message': Message to print in console\n"},
@@ -174,7 +212,7 @@ static void testallocHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAm
             }
         }
     */
-    // free(mem);
+    free(mem);
 }
 
 static void echoHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
@@ -326,7 +364,7 @@ static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
     }
 }
 
-static void testProcessA(int argc, char* argv[]){
+void testProcess(int argc, char* argv[]){
     /*
     for(size_t i=0 ; i < 100000000 ; i++){
         if(i % 1000000 == 0)
@@ -334,34 +372,25 @@ static void testProcessA(int argc, char* argv[]){
     }
     */
     printf("RECIBIDA: ");
-    printInt(argv[0], 100, 16);
+    printInt(argv, 100, 16);
     printf("\n");
     printf("VALOR: ");
     printf(argv[0]);
-    printf("\n");
+    free(argv);
     killCurrentProcess();
-}
+};
 
-static void testProcessB(int argc, char* argv[]){
-    for(size_t i=0 ; i < 1000000000 ; i++){
-        if(i % 1000000 == 0)
-            printf("B");
-    }
-    printf("RECIBIDA: ");
-    printInt(argv[0], 100, 16);
-    printf("\n");
-    killCurrentProcess();
-}
-
-static void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount != 0){
         printErr("Too many parameters for command 'test'");
     }
     char* msg[] = {"Estoy vivo\n", "Me muero\n"};
+    void *ptr = calloc(1, strlen(msg[0])+strlen(msg[1]));
+    memcpy(ptr, msg, strlen(msg[0])+strlen(msg[1]));
     printf("MANDADA: ");
     printInt(msg[0], 100, 16);
     printf("\n");
-    createProcess(testProcessA, HIGH, 2, msg, "testProcessA");
+    createProcess(testProcess, HIGH, 2, ptr, "testProcess");
     // createProcess(testProcessB, LOW, 2, msg);
 }
 

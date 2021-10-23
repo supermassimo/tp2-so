@@ -1,8 +1,8 @@
 #include <memManager.h>
 
-#define PAGE_SIZE 0x1000
-#define MEM_LIMIT 536870912             // 512MB
-#define MEM_BASE 9437184
+#define PAGE_SIZE   0x1000
+#define MEM_LIMIT   536870912             // 512MB
+#define MEM_BASE    9437184
 
 typedef struct MemHeader {
     struct MemHeader* next;
@@ -12,7 +12,7 @@ typedef struct MemHeader {
 static MemHeader baseHeader;
 static MemHeader* freeList = NULL;
 static uint8_t* nextToMap= (uint8_t*)MEM_BASE;
-static long occupiedMemory;
+static long occupiedMemory = 0;
 
 static void* memMap(size_t size){
     if((size_t)nextToMap + size > MEM_LIMIT)
@@ -52,6 +52,7 @@ static MemHeader* getBlocks(size_t blockAmount){
 void* memAlloc(size_t size, int options){
     MemHeader *auxp, *currentBlock;
     size_t headerBlocks = (size + sizeof(MemHeader) - 1)/sizeof(MemHeader) + 1;         // Always round up # of block needed
+    size_t blockBytes = headerBlocks * sizeof(MemHeader);
 
     if((currentBlock = freeList) == NULL){     /* No free blocks to asign yet*/
         baseHeader.next = freeList = currentBlock = &baseHeader;
@@ -59,17 +60,17 @@ void* memAlloc(size_t size, int options){
     }
 
     for(auxp = currentBlock->next ;  ; currentBlock = auxp, auxp = auxp->next){
-        if(auxp->size >= headerBlocks){
-            if(auxp->size == headerBlocks)
+        if(auxp->size >= blockBytes){
+            if(auxp->size == blockBytes)
                 currentBlock->next = auxp->next;
             else {
-                auxp->size -= headerBlocks;
+                auxp->size -= blockBytes;
                 auxp += auxp->size;
-                auxp->size = headerBlocks;
+                auxp->size = blockBytes;
             }
             freeList = currentBlock;
             applyOptions(auxp, options);
-            occupiedMemory += headerBlocks * sizeof(MemHeader);
+            occupiedMemory += blockBytes;
             return (void*)(auxp+1);
         }
         if(auxp == freeList)
@@ -87,6 +88,11 @@ int memFree(void *blockp){
             break;
     
     occupiedMemory -= headp->size;
+    /*
+    print("LIBERO: ");
+    printInt(headp->size, 10);
+    print("\n");
+    */
     if(headp + headp->size == auxp->next){
         headp->size += auxp->next->size;
         headp->next = headp->next->next;

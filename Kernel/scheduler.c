@@ -11,6 +11,7 @@ typedef struct {
     State state;
     Priority priority;
     uint64_t *pcb;
+    uint64_t *base;
 } Process;
 
 extern uint64_t* createPCB(uint64_t* entryPoint, uint64_t* pcbAddr, int argc, char* argv[]);
@@ -28,7 +29,7 @@ static size_t var1 = 0;
 static size_t var2 = 0;
 static size_t var3 = 0;
 
-
+/*
 void testProcess(){
     while(1) {
         if(var1 % 1000000 == 0) {
@@ -40,6 +41,7 @@ void testProcess(){
         var1++;
     }
 }
+*/
 
 void testProcess2(){
     while(1) {
@@ -66,6 +68,10 @@ void testProcess3(){
 }
 //-------------------------------------------------------------------------------------------------------
 
+int processWrapper(void* processEntry, int argc, char* argv[]){
+    
+}
+
 void enableScheduler(){
     isSchedulerEnabled = 1;
 }
@@ -79,14 +85,21 @@ static int getFirstFree(){
 }
 
 int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], char* name){
+    /*
     print("RECIBIDA (K): ");
     printInt(argv[0], 16);
     print("\n");
+    if(priority != SYSTEM){
+        print("VALOR (K): ");
+        print(argv[0]);
+    }
+    */
     int processIdx = getFirstFree();
     if(processIdx == -1)
         return processIdx;
-    uint64_t* pcbAddr = memAlloc(sizeof(uint64_t) * (PCB_REGISTERS + PROCESS_STACK), SET_ZERO);
-    processes[processIdx].pcb = createPCB(entryPoint, pcbAddr, argc, argv);
+    uint64_t* baseAddr = memAlloc(sizeof(uint64_t) * (PCB_REGISTERS + PROCESS_STACK), SET_ZERO);
+    processes[processIdx].pcb = createPCB(entryPoint, baseAddr, argc, argv);
+    processes[processIdx].base = baseAddr;
     processes[processIdx].state = READY;
     processes[processIdx].priority = priority;
     processes[processIdx].name = name;
@@ -96,9 +109,9 @@ int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], c
 
 void killCurrentProcess(){
     processes[currentProcess].state = TERMINATED;
-    memFree(processes[currentProcess].pcb);
-    scheduleNext();
+    memFree(processes[currentProcess].base);
     activeProcesses--;
+    scheduleNext();
 }
 
 // TODO
@@ -110,7 +123,7 @@ void printProcess(uint64_t* currentProcPCB) {
     changeConsoleSide(1);
     print("PCB ACTUAL:\n");
     for(int i=0 ; i < 21 ; i++){
-        printInt(currentProcPCB[i], 16);
+        printInt(currentProcPCB+i, 16);
         print("\n");
     }
     print("\n");
@@ -120,8 +133,6 @@ void printProcess(uint64_t* currentProcPCB) {
 }
 
 static int getNextReady(int current){
-    if(activeProcesses == 1)            // Assumes there´s always one process ready -> 'halt' process
-        return current;
     while(processes[current+1].state != READY){
         current++;
         if(current+1 == MAX_PROCESSES)

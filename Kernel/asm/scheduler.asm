@@ -57,5 +57,10 @@ createPCB:
     ret
 
 scheduleNext:
+	push rbp
+	mov rbp, rsp
+
 	int 20h
+	
+	leave
 	ret
