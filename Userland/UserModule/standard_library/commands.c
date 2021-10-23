@@ -376,7 +376,6 @@ void testProcess(int argc, char* argv[]){
     printf("\n");
     printf("VALOR: ");
     printf(argv[0]);
-    free(argv);
     killCurrentProcess();
 };
 

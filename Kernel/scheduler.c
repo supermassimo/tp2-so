@@ -12,6 +12,7 @@ typedef struct {
     Priority priority;
     uint64_t *pcb;
     uint64_t *base;
+    char** argv;
 } Process;
 
 extern uint64_t* createPCB(uint64_t* entryPoint, uint64_t* pcbAddr, int argc, char* argv[]);
@@ -68,10 +69,6 @@ void testProcess3(){
 }
 //-------------------------------------------------------------------------------------------------------
 
-int processWrapper(void* processEntry, int argc, char* argv[]){
-    
-}
-
 void enableScheduler(){
     isSchedulerEnabled = 1;
 }
@@ -82,6 +79,13 @@ static int getFirstFree(){
             return i;
     }
     return -1;
+}
+
+static void* loadArgv(int argc, char* argv[]){
+    size_t argvLen = totalStrlen(argc, argv);
+    void* argPtr = memAlloc(argvLen, NO_ACTION);
+    memcpy(argPtr, argv, argvLen);
+    return argPtr;
 }
 
 int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], char* name){
@@ -98,7 +102,8 @@ int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], c
     if(processIdx == -1)
         return processIdx;
     uint64_t* baseAddr = memAlloc(sizeof(uint64_t) * (PCB_REGISTERS + PROCESS_STACK), SET_ZERO);
-    processes[processIdx].pcb = createPCB(entryPoint, baseAddr, argc, argv);
+    processes[processIdx].argv = loadArgv(argc, argv);
+    processes[processIdx].pcb = createPCB(entryPoint, baseAddr, argc, processes[processIdx].argv);
     processes[processIdx].base = baseAddr;
     processes[processIdx].state = READY;
     processes[processIdx].priority = priority;
@@ -110,6 +115,7 @@ int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], c
 void killCurrentProcess(){
     processes[currentProcess].state = TERMINATED;
     memFree(processes[currentProcess].base);
+    memFree(processes[currentProcess].argv);
     activeProcesses--;
     scheduleNext();
 }
