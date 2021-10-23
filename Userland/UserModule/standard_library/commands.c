@@ -327,9 +327,10 @@ static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
 }
 
 static void testProcessA(int argc, char** argv){
-    for(int i=0 ; i < 100000000 ; i++){
-        if(i % 10000000 == 0)
-            printf("A");
+    printf("A");
+    for(size_t i=0 ; i < 100 ; i++){
+        if(i % 10 == 0)
+            printInt(i/10, 10, 10);
     }
     /*
     printf("RECIBIDA: ");
@@ -340,9 +341,10 @@ static void testProcessA(int argc, char** argv){
 }
 
 static void testProcessB(int argc, char** argv){
-    for(int i=0 ; i < 1000000000 ; i++){
-        if(i % 10000000 == 0)
-            printf("B");
+    printf("B");
+    for(size_t i=0 ; i < 10000 ; i++){
+        if(i % 1000 == 0)
+            printInt(i/1000, 100, 10);
     }
     /*
     printf("RECIBIDA: ");

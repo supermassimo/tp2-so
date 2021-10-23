@@ -95,8 +95,8 @@ int createProcess(void* entryPoint, Priority priority, int argc, char** argv){
 void killCurrentProcess(){
     processes[currentProcess].state = TERMINATED;
     memFree(processes[currentProcess].pcb);
-    activeProcesses--;
     scheduleNext();
+    activeProcesses--;
 }
 
 // TODO
@@ -118,6 +118,8 @@ void printProcess(uint64_t* currentProcPCB) {
 }
 
 static int getNextReady(int current){
+    if(activeProcesses == 1)
+        return current;
     while(processes[current+1].state != READY){
         current++;
         if(current+1 == MAX_PROCESSES)
@@ -135,8 +137,7 @@ uint64_t* schedule(uint64_t* currentProcPCB){
         if(processes[currentProcess].state != TERMINATED){
             processes[currentProcess].pcb = currentProcPCB;
         }
-        if(activeProcesses > 1 && (processes[currentProcess].state == TERMINATED ||
-                                    processes[currentProcess].priority < currentProcessQuantums)){
+        if(processes[currentProcess].state == TERMINATED || processes[currentProcess].priority < currentProcessQuantums){
             currentProcessQuantums = 0;
             currentProcess = getNextReady(currentProcess);
         }
