@@ -95,8 +95,8 @@ int createProcess(void* entryPoint, Priority priority, int argc, char** argv){
 void killCurrentProcess(){
     processes[currentProcess].state = TERMINATED;
     memFree(processes[currentProcess].pcb);
-    scheduleNext();
     activeProcesses--;
+    scheduleNext();
 }
 
 // TODO
@@ -135,7 +135,8 @@ uint64_t* schedule(uint64_t* currentProcPCB){
         if(processes[currentProcess].state != TERMINATED){
             processes[currentProcess].pcb = currentProcPCB;
         }
-        if(activeProcesses > 1 && processes[currentProcess].priority < currentProcessQuantums){
+        if(activeProcesses > 1 && (processes[currentProcess].state == TERMINATED ||
+                                    processes[currentProcess].priority < currentProcessQuantums)){
             currentProcessQuantums = 0;
             currentProcess = getNextReady(currentProcess);
         }

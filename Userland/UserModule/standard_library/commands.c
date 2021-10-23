@@ -327,7 +327,7 @@ static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
 }
 
 static void testProcessA(int argc, char** argv){
-    for(int i=0 ; i < 1000000000 ; i++){
+    for(int i=0 ; i < 100000000 ; i++){
         if(i % 10000000 == 0)
             printf("A");
     }
