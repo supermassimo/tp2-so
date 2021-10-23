@@ -18,6 +18,8 @@ extern void scheduleNext();
 static Process processes[MAX_PROCESSES] = {0};
 static int currentProcess = -1;
 static int isSchedulerEnabled = 0;
+static int activeProcesses = 0;
+static size_t currentProcessQuantums = 0;
 
 //-------------------------------------------------------------------------------------------------------
 //Testing process
@@ -86,6 +88,7 @@ int createProcess(void* entryPoint, Priority priority, int argc, char** argv){
     processes[processIdx].pcb = createPCB(entryPoint, pcbAddr, argc, argv);
     processes[processIdx].state = READY;
     processes[processIdx].priority = priority;
+    activeProcesses++;
     return processIdx;
 }
 
@@ -93,6 +96,7 @@ void killCurrentProcess(){
     processes[currentProcess].state = TERMINATED;
     memFree(processes[currentProcess].pcb);
     scheduleNext();
+    activeProcesses--;
 }
 
 // TODO
@@ -113,17 +117,30 @@ void printProcess(uint64_t* currentProcPCB) {
     changeConsoleSide(0);
 }
 
+static int getNextReady(int current){
+    while(processes[current+1].state != READY){
+        current++;
+        if(current+1 == MAX_PROCESSES)
+            current = -1;
+    }
+    return current+1;
+}
+
 uint64_t* schedule(uint64_t* currentProcPCB){
     if(isSchedulerEnabled){
+        if(currentProcess == -1){       // Only when no processes are running yet (only kernel)
+            currentProcessQuantums++;
+            return processes[++currentProcess].pcb;
+        }
         if(processes[currentProcess].state != TERMINATED){
             processes[currentProcess].pcb = currentProcPCB;
         }
-        while(processes[currentProcess+1].state != READY){
-            currentProcess++;
-            if(currentProcess+1 == MAX_PROCESSES)
-                currentProcess = -1;
+        if(activeProcesses > 1 && processes[currentProcess].priority < currentProcessQuantums){
+            currentProcessQuantums = 0;
+            currentProcess = getNextReady(currentProcess);
         }
-        currentProcPCB = processes[++currentProcess].pcb;
+        currentProcPCB = processes[currentProcess].pcb;
+        currentProcessQuantums++;
         // printProcess(processes[currentProcess].pcb);
     }
     return currentProcPCB;
