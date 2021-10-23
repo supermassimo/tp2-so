@@ -65,8 +65,8 @@ void sysGetMemInfo(MemoryInfo* meminfo){
     return getMemInfo(meminfo);
 }
 
-int sysCreateProcess(void* entryPoint, Priority priority, int argc, char** argv){
-    return createProcess(entryPoint, priority, argc, argv);
+int sysCreateProcess(void* entryPoint, Priority priority, int argc, char* argv[], char* name){
+    return createProcess(entryPoint, priority, argc, argv, name);
 }
 
 void sysKillCurrentProcess(){

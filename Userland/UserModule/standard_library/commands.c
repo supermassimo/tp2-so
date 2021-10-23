@@ -12,7 +12,7 @@ extern void sleep(long seconds);
 extern int getQuadratic(float a, float b, float c, float*, float*);
 extern void getDateTime(Date* date, Time* time, int utc);
 extern void getMemInfo(MemoryInfo* meminfo);
-extern int createProcess(void* entryPoint, UserPriority priority, int argc, char** argv);
+extern int createProcess(void* entryPoint, UserPriority priority, int argc, char* argv[], char* name);
 extern void killCurrentProcess();
 
 #define PRINTMEM_BYTES 32
@@ -361,7 +361,7 @@ static void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t param
     printf("MANDADA: ");
     printInt(msg[0], 100, 16);
     printf("\n");
-    createProcess(testProcessA, HIGH, 2, msg);
+    createProcess(testProcessA, HIGH, 2, msg, "testProcessA");
     // createProcess(testProcessB, LOW, 2, msg);
 }
 

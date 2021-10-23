@@ -7,6 +7,7 @@
 typedef enum State {TERMINATED, READY, BLOCKED, SUSPENDED} State;
 
 typedef struct {
+    char* name;
     State state;
     Priority priority;
     uint64_t *pcb;
@@ -77,7 +78,7 @@ static int getFirstFree(){
     return -1;
 }
 
-int createProcess(void* entryPoint, Priority priority, int argc, char* argv[]){
+int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], char* name){
     print("RECIBIDA (K): ");
     printInt(argv[0], 16);
     print("\n");
@@ -88,6 +89,7 @@ int createProcess(void* entryPoint, Priority priority, int argc, char* argv[]){
     processes[processIdx].pcb = createPCB(entryPoint, pcbAddr, argc, argv);
     processes[processIdx].state = READY;
     processes[processIdx].priority = priority;
+    processes[processIdx].name = name;
     activeProcesses++;
     return processIdx;
 }
