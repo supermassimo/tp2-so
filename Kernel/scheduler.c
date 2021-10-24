@@ -24,51 +24,6 @@ static int isSchedulerEnabled = 0;
 static int activeProcesses = 0;
 static size_t currentProcessQuantums = 0;
 
-//-------------------------------------------------------------------------------------------------------
-//Testing process
-static size_t var1 = 0;
-static size_t var2 = 0;
-static size_t var3 = 0;
-
-/*
-void testProcess(){
-    while(1) {
-        if(var1 % 1000000 == 0) {
-            print("Process [1] is running\n");
-            changeConsoleSide(1);
-            print("\n");
-            changeConsoleSide(0);
-        }
-        var1++;
-    }
-}
-*/
-
-void testProcess2(){
-    while(1) {
-        if(var2 % 1000000 == 0) {
-            print("Process [2] is running\n");
-            changeConsoleSide(1);
-            print("\n");
-            changeConsoleSide(0);
-        }
-        var2++;
-    }
-}
-
-void testProcess3(){
-    while(1) {
-        if(var3 % 1000000 == 0) {
-            print("Process [3] is running\n");
-            changeConsoleSide(1);
-            print("\n");
-            changeConsoleSide(0);
-        }
-        var3++;
-    }
-}
-//-------------------------------------------------------------------------------------------------------
-
 void enableScheduler(){
     isSchedulerEnabled = 1;
 }
@@ -94,15 +49,6 @@ static void processWrapper(void* processEntry, int argc, char* argv[]){
 }
 
 int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], char* name){
-    /*
-    print("RECIBIDA (K): ");
-    printInt(argv[0], 16);
-    print("\n");
-    if(priority != SYSTEM){
-        print("VALOR (K): ");
-        print(argv[0]);
-    }
-    */
     int processIdx = getFirstFree();
     if(processIdx == -1)
         return processIdx;
@@ -125,9 +71,23 @@ void exit(int status){
     scheduleNext();
 }
 
-// TODO
-void killRandomProcess(){
+static int killProcess(int pid){
+    if(processes[pid].state == TERMINATED)
+        return -1;
+    processes[pid].state = TERMINATED;
+    memFree(processes[currentProcess].base);
+    memFree(processes[currentProcess].argv);
+    activeProcesses--;
+    return 0;
+}
 
+int kill(int pid, ProcessSignal sig){
+    switch(sig){
+        case 0:
+            return killProcess(pid);
+        default:
+            return -1;
+    }
 }
 
 void printProcess(uint64_t* currentProcPCB) {

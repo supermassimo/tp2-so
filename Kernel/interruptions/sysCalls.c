@@ -72,3 +72,7 @@ int sysCreateProcess(void* entryPoint, Priority priority, int argc, char* argv[]
 void sysExit(int status){
     return exit(status);
 }
+
+int sysKill(int pid, ProcessSignal sig){
+    return kill(pid, sig);
+}

@@ -27,5 +27,6 @@ int sysMemFree(void *blockp);
 void sysGetMemInfo(MemoryInfo* meminfo);
 int sysCreateProcess(void* entryPoint, Priority priority, int argc, char* argv[], char* name);
 void sysExit(int status);
+int sysKill(int pid, ProcessSignal sig);
 
 #endif

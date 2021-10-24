@@ -15,6 +15,7 @@ GLOBAL memFree
 GLOBAL getMemInfo
 GLOBAL createProcess
 GLOBAL exit
+GLOBAL kill
 
 section .text
 
@@ -110,6 +111,12 @@ createProcess
 
 exit:
     mov rax, 60
+    int 80h
+
+    ret
+
+kill:
+    mov rax, 62
     int 80h
 
     ret

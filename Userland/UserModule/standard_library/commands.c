@@ -14,6 +14,7 @@ extern void getDateTime(Date* date, Time* time, int utc);
 extern void getMemInfo(MemoryInfo* meminfo);
 extern int createProcess(void* entryPoint, UserPriority priority, int argc, char* argv[], char* name);
 extern void exit(int status);
+extern int kill(int pid, ProcessSignal sig);
 
 #define PRINTMEM_BYTES 32
 
@@ -32,7 +33,7 @@ typedef struct exceptionTestStruct{
     void* thrower;
 } exceptionTestStruct;
 
-static const size_t commandAmount = 14;
+static const size_t commandAmount = 15;
 static const size_t exceptionAmount = 2;
 
 #define QUADRATIC_PRECISION 2
@@ -365,17 +366,18 @@ static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
 }
 
 void testProcess(int argc, char* argv[]){
-    /*
-    for(size_t i=0 ; i < 100000000 ; i++){
-        if(i % 1000000 == 0)
-            printf("A");
+    for(size_t i=0 ; i < 10000000000 ; i++){
+        if(i % 100000000 == 0)
+            printf(argv[0]);
     }
-    */
+    printf(argv[1]);
+    /*
     printf("RECIBIDA: ");
     printInt(argv, 100, 16);
     printf("\n");
     printf("VALOR: ");
     printf(argv[0]);
+    */
     return 0;
 }
 
@@ -394,9 +396,29 @@ void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
     printf("\n");
     if(paramAmount == 0)
         testProcess(2, msg);
-    else
-        createProcess(testProcess, HIGH, 2, msg, "testProcess");
+    else{
+        if(createProcess(testProcess, HIGH, 2, msg, "testProcess") == -1){
+            printErr("Cannot create a new process; process limit reached");
+            return;
+        }
+    }
     // createProcess(testProcessB, LOW, 2, msg);
+}
+
+void killHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount == 0){
+        printErr("Missing parameter for command 'kill'");
+        return;
+    }
+    if(paramAmount > 1){
+        printErr("Too many parameters for command 'kill'");
+        return;
+    }
+    int pid = strToNum(params[0]);
+    if(kill(pid, SIG_KILL) == -1){
+        printErr("No process with pid sent");
+        return;
+    }
 }
 
 static commandStruct commands[] = {
@@ -414,7 +436,8 @@ static commandStruct commands[] = {
     //{"quadratic", &quadraticHandler},
     {"testalloc", &testallocHandler},
     {"meminfo", &meminfoHandler},
-    {"testprocess", &testProcessHandler}
+    {"testprocess", &testProcessHandler},
+    {"kill", &killHandler}
 };
 
 static int isEnd(int c){
