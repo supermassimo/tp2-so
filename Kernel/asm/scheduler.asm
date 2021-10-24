@@ -14,7 +14,7 @@ GLOBAL scheduleNext
 	push rcx	; rsi
 	push rdx	; rdi
 	push 0xA	; rbp
-	push 0xB	; rdx
+	push r8		; rdx
 	push 0xC	; rcx
 	push 0xD	; rbx
 	push 0xE	; rax

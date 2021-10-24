@@ -376,20 +376,26 @@ void testProcess(int argc, char* argv[]){
     printf("\n");
     printf("VALOR: ");
     printf(argv[0]);
-    exit(0);
-};
+    return 0;
+}
 
 void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount != 0){
+    if(paramAmount > 1){
         printErr("Too many parameters for command 'test'");
+        return;
+    }
+    if(paramAmount == 1 && strcmp("b", params[0]) != 0){
+        printErr("Wrong parameter sent. Check 'help testprocess' for more info");
+        return;
     }
     char* msg[] = {"Estoy vivo\n", "Me muero\n"};
-    void *ptr = calloc(1, strlen(msg[0])+strlen(msg[1]));
-    memcpy(ptr, msg, strlen(msg[0])+strlen(msg[1]));
     printf("MANDADA: ");
     printInt(msg[0], 100, 16);
     printf("\n");
-    createProcess(testProcess, HIGH, 2, ptr, "testProcess");
+    if(paramAmount == 0)
+        testProcess(2, msg);
+    else
+        createProcess(testProcess, HIGH, 2, msg, "testProcess");
     // createProcess(testProcessB, LOW, 2, msg);
 }
 

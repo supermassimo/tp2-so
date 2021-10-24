@@ -15,7 +15,7 @@ typedef struct {
     char** argv;
 } Process;
 
-extern uint64_t* createPCB(uint64_t* entryPoint, uint64_t* pcbAddr, int argc, char* argv[]);
+extern uint64_t* createPCB(uint64_t* wrapper, uint64_t* pcbAddr, uint64_t* entryPoint, int argc, char* argv[]);
 extern void scheduleNext();
 
 static Process processes[MAX_PROCESSES] = {0};
@@ -88,6 +88,11 @@ static void* loadArgv(int argc, char* argv[]){
     return argPtr;
 }
 
+static void processWrapper(void* processEntry, int argc, char* argv[]){
+    int status = ((int(*)(int, char*[]))processEntry)(argc, argv);
+    exit(status);
+}
+
 int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], char* name){
     /*
     print("RECIBIDA (K): ");
@@ -103,7 +108,7 @@ int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], c
         return processIdx;
     uint64_t* baseAddr = memAlloc(sizeof(uint64_t) * (PCB_REGISTERS + PROCESS_STACK), SET_ZERO);
     processes[processIdx].argv = loadArgv(argc, argv);
-    processes[processIdx].pcb = createPCB(entryPoint, baseAddr, argc, processes[processIdx].argv);
+    processes[processIdx].pcb = createPCB(processWrapper, baseAddr, entryPoint, argc, processes[processIdx].argv);
     processes[processIdx].base = baseAddr;
     processes[processIdx].state = READY;
     processes[processIdx].priority = priority;
