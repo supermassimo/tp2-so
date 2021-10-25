@@ -2,7 +2,7 @@
 
 #define MAX_PROCESSES  10
 #define PCB_REGISTERS  21
-#define PROCESS_STACK  400
+#define PROCESS_STACK  4080         // PAGE_SIZE - MEM_HEADER_SIZE
 
 typedef enum State {TERMINATED, READY, BLOCKED, SUSPENDED} State;
 
@@ -52,9 +52,9 @@ int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], c
     int processIdx = getFirstFree();
     if(processIdx == -1)
         return processIdx;
-    uint64_t* baseAddr = memAlloc(sizeof(uint64_t) * (PCB_REGISTERS + PROCESS_STACK), SET_ZERO);
+    uint64_t* baseAddr = memAlloc(sizeof(uint64_t) * PROCESS_STACK, SET_ZERO);
     processes[processIdx].argv = loadArgv(argc, argv);
-    processes[processIdx].pcb = createPCB(processWrapper, baseAddr, entryPoint, argc, processes[processIdx].argv);
+    processes[processIdx].pcb = createPCB(processWrapper, baseAddr+(PROCESS_STACK-2), entryPoint, argc, processes[processIdx].argv);
     processes[processIdx].base = baseAddr;
     processes[processIdx].state = READY;
     processes[processIdx].priority = priority;
