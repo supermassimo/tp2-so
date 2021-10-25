@@ -63,6 +63,28 @@ int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], c
     return processIdx;
 }
 
+int nice(int pid, Priority priority){
+    if(priority == SYSTEM || processes[pid].state == TERMINATED)
+        return -1;
+    processes[pid].priority = priority;
+    return;
+}
+
+int block(int pid){
+    if(processes[pid].state == TERMINATED)      // Might be useless. Remove if no more states are added (apart from READY/BLOCKED/TERMINATED)
+        return -1;
+    switch(processes[pid].state){
+        case READY:
+            processes[pid].state = BLOCKED;
+            return 0;
+        case BLOCKED:
+            processes[pid].state = READY;
+            return 1;
+        default:        // Process was terminated
+            return -1;
+    }
+}
+
 void exit(int status){
     processes[currentProcess].state = TERMINATED;
     memFree(processes[currentProcess].base);

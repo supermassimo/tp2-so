@@ -14,6 +14,8 @@ GLOBAL memAlloc
 GLOBAL memFree
 GLOBAL getMemInfo
 GLOBAL createProcess
+GLOBAL nice
+GLOBAL block
 GLOBAL exit
 GLOBAL kill
 
@@ -103,8 +105,20 @@ getMemInfo:
 
     ret
 
-createProcess
+createProcess:
     mov rax, 15
+    int 80h
+
+    ret
+
+nice:
+    mov rax, 16
+    int 80h
+
+    ret
+
+block:
+    mov rax, 17
     int 80h
 
     ret

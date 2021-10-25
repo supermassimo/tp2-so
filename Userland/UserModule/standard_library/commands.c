@@ -15,6 +15,8 @@ extern void getMemInfo(MemoryInfo* meminfo);
 extern int createProcess(void* entryPoint, UserPriority priority, int argc, char* argv[], char* name);
 extern void exit(int status);
 extern int kill(int pid, ProcessSignal sig);
+extern int nice(int pid, UserPriority priority);
+extern int block(int pid);
 
 #define PRINTMEM_BYTES 32
 
@@ -33,7 +35,7 @@ typedef struct exceptionTestStruct{
     void* thrower;
 } exceptionTestStruct;
 
-static const size_t commandAmount = 15;
+static const size_t commandAmount = 17;
 static const size_t exceptionAmount = 2;
 
 #define QUADRATIC_PRECISION 2
@@ -91,7 +93,10 @@ static helpStruct help_messages[] = {
     {"clear", "'clear': Clears the current console\nUse: 'clear'\n"},
     //{"quadratic", "'quadratic': Calculates the roots of a quadratic ecuation\nUse: 'quadratic [a] [b] [c]'\n'a': Quadratic coeficient\n'b': Lineal coeficient\n'c': Independent coeficient\n"},
     {"testalloc", "'testalloc': Tests the functionality of memory allocation\nUse: 'testalloc' [test num]\n'test num': A test integer number that will be saved in memory and then read\n"},
-    {"meminfo", "'meminfo': Displays memory info\nUse: 'meminfo' [units]\n'units': Determines which unit the info will be displayed on\nOptions:\n-b: Bytes (Default)\n-k: Kilobytes\n"}
+    {"meminfo", "'meminfo': Displays memory info\nUse: 'meminfo' [units]\n'units': Determines which unit the info will be displayed on\nOptions:\n-b: Bytes (Default)\n-k: Kilobytes\n"},
+    {"kill", "'kill': Kills process with pid sent\nUse: 'kill' [pid]\n'pid': Id of process\n"},
+    {"nice", "'nice': Change priority of given process\nUse: 'nice' [pid] [priority]\n'pid': Id of process\n'priority': New priority to assign to process\n"},
+    {"block", "'block': Toggles a process' state between ready and blocked\nUse: 'block' [pid]\n'pid': Id of process\n"}
 };
 
 static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
@@ -100,7 +105,7 @@ static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
     }
     if (paramAmount == 0){
         printf("Available Commands:\nhelp [command]\necho [message]\nechofloat [precision] [number]\ninforeg\nprintmem [pointer]\n"
-            "datetime [timezone]\nlocaldatetime\ncpufeatures\nsleep [seconds]\ntest [exception]\nclear\nmeminfo\n");//quadratic [a] [b] [c]\n");
+            "datetime [timezone]\nlocaldatetime\ncpufeatures\nsleep [seconds]\ntest [exception]\nclear\nmeminfo\nkill\nnice\nblock\n");//quadratic [a] [b] [c]\n");
     }
     for(int i=0 ; i < commandAmount ; i++){
         if(strcmp(help_messages[i].name, params[0]) == 0){
@@ -381,6 +386,36 @@ void testProcess(int argc, char* argv[]){
     return 0;
 }
 
+void testProcessA(int argc, char* argv[]){
+    for(size_t i=0 ; i < 10000000000 ; i++){
+        if(i % 100000000 == 0)
+            printf("A");
+    }
+    /*
+    printf("RECIBIDA: ");
+    printInt(argv, 100, 16);
+    printf("\n");
+    printf("VALOR: ");
+    printf(argv[0]);
+    */
+    return 0;
+}
+
+void testProcessB(int argc, char* argv[]){
+    for(size_t i=0 ; i < 10000000000 ; i++){
+        if(i % 100000000 == 0)
+            printf("B");
+    }
+    /*
+    printf("RECIBIDA: ");
+    printInt(argv, 100, 16);
+    printf("\n");
+    printf("VALOR: ");
+    printf(argv[0]);
+    */
+    return 0;
+}
+
 void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount > 1){
         printErr("Too many parameters for command 'test'");
@@ -397,7 +432,11 @@ void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
     if(paramAmount == 0)
         testProcess(2, msg);
     else{
-        if(createProcess(testProcess, HIGH, 2, msg, "testProcess") == -1){
+        if(createProcess(testProcessA, HIGH, 2, msg, "testProcess") == -1){
+            printErr("Cannot create a new process; process limit reached");
+            return;
+        }
+        if(createProcess(testProcessB, LOW, 2, msg, "testProcess") == -1){
             printErr("Cannot create a new process; process limit reached");
             return;
         }
@@ -421,6 +460,43 @@ void killHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     }
 }
 
+void niceHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount == 0){
+        printErr("Missing parameters for command 'nice'");
+        return;
+    }
+    if(paramAmount == 1){
+        printErr("Missing process new priority");
+        return;
+    }
+    if(paramAmount > 2){
+        printErr("Too many parameters for command 'nice'");
+        return;
+    }
+    int pid = strToNum(params[0]);
+    int priority = strToNum(params[1]);
+    if(nice(pid, priority) == -1){
+        printErr("Cannot assign new priority to process with pid sent");
+        return;
+    }
+}
+
+void blockHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount == 0){
+        printErr("Missing parameters for command 'block'");
+        return;
+    }
+    if(paramAmount > 1){
+        printErr("Too many parameters for command 'block'");
+        return;
+    }
+    int pid = strToNum(params[0]);
+    if(block(pid) == -1){
+        printErr("Cannot change sent process state");
+        return;
+    }
+}
+
 static commandStruct commands[] = {
     {"help", &helpHandler},
     {"echo", &echoHandler},
@@ -437,7 +513,9 @@ static commandStruct commands[] = {
     {"testalloc", &testallocHandler},
     {"meminfo", &meminfoHandler},
     {"testprocess", &testProcessHandler},
-    {"kill", &killHandler}
+    {"kill", &killHandler},
+    {"nice", &niceHandler},
+    {"block", &blockHandler}
 };
 
 static int isEnd(int c){

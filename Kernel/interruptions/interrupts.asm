@@ -38,6 +38,8 @@ EXTERN sysMemAlloc
 EXTERN sysMemFree
 EXTERN sysGetMemInfo
 EXTERN sysCreateProcess
+EXTERN sysNice
+EXTERN sysBlock
 EXTERN sysExit
 EXTERN sysKill
 
@@ -164,6 +166,10 @@ _sysCallHandler:
 		je syscall_14
 		cmp rax, 15
 		je syscall_15
+		cmp rax, 16
+		je syscall_16
+		cmp rax, 17
+		je syscall_17
 		cmp rax, 60
 		je syscall_60
 		cmp rax, 62
@@ -217,6 +223,12 @@ _sysCallHandler:
 		jmp endSysCallHandler
 	syscall_15:
 		call sysCreateProcess
+		jmp endSysCallHandler
+	syscall_16:
+		call sysNice
+		jmp endSysCallHandler
+	syscall_17:
+		call sysBlock
 		jmp endSysCallHandler
 	syscall_60:
 		call sysExit
