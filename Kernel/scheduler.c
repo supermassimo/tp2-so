@@ -4,7 +4,7 @@
 #define PCB_REGISTERS  21
 #define PROCESS_STACK  4080         // PAGE_SIZE - MEM_HEADER_SIZE
 
-typedef enum State {TERMINATED, READY, BLOCKED, SUSPENDED} State;
+typedef enum State {TERMINATED, READY, BLOCKED} State;
 
 typedef struct {
     char* name;
@@ -15,6 +15,15 @@ typedef struct {
     char** argv;
 } Process;
 
+typedef struct ProcessInfo {
+    int pid;
+    char* name;
+    State state;
+    size_t bsp;
+    size_t rsp;
+    Priority priority;
+} ProcessInfo;
+
 extern uint64_t* createPCB(uint64_t* wrapper, uint64_t* pcbAddr, uint64_t* entryPoint, int argc, char* argv[]);
 extern void scheduleNext();
 
@@ -23,6 +32,7 @@ static int currentProcess = -1;
 static int isSchedulerEnabled = 0;
 static int activeProcesses = 0;
 static size_t currentProcessQuantums = 0;
+static int currentProcessOnExit = 0;
 
 void enableScheduler(){
     isSchedulerEnabled = 1;
@@ -85,11 +95,16 @@ int block(int pid){
     }
 }
 
+int isCurrentProcessOnExit(){
+    return currentProcessOnExit;
+}
+
 void exit(int status){
     processes[currentProcess].state = TERMINATED;
     memFree(processes[currentProcess].base);
     memFree(processes[currentProcess].argv);
     activeProcesses--;
+    currentProcessOnExit = 1;
     scheduleNext();
 }
 
@@ -97,8 +112,6 @@ static int killProcess(int pid){
     if(processes[pid].state == TERMINATED)
         return -1;
     processes[pid].state = TERMINATED;
-    memFree(processes[currentProcess].base);
-    memFree(processes[currentProcess].argv);
     activeProcesses--;
     return 0;
 }
@@ -144,6 +157,11 @@ uint64_t* schedule(uint64_t* currentProcPCB){
             processes[currentProcess].pcb = currentProcPCB;
         }
         if(processes[currentProcess].state == TERMINATED || processes[currentProcess].priority < currentProcessQuantums){
+            if(processes[currentProcess].state == TERMINATED){
+                memFree(processes[currentProcess].base);
+                memFree(processes[currentProcess].argv);
+                currentProcessOnExit = 0;
+            }
             currentProcessQuantums = 0;
             currentProcess = getNextReady(currentProcess);
         }

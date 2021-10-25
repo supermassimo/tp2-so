@@ -53,6 +53,7 @@ EXTERN rebootKernel
 
 EXTERN awaitForInstantInput
 EXTERN schedule
+EXTERN isCurrentProcessOnExit
 
 USER_MODULE_ADDRESS EQU 0x400000
 
@@ -302,23 +303,28 @@ picSlaveMask:
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
-	pushState
-	mov [reg_stack_pointer], rsp
+		pushState
+		mov [reg_stack_pointer], rsp
 
-	; Timer
-	mov rdi, 0
-	call irqDispatcher
+		; Scheduler
+		mov rdi, rsp
+		call schedule
+		mov rsp, rax
 
-	; Scheduler
-	mov rdi, rsp
-	call schedule
-	mov rsp, rax
+		call isCurrentProcessOnExit
+		cmp rax, 1
+		je endInt00
 
-	mov al, 20h
-	out 20h, al
+		; Timer
+		mov rdi, 0
+		call irqDispatcher
 
-	popState
-	iretq
+	endInt00:
+		mov al, 20h
+		out 20h, al
+
+		popState
+		iretq
 	
 ;Keyboard
 _irq01Handler:

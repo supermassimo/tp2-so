@@ -371,10 +371,12 @@ static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
 }
 
 void testProcess(int argc, char* argv[]){
+    /*
     for(size_t i=0 ; i < 10000000000 ; i++){
         if(i % 100000000 == 0)
             printf(argv[0]);
     }
+    */
     printf(argv[1]);
     /*
     printf("RECIBIDA: ");
