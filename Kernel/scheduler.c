@@ -98,8 +98,6 @@ int isCurrentProcessOnExit(){
 
 void exit(int status){
     processes[currentProcess].state = TERMINATED;
-    memFree(processes[currentProcess].base);
-    memFree(processes[currentProcess].argv);
     activeProcesses--;
     currentProcessOnExit = 1;
     scheduleNext();

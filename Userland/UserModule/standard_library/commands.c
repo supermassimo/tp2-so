@@ -211,7 +211,7 @@ static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
     }
 }
 
-void testProcess(int argc, char* argv[]){
+int testProcess(int argc, char* argv[]){
     /*
     for(size_t i=0 ; i < 10000000000 ; i++){
         if(i % 100000000 == 0)
@@ -226,37 +226,23 @@ void testProcess(int argc, char* argv[]){
     printf("VALOR: ");
     printf(argv[0]);
     */
-    return;
+    return 0;
 }
 
-void testProcessA(int argc, char* argv[]){
+int testProcessA(int argc, char* argv[]){
     for(size_t i=0 ; i < 10000000000 ; i++){
         if(i % 100000000 == 0)
             printf("A");
     }
-    /*
-    printf("RECIBIDA: ");
-    printInt(argv, 100, 16);
-    printf("\n");
-    printf("VALOR: ");
-    printf(argv[0]);
-    */
-    return;
+    return 0;
 }
 
-void testProcessB(int argc, char* argv[]){
+int testProcessB(int argc, char* argv[]){
     for(size_t i=0 ; i < 10000000000 ; i++){
         if(i % 100000000 == 0)
             printf("B");
     }
-    /*
-    printf("RECIBIDA: ");
-    printInt(argv, 100, 16);
-    printf("\n");
-    printf("VALOR: ");
-    printf(argv[0]);
-    */
-    return;
+    return 0;
 }
 
 void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
@@ -274,18 +260,18 @@ void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
     printf("\n");
     if(paramAmount == 0)
         testProcess(2, msg);
-    else{
+    else {
         /*
         if(createProcess(testProcess, MEDIUM, 2, msg, "testProcess") == -1){
             printErr("Cannot create a new process; process limit reached");
             return;
         }
         */
-        if(createProcess(testProcessA, HIGH, 2, msg, "testPA") == -1){
+        if(createProcess(testProcessB, HIGH, 2, msg, "testPB") == -1){
             printErr("Cannot create a new process; process limit reached");
             return;
         }
-        if(createProcess(testProcessB, LOW, 2, msg, "testPB") == -1){
+        if(createProcess(testProcessA, HIGH, 2, msg, "testPA") == -1){
             printErr("Cannot create a new process; process limit reached");
             return;
         }
