@@ -320,13 +320,17 @@ void printRegistries(const Registries * regs){
 
 void printProcesses(struct Process* processes, size_t amount){
 	size_t printed = 0;
-	print("PID\tCMD\tP  S  F  BP\n");
+	size_t length = 0;
+	print("PID CMD            P  S  F  BP\n");
 	for(int i=0 ; printed < amount ; i++){
 		if(processes[i].state != TERMINATED){
 			printInt(i, 10);
-			print("\t");
+			print("   ");
 			print(processes[i].name);
-			print("\t");
+			length = strlen(processes[i].name);
+			for(int j=length; j<15; j++) {
+				print(" ");
+			}
 			printInt(processes[i].priority, 10);
 			print("  ");
 			print(getStateString(processes[i].state));
