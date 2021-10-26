@@ -69,6 +69,22 @@ int sysCreateProcess(void* entryPoint, Priority priority, int argc, char* argv[]
     return createProcess(entryPoint, priority, argc, argv, name);
 }
 
-void sysKillCurrentProcess(){
-    return killCurrentProcess();
+int sysNice(int pid, Priority priority){
+    return nice(pid, priority);
+}
+
+int sysBlock(int pid){
+    return block(pid);
+}
+
+void sysExit(int status){
+    return exit(status);
+}
+
+int sysKill(int pid, ProcessSignal sig){
+    return kill(pid, sig);
+}
+
+void sysPrintAllProcesses(){
+    return printAllProcesses();
 }

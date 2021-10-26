@@ -318,6 +318,28 @@ void printRegistries(const Registries * regs){
 	printRegistry("RIP: ", regs -> RIP);
 }
 
+void printProcesses(struct Process* processes, size_t amount){
+	size_t printed = 0;
+	print("PID\tCMD\tP  S  F  BP\n");
+	for(int i=0 ; printed < amount ; i++){
+		if(processes[i].state != TERMINATED){
+			printInt(i, 10);
+			print("\t");
+			print(processes[i].name);
+			print("\t");
+			printInt(processes[i].priority, 10);
+			print("  ");
+			print(getStateString(processes[i].state));
+			print("  ");
+			print(i == 0 ? "Y" : "N");
+			print("  ");
+			printInt(processes[i].base + (PROCESS_STACK-2) * 8 , 16);
+			print("\n");
+			printed++;
+		}
+	}
+}
+
 void initializeConsole (){
 	drawDelimiter(SCR_SIDE_COLS+1, LIMITER_GIRTH, delimiterColor);
 }

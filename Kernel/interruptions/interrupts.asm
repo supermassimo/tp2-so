@@ -38,7 +38,11 @@ EXTERN sysMemAlloc
 EXTERN sysMemFree
 EXTERN sysGetMemInfo
 EXTERN sysCreateProcess
-EXTERN sysKillCurrentProcess
+EXTERN sysNice
+EXTERN sysBlock
+EXTERN sysExit
+EXTERN sysKill
+EXTERN sysPrintAllProcesses
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
@@ -50,6 +54,7 @@ EXTERN rebootKernel
 
 EXTERN awaitForInstantInput
 EXTERN schedule
+EXTERN isCurrentProcessOnExit
 
 USER_MODULE_ADDRESS EQU 0x400000
 
@@ -165,6 +170,14 @@ _sysCallHandler:
 		je syscall_15
 		cmp rax, 16
 		je syscall_16
+		cmp rax, 17
+		je syscall_17
+		cmp rax, 18
+		je syscall_18
+		cmp rax, 60
+		je syscall_60
+		cmp rax, 62
+		je syscall_62
 	syscall_0:
 		call sysReadInput
 		jmp endSysCallHandler
@@ -216,7 +229,19 @@ _sysCallHandler:
 		call sysCreateProcess
 		jmp endSysCallHandler
 	syscall_16:
-		call sysKillCurrentProcess
+		call sysNice
+		jmp endSysCallHandler
+	syscall_17:
+		call sysBlock
+		jmp endSysCallHandler
+	syscall_18:
+		call sysPrintAllProcesses
+		jmp endSysCallHandler
+	syscall_60:
+		call sysExit
+		jmp endSysCallHandler
+	syscall_62:
+		call sysKill
 		jmp endSysCallHandler
 	endSysCallHandler:
 		mov rbx, [reg_stack_pointer]
@@ -284,23 +309,28 @@ picSlaveMask:
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
-	pushState
-	mov [reg_stack_pointer], rsp
+		pushState
+		mov [reg_stack_pointer], rsp
 
-	; Timer
-	mov rdi, 0
-	call irqDispatcher
+		; Scheduler
+		mov rdi, rsp
+		call schedule
+		mov rsp, rax
 
-	; Scheduler
-	mov rdi, rsp
-	call schedule
-	mov rsp, rax
+		call isCurrentProcessOnExit
+		cmp rax, 1
+		je endInt00
 
-	mov al, 20h
-	out 20h, al
+		; Timer
+		mov rdi, 0
+		call irqDispatcher
 
-	popState
-	iretq
+	endInt00:
+		mov al, 20h
+		out 20h, al
+
+		popState
+		iretq
 	
 ;Keyboard
 _irq01Handler:
