@@ -33,6 +33,7 @@ char* getStateString(State state);
 
 void exit(int status);
 int kill(int pid, ProcessSignal sig);
+int getpid();
 uint64_t* schedule(uint64_t* currentProcPCB);
 
 #endif

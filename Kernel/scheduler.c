@@ -66,6 +66,10 @@ int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], c
     return processIdx;
 }
 
+int getpid(){
+    return currentProcess;
+}
+
 void printAllProcesses(){
     printProcesses(processes, activeProcesses);
 }
@@ -98,8 +102,6 @@ int isCurrentProcessOnExit(){
 
 void exit(int status){
     processes[currentProcess].state = TERMINATED;
-    memFree(processes[currentProcess].base);
-    memFree(processes[currentProcess].argv);
     activeProcesses--;
     currentProcessOnExit = 1;
     scheduleNext();

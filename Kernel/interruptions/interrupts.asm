@@ -43,6 +43,7 @@ EXTERN sysBlock
 EXTERN sysExit
 EXTERN sysKill
 EXTERN sysPrintAllProcesses
+EXTERN sysGetpid
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
@@ -174,6 +175,8 @@ _sysCallHandler:
 		je syscall_17
 		cmp rax, 18
 		je syscall_18
+		cmp rax, 39
+		je syscall_39
 		cmp rax, 60
 		je syscall_60
 		cmp rax, 62
@@ -236,6 +239,9 @@ _sysCallHandler:
 		jmp endSysCallHandler
 	syscall_18:
 		call sysPrintAllProcesses
+		jmp endSysCallHandler
+	syscall_39:
+		call sysGetpid
 		jmp endSysCallHandler
 	syscall_60:
 		call sysExit
