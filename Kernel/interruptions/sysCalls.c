@@ -84,3 +84,7 @@ void sysExit(int status){
 int sysKill(int pid, ProcessSignal sig){
     return kill(pid, sig);
 }
+
+void sysPrintAllProcesses(){
+    return printAllProcesses();
+}

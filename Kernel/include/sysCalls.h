@@ -30,5 +30,6 @@ int sysNice(int pid, Priority priority);
 int sysBlock(int pid);
 void sysExit(int status);
 int sysKill(int pid, ProcessSignal sig);
+void sysPrintAllProcesses();
 
 #endif

@@ -17,6 +17,7 @@ extern void exit(int status);
 extern int kill(int pid, ProcessSignal sig);
 extern int nice(int pid, UserPriority priority);
 extern int block(int pid);
+extern void printAllProcesses();
 
 #define PRINTMEM_BYTES 32
 
@@ -35,7 +36,7 @@ typedef struct exceptionTestStruct{
     void* thrower;
 } exceptionTestStruct;
 
-static const size_t commandAmount = 17;
+static const size_t commandAmount = 18;
 static const size_t exceptionAmount = 2;
 
 #define QUADRATIC_PRECISION 2
@@ -434,20 +435,20 @@ void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
     if(paramAmount == 0)
         testProcess(2, msg);
     else{
+        /*
         if(createProcess(testProcess, MEDIUM, 2, msg, "testProcess") == -1){
             printErr("Cannot create a new process; process limit reached");
             return;
         }
-        /*
-        if(createProcess(testProcessA, HIGH, 2, msg, "testProcess") == -1){
-            printErr("Cannot create a new process; process limit reached");
-            return;
-        }
-        if(createProcess(testProcessB, LOW, 2, msg, "testProcess") == -1){
-            printErr("Cannot create a new process; process limit reached");
-            return;
-        }
         */
+        if(createProcess(testProcessA, HIGH, 2, msg, "testPA") == -1){
+            printErr("Cannot create a new process; process limit reached");
+            return;
+        }
+        if(createProcess(testProcessB, LOW, 2, msg, "testPB") == -1){
+            printErr("Cannot create a new process; process limit reached");
+            return;
+        }
     }
     // createProcess(testProcessB, LOW, 2, msg);
 }
@@ -505,6 +506,14 @@ void blockHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     }
 }
 
+void psHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount > 0){
+        printErr("Too many parameters for command 'ps'");
+        return;
+    }
+    printAllProcesses();
+}
+
 static commandStruct commands[] = {
     {"help", &helpHandler},
     {"echo", &echoHandler},
@@ -523,7 +532,8 @@ static commandStruct commands[] = {
     {"testprocess", &testProcessHandler},
     {"kill", &killHandler},
     {"nice", &niceHandler},
-    {"block", &blockHandler}
+    {"block", &blockHandler},
+    {"ps", &psHandler}
 };
 
 static int isEnd(int c){

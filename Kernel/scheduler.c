@@ -2,27 +2,6 @@
 
 #define MAX_PROCESSES  10
 #define PCB_REGISTERS  21
-#define PROCESS_STACK  4080         // PAGE_SIZE - MEM_HEADER_SIZE
-
-typedef enum State {TERMINATED, READY, BLOCKED} State;
-
-typedef struct {
-    char* name;
-    State state;
-    Priority priority;
-    uint64_t *pcb;
-    uint64_t *base;
-    char** argv;
-} Process;
-
-typedef struct ProcessInfo {
-    int pid;
-    char* name;
-    State state;
-    size_t bsp;
-    size_t rsp;
-    Priority priority;
-} ProcessInfo;
 
 extern uint64_t* createPCB(uint64_t* wrapper, uint64_t* pcbAddr, uint64_t* entryPoint, int argc, char* argv[]);
 extern void scheduleNext();
@@ -36,6 +15,19 @@ static int currentProcessOnExit = 0;
 
 void enableScheduler(){
     isSchedulerEnabled = 1;
+}
+
+char* getStateString(State state){
+    switch(state){
+        case 0:
+            return "T";
+        case 1:
+            return "R";
+        case 2:
+            return "B";
+        default:
+            return "?";
+    }
 }
 
 static int getFirstFree(){
@@ -69,15 +61,20 @@ int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], c
     processes[processIdx].state = READY;
     processes[processIdx].priority = priority;
     processes[processIdx].name = name;
+    processes[processIdx].startTime = seconds_elapsed();
     activeProcesses++;
     return processIdx;
+}
+
+void printAllProcesses(){
+    printProcesses(processes, activeProcesses);
 }
 
 int nice(int pid, Priority priority){
     if(priority == SYSTEM || processes[pid].state == TERMINATED)
         return -1;
     processes[pid].priority = priority;
-    return;
+    return 0;
 }
 
 int block(int pid){

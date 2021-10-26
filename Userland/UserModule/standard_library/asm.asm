@@ -18,6 +18,7 @@ GLOBAL nice
 GLOBAL block
 GLOBAL exit
 GLOBAL kill
+GLOBAL printAllProcesses
 
 section .text
 
@@ -119,6 +120,12 @@ nice:
 
 block:
     mov rax, 17
+    int 80h
+
+    ret
+
+printAllProcesses:
+    mov rax, 18
     int 80h
 
     ret
