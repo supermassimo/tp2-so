@@ -92,3 +92,6 @@ void sysPrintAllProcesses(){
 int sysGetpid(){
     return getpid();
 }
+void sysSkip(){
+    return skip();
+}

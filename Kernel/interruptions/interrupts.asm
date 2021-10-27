@@ -44,6 +44,7 @@ EXTERN sysExit
 EXTERN sysKill
 EXTERN sysPrintAllProcesses
 EXTERN sysGetpid
+EXTERN sysSkip
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
@@ -55,7 +56,7 @@ EXTERN rebootKernel
 
 EXTERN awaitForInstantInput
 EXTERN schedule
-EXTERN isCurrentProcessOnExit
+EXTERN scheduleOutsideRtc
 
 USER_MODULE_ADDRESS EQU 0x400000
 
@@ -175,6 +176,8 @@ _sysCallHandler:
 		je syscall_17
 		cmp rax, 18
 		je syscall_18
+		cmp rax, 19
+		je syscall_19
 		cmp rax, 39
 		je syscall_39
 		cmp rax, 60
@@ -239,6 +242,9 @@ _sysCallHandler:
 		jmp endSysCallHandler
 	syscall_18:
 		call sysPrintAllProcesses
+		jmp endSysCallHandler
+	syscall_19:
+		call sysSkip
 		jmp endSysCallHandler
 	syscall_39:
 		call sysGetpid
@@ -323,7 +329,7 @@ _irq00Handler:
 		call schedule
 		mov rsp, rax
 
-		call isCurrentProcessOnExit
+		call scheduleOutsideRtc
 		cmp rax, 1
 		je endInt00
 

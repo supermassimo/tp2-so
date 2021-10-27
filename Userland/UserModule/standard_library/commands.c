@@ -19,6 +19,7 @@ extern int nice(int pid, UserPriority priority);
 extern int block(int pid);
 extern void printAllProcesses();
 extern int getpid();
+extern void skip();
 
 #define PRINTMEM_BYTES 32
 
@@ -33,7 +34,7 @@ typedef struct exceptionTestStruct{
     void* thrower;
 } exceptionTestStruct;
 
-static const size_t commandAmount = 22;
+static const size_t commandAmount = 23;
 static const size_t exceptionAmount = 2;
 
 #define QUADRATIC_PRECISION 2
@@ -297,6 +298,14 @@ void blockHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     }
 }
 
+void skipHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount != 0){
+        printErr("Too many parameters for command 'skip'");
+        return;
+    }
+    skip();
+}
+
 void semHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount > 0){
         printErr("Too many parameters for command 'sem'");
@@ -395,6 +404,14 @@ int testProcess(int argc, char* argv[]){
     return 0;
 }
 
+int testProcessLooping(int argc, char* argv[]){
+    for(size_t i=0 ; i < 10000000000 ; i++){
+        if(i % 1000000 == 0)
+            printf("C");
+    }
+    return 0;
+}
+
 int testProcessA(int argc, char* argv[]){
     for(size_t i=0 ; i < 10000000000 ; i++){
         if(i % 100000000 == 0)
@@ -427,12 +444,11 @@ void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
     if(paramAmount == 0)
         testProcess(2, msg);
     else {
-        /*
-        if(createProcess(testProcess, MEDIUM, 2, msg, "testProcess") == -1){
+        if(createProcess(testProcessLooping, HIGH, 2, msg, "testProcess") == -1){
             printErr("Cannot create a new process; process limit reached");
             return;
         }
-        */
+        /*
         if(createProcess(testProcessB, HIGH, 2, msg, "testPB") == -1){
             printErr("Cannot create a new process; process limit reached");
             return;
@@ -441,6 +457,7 @@ void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
             printErr("Cannot create a new process; process limit reached");
             return;
         }
+        */
     }
     // createProcess(testProcessB, LOW, 2, msg);
 }
@@ -461,18 +478,16 @@ static commandStruct commands[] = {
     {"kill", &killHandler, "'kill': Kills process with pid sent\nUse: 'kill' [pid]\n'pid': Id of process\n"},
     {"nice", &niceHandler, "'nice': Change priority of given process\nUse: 'nice' [pid] [priority]\n'pid': Id of process\n'priority': New priority to assign to process\n"},
     {"block", &blockHandler, "'block': Toggles a process state between ready and blocked\nUse: 'block' [pid]\n'pid': Id of process\n"},
+    {"skip", &skipHandler, "'skip': Skips execution of current process. Do not confound with 'kill'\nUse: 'skip'\n"},
     {"sem", &semHandler, "'sem': Displays current semaphores information\nUse: sem [?] ..."},
     {"cat", &catHandler, "'cat': "},
     {"wc", &wcHandler, "'wc': "},
     {"filter", &filterHandler, "'filter': "},
     {"pipe", &pipeHandler, "'pipe': "},
     {"phylo", &phyloHandler, "'phylo': "},
-
     {"clear", &clearHandler, "'clear': Clears the current console\nUse: 'clear'\n"},
     {"sleep", &sleepHandler, "'sleep': Causes the system to sleep for the seconds specified\nUse: 'sleep' [seconds]\n'seconds': Number of seconds for the system to sleep\n"},    
-    {"testprocess", &testProcessHandler, "'testprocess': Creates new process\n"}
-    
-    
+    {"testprocess", &testProcessHandler, "'testprocess': Creates new process\nUse: 'testprocess'\n"}
 };
 
 static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){

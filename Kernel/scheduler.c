@@ -11,7 +11,7 @@ static int currentProcess = -1;
 static int isSchedulerEnabled = 0;
 static int activeProcesses = 0;
 static size_t currentProcessQuantums = 0;
-static int currentProcessOnExit = 0;
+static int outsideRtc = 0;
 
 void enableScheduler(){
     isSchedulerEnabled = 1;
@@ -96,14 +96,22 @@ int block(int pid){
     }
 }
 
-int isCurrentProcessOnExit(){
-    return currentProcessOnExit;
+void skip(){
+    outsideRtc = 1;
+    scheduleNext();
+}
+
+int scheduleOutsideRtc(){
+    if(outsideRtc == 1){
+        outsideRtc = 0;
+        return 1;
+    }
+    return 0;
 }
 
 void exit(int status){
     processes[currentProcess].state = TERMINATED;
-    activeProcesses--;
-    currentProcessOnExit = 1;
+    outsideRtc = 1;
     scheduleNext();
 }
 
@@ -111,7 +119,6 @@ static int killProcess(int pid){
     if(processes[pid].state == TERMINATED)
         return -1;
     processes[pid].state = TERMINATED;
-    activeProcesses--;
     return 0;
 }
 
@@ -159,7 +166,7 @@ uint64_t* schedule(uint64_t* currentProcPCB){
             if(processes[currentProcess].state == TERMINATED){
                 memFree(processes[currentProcess].base);
                 memFree(processes[currentProcess].argv);
-                currentProcessOnExit = 0;
+                activeProcesses--;
             }
             currentProcessQuantums = 0;
             currentProcess = getNextReady(currentProcess);

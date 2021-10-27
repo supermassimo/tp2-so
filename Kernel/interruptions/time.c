@@ -17,6 +17,7 @@ void timerTickSleep(long seconds){
 		_hlt();
 		currentSeconds = seconds_elapsed();
 	}
+	print("SALGOOO");
 	enableKeyboardInt();
 }
 
