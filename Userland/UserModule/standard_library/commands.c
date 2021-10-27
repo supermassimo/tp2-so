@@ -211,74 +211,6 @@ static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
     }
 }
 
-int testProcess(int argc, char* argv[]){
-    /*
-    for(size_t i=0 ; i < 10000000000 ; i++){
-        if(i % 100000000 == 0)
-            printf(argv[0]);
-    }
-    */
-    printf(argv[1]);
-    /*
-    printf("RECIBIDA: ");
-    printInt(argv, 100, 16);
-    printf("\n");
-    printf("VALOR: ");
-    printf(argv[0]);
-    */
-    return 0;
-}
-
-int testProcessA(int argc, char* argv[]){
-    for(size_t i=0 ; i < 10000000000 ; i++){
-        if(i % 100000000 == 0)
-            printf("A");
-    }
-    return 0;
-}
-
-int testProcessB(int argc, char* argv[]){
-    for(size_t i=0 ; i < 10000000000 ; i++){
-        if(i % 100000000 == 0)
-            printf("B");
-    }
-    return 0;
-}
-
-void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 1){
-        printErr("Too many parameters for command 'test'");
-        return;
-    }
-    if(paramAmount == 1 && strcmp("b", params[0]) != 0){
-        printErr("Wrong parameter sent. Check 'help testprocess' for more info");
-        return;
-    }
-    char* msg[] = {"Estoy vivo\n", "Me muero\n"};
-    printf("MANDADA: ");
-    printInt(msg[0], 100, 16);
-    printf("\n");
-    if(paramAmount == 0)
-        testProcess(2, msg);
-    else {
-        /*
-        if(createProcess(testProcess, MEDIUM, 2, msg, "testProcess") == -1){
-            printErr("Cannot create a new process; process limit reached");
-            return;
-        }
-        */
-        if(createProcess(testProcessB, HIGH, 2, msg, "testPB") == -1){
-            printErr("Cannot create a new process; process limit reached");
-            return;
-        }
-        if(createProcess(testProcessA, HIGH, 2, msg, "testPA") == -1){
-            printErr("Cannot create a new process; process limit reached");
-            return;
-        }
-    }
-    // createProcess(testProcessB, LOW, 2, msg);
-}
-
 void psHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount > 0){
         printErr("Too many parameters for command 'ps'");
@@ -440,6 +372,74 @@ static void clearHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount
         return;
     }
     clear();
+}
+
+int testProcess(int argc, char* argv[]){
+    /*
+    for(size_t i=0 ; i < 10000000000 ; i++){
+        if(i % 100000000 == 0)
+            printf(argv[0]);
+    }
+    */
+    printf(argv[1]);
+    /*
+    printf("RECIBIDA: ");
+    printInt(argv, 100, 16);
+    printf("\n");
+    printf("VALOR: ");
+    printf(argv[0]);
+    */
+    return 0;
+}
+
+int testProcessA(int argc, char* argv[]){
+    for(size_t i=0 ; i < 10000000000 ; i++){
+        if(i % 100000000 == 0)
+            printf("A");
+    }
+    return 0;
+}
+
+int testProcessB(int argc, char* argv[]){
+    for(size_t i=0 ; i < 10000000000 ; i++){
+        if(i % 100000000 == 0)
+            printf("B");
+    }
+    return 0;
+}
+
+void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount > 1){
+        printErr("Too many parameters for command 'test'");
+        return;
+    }
+    if(paramAmount == 1 && strcmp("b", params[0]) != 0){
+        printErr("Wrong parameter sent. Check 'help testprocess' for more info");
+        return;
+    }
+    char* msg[] = {"Estoy vivo\n", "Me muero\n"};
+    printf("MANDADA: ");
+    printInt(msg[0], 100, 16);
+    printf("\n");
+    if(paramAmount == 0)
+        testProcess(2, msg);
+    else {
+        /*
+        if(createProcess(testProcess, MEDIUM, 2, msg, "testProcess") == -1){
+            printErr("Cannot create a new process; process limit reached");
+            return;
+        }
+        */
+        if(createProcess(testProcessB, HIGH, 2, msg, "testPB") == -1){
+            printErr("Cannot create a new process; process limit reached");
+            return;
+        }
+        if(createProcess(testProcessA, HIGH, 2, msg, "testPA") == -1){
+            printErr("Cannot create a new process; process limit reached");
+            return;
+        }
+    }
+    // createProcess(testProcessB, LOW, 2, msg);
 }
 
 static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount);
