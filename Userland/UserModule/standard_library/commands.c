@@ -18,6 +18,7 @@ extern int kill(int pid, ProcessSignal sig);
 extern int nice(int pid, UserPriority priority);
 extern int block(int pid);
 extern void printAllProcesses();
+extern int getpid();
 
 #define PRINTMEM_BYTES 32
 
@@ -381,7 +382,9 @@ int testProcess(int argc, char* argv[]){
             printf(argv[0]);
     }
     */
-    printf(argv[1]);
+    printf("PID: ");
+    printInt(getpid(), 10, 10);
+    printf("\n");
     /*
     printf("RECIBIDA: ");
     printInt(argv, 100, 16);

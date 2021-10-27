@@ -66,6 +66,10 @@ int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], c
     return processIdx;
 }
 
+int getpid(){
+    return currentProcess;
+}
+
 void printAllProcesses(){
     printProcesses(processes, activeProcesses);
 }

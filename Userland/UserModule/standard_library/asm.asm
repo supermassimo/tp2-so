@@ -19,6 +19,7 @@ GLOBAL block
 GLOBAL exit
 GLOBAL kill
 GLOBAL printAllProcesses
+GLOBAL getpid
 
 section .text
 
@@ -126,6 +127,12 @@ block:
 
 printAllProcesses:
     mov rax, 18
+    int 80h
+
+    ret
+
+getpid:
+    mov rax, 39
     int 80h
 
     ret

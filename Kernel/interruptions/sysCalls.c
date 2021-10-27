@@ -88,3 +88,7 @@ int sysKill(int pid, ProcessSignal sig){
 void sysPrintAllProcesses(){
     return printAllProcesses();
 }
+
+int sysGetpid(){
+    return getpid();
+}

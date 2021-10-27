@@ -31,5 +31,6 @@ int sysBlock(int pid);
 void sysExit(int status);
 int sysKill(int pid, ProcessSignal sig);
 void sysPrintAllProcesses();
+int sysGetpid();
 
 #endif
