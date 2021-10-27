@@ -444,7 +444,7 @@ void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
     if(paramAmount == 0)
         testProcess(2, msg);
     else {
-        if(createProcess(testProcessLooping, HIGH, 2, msg, "testProcess") == -1){
+        if(createProcess(testProcess, HIGH, 2, msg, "testProcess") == -1){
             printErr("Cannot create a new process; process limit reached");
             return;
         }

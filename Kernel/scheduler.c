@@ -168,6 +168,9 @@ uint64_t* schedule(uint64_t* currentProcPCB){
                 memFree(processes[currentProcess].argv);
                 activeProcesses--;
             }
+            if(processes[currentProcess].pcb < processes[currentProcess].base){         // If process' stack exceeded reserved space, kill it
+                kill(currentProcess, SIG_KILL);
+            }
             currentProcessQuantums = 0;
             currentProcess = getNextReady(currentProcess);
         }
