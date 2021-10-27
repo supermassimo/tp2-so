@@ -321,6 +321,7 @@ void printRegistries(const Registries * regs){
 void printProcesses(struct Process* processes, size_t amount){
 	size_t printed = 0;
 	size_t length = 0;
+	/*
 	print("PID CMD            P  S  F  BP\n");
 	for(int i=0 ; printed < amount ; i++){
 		if(processes[i].state != TERMINATED){
@@ -338,6 +339,31 @@ void printProcesses(struct Process* processes, size_t amount){
 			print(i == 0 ? "Y" : "N");
 			print("  ");
 			printInt(processes[i].base + (PROCESS_STACK-2) * 8 , 16);
+			print("\n");
+			printed++;
+		}
+	}
+	*/
+	print("PID CMD      P  S  F  BP\tSP\n");
+	for(int i=0 ; printed < amount ; i++){
+		if(processes[i].state != TERMINATED){
+			printInt(i, 10);
+			print("   ");
+			print(processes[i].name);
+			length = strlen(processes[i].name);
+			for(int j=length; j<9; j++) {
+				print(" ");
+			}
+			printInt(processes[i].priority, 10);
+			print("  ");
+			print(getStateString(processes[i].state));
+			print("  ");
+			print(i == 0 ? "Y" : "N");
+			print("  ");
+			printInt(processes[i].base, 16);
+			print("\t");
+			// printInt(processes[i].base + (PROCESS_STACK-2) * 8, 16);
+			printInt(processes[i].pcb, 16);
 			print("\n");
 			printed++;
 		}

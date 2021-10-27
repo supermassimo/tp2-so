@@ -176,7 +176,7 @@ uint64_t* schedule(uint64_t* currentProcPCB){
         }
         currentProcPCB = processes[currentProcess].pcb;
         currentProcessQuantums++;
-        // printProcess(processes[currentProcess].pcb);
+        printProcess(processes[currentProcess].pcb);
     }
     return currentProcPCB;
 }
