@@ -344,7 +344,7 @@ void printProcesses(struct Process* processes, size_t amount){
 		}
 	}
 	*/
-	print("PID CMD      P  S  F  BP\tSP\n");
+	print("PID CMD      P  S  F  BP     SP\n");
 	for(int i=0 ; printed < amount ; i++){
 		if(processes[i].state != TERMINATED){
 			printInt(i, 10);
@@ -361,7 +361,7 @@ void printProcesses(struct Process* processes, size_t amount){
 			print(i == 0 ? "Y" : "N");
 			print("  ");
 			printInt(processes[i].base, 16);
-			print("\t");
+			print(" ");
 			// printInt(processes[i].base + (PROCESS_STACK-2) * 8, 16);
 			printInt(processes[i].pcb, 16);
 			print("\n");

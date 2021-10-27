@@ -223,11 +223,12 @@ void psHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
 }
 
 void loop() {
+    int pid = getpid();
     for(size_t i=0 ; i < 10000000000 ; i++){
         if(i % 100000000 == 0) {
-            /*printf("Hi, process ");
-            printInt(1,2,10);
-            printf("\n");*/
+            printf("Hi, process ");
+            printInt(pid,2,10);
+            printf(" here\n");
         }
     }
     return;
