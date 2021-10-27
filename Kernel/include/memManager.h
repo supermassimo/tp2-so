@@ -1,3 +1,6 @@
+#ifndef MEM_MANAGER_H
+#define MEM_MANAGER_H
+
 #include <stdint.h>
 #include <stddef.h>
 #include <lib.h>
@@ -14,3 +17,5 @@ typedef struct MemoryInfo{
 void* memAlloc(size_t size, int options);
 int memFree(void *blockp);
 void getMemInfo(MemoryInfo* meminfo);
+
+#endif

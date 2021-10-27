@@ -19,12 +19,14 @@ void enableScheduler(){
 
 char* getStateString(State state){
     switch(state){
-        case 0:
+        case TERMINATED:
             return "T";
-        case 1:
+        case READY:
             return "R";
-        case 2:
+        case BLOCKED:
             return "B";
+        case SLEEP:
+            return "S";
         default:
             return "?";
     }
@@ -61,7 +63,6 @@ int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], c
     processes[processIdx].state = READY;
     processes[processIdx].priority = priority;
     processes[processIdx].name = name;
-    processes[processIdx].startTime = seconds_elapsed();
     activeProcesses++;
     return processIdx;
 }
@@ -94,6 +95,26 @@ int block(int pid){
         default:        // Process was terminated
             return -1;
     }
+}
+
+int sleep(int pid, size_t seconds){
+    if(processes[pid].state == TERMINATED){
+        return -1;
+    }
+    /*
+    changeConsoleSide(1);
+    print("PASARON ");
+    printInt(seconds_elapsed(), 10);
+    print(" SEGUNDOS\n");
+    print("ME DESPIERTO A LOS ");
+    printInt(seconds, 10);
+    print(" SEGUNDOS\n");
+    changeConsoleSide(0);
+    */
+    processes[pid].sleepTime = seconds + seconds_elapsed();
+    processes[pid].state = SLEEP;
+    scheduleNext();
+    return 0;
 }
 
 void skip(){
@@ -147,6 +168,10 @@ void printProcess(uint64_t* currentProcPCB) {
 static int getNextReady(int current){
     while(processes[current+1].state != READY){
         current++;
+        if(processes[current].state == SLEEP && processes[current].sleepTime <= seconds_elapsed()){
+            processes[current].state = READY;
+            current--;
+        }
         if(current+1 == MAX_PROCESSES)
             current = -1;
     }
@@ -176,7 +201,7 @@ uint64_t* schedule(uint64_t* currentProcPCB){
         }
         currentProcPCB = processes[currentProcess].pcb;
         currentProcessQuantums++;
-        printProcess(processes[currentProcess].pcb);
+        // printProcess(processes[currentProcess].pcb);
     }
     return currentProcPCB;
 }

@@ -21,7 +21,7 @@ typedef struct Process {
     uint64_t *pcb;
     uint64_t *base;
     char** argv;
-    size_t startTime;
+    size_t sleepTime;
 } Process;
 
 void enableScheduler();
@@ -31,6 +31,7 @@ int block(int pid);
 void printAllProcesses();
 char* getStateString(State state);
 int scheduleOutsideRtc();
+int sleep(int pid, size_t seconds);
 
 void exit(int status);
 int kill(int pid, ProcessSignal sig);

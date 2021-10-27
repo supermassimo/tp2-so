@@ -20,7 +20,7 @@ void sysClear();
 int sysGetActiveDisplay();
 bool sysGetCpuFeatures(CommonFeatures* commonFeatures, ExtendedFeatures* extendedFeatures);
 void sysSwapActiveDisplay();
-void sysSleep(long seconds);
+int sysSleep(int pid, size_t seconds);
 void sysDelKey();
 void* sysMemAlloc(size_t size, int options);
 int sysMemFree(void *blockp);

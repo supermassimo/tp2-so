@@ -45,8 +45,8 @@ void sysSwapActiveDisplay(){
     swapDisplay();
 }
 
-void sysSleep(long seconds){
-    timerTickSleep(seconds);
+int sysSleep(int pid, size_t seconds){
+    return sleep(pid, seconds);
 }
 
 void sysDelKey(){

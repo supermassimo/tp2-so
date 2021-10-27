@@ -8,7 +8,7 @@ extern void invalidOpcodeThrower();
 extern void setIdle(int idle);
 extern void clear();
 extern bool getCpuFeatures(CommonFeatures* commonFeatures, ExtendedFeatures* extendedFeatures);
-extern void sleep(long seconds);
+extern int sleep(int pid, size_t seconds);
 extern int getQuadratic(float a, float b, float c, float*, float*);
 extern void getDateTime(Date* date, Time* time, int utc);
 extern void getMemInfo(MemoryInfo* meminfo);
@@ -222,8 +222,18 @@ void psHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     return;
 }
 
-void loop() {
+int loop(int argc, char* argv[]) {
     int pid = getpid();
+    // size_t seconds = strToNum(argv[0]);
+    size_t seconds = 5;
+    while(1){
+        sleep(pid, seconds);
+        printf("Hi, process ");
+        printInt(pid,2,10);
+        printf(" here\n");
+    }
+    return 0;
+    /*
     for(size_t i=0 ; i < 10000000000 ; i++){
         if(i % 100000000 == 0) {
             printf("Hi, process ");
@@ -231,15 +241,16 @@ void loop() {
             printf(" here\n");
         }
     }
-    return;
+    */
 }
 
 void loopHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 0){
+    if(paramAmount > 1){
         printErr("Too many parameters for command 'loop'");
         return;
     }
-    if(createProcess(loop, LOW, 0, NULL, "loop") == -1){
+    char* time[] = {params[0]};
+    if(createProcess(loop, LOW, 1, time, "loop") == -1){
         printErr("Cannot create a new process; process limit reached");
         return;
     }
@@ -362,19 +373,20 @@ void phyloHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
 }
 
 static void sleepHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount < 1){
-        printErr("Missing parameter for command 'sleep'");
+    if(paramAmount < 2){
+        printErr("Missing parameters for command 'sleep'");
         return;
     }
-    if(paramAmount > 1){
+    if(paramAmount > 2){
         printErr("Too many parameters for command 'sleep'");
         return;
     }
-    long seconds = strToNumPos(params[0]);
-    if(seconds > 0) {
-        sleep(seconds);
+    int pid = strToNum(params[0]);
+    size_t seconds = strToNum(params[1]);
+    if(sleep(pid, seconds) == -1) {
+        printErr("Cannot sleep given process pid");
+        return;
     }
-    return;
 }
 
 static void clearHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
@@ -487,7 +499,7 @@ static commandStruct commands[] = {
     {"pipe", &pipeHandler, "'pipe': "},
     {"phylo", &phyloHandler, "'phylo': "},
     {"clear", &clearHandler, "'clear': Clears the current console\nUse: 'clear'\n"},
-    {"sleep", &sleepHandler, "'sleep': Causes the system to sleep for the seconds specified\nUse: 'sleep' [seconds]\n'seconds': Number of seconds for the system to sleep\n"},    
+    {"sleep", &sleepHandler, "'sleep': Causes the given process to sleep for the seconds specified\nUse: 'sleep' [pid] [seconds]\n'pid': Process id\n'seconds': Number of seconds for the system to sleep\n"},    
     {"testprocess", &testProcessHandler, "'testprocess': Creates new process\nUse: 'testprocess'\n"}
 };
 
