@@ -3,7 +3,7 @@
 #define MAX_PROCESSES  10
 #define PCB_REGISTERS  21
 
-extern uint64_t* createPCB(uint64_t* wrapper, uint64_t* pcbAddr, uint64_t* entryPoint, int argc, char* argv[]);
+extern uint64_t* createPCB(uint64_t* wrapper, uint64_t* pcbAddr, int argc, char* argv[], void* entryPoint);
 extern void scheduleNext();
 
 static Process processes[MAX_PROCESSES] = {0};
@@ -42,12 +42,12 @@ static int getFirstFree(){
 
 static void* loadArgv(int argc, char* argv[]){
     size_t argvLen = totalStrlen(argc, argv);
-    void* argPtr = memAlloc(argvLen, NO_ACTION);
-    memcpy(argPtr, argv, argvLen);
+    void* argPtr = memAlloc(argvLen+argc, NO_ACTION);
+    memcpy(argPtr, argv, argvLen+argc*2);
     return argPtr;
 }
 
-static void processWrapper(void* processEntry, int argc, char* argv[]){
+void processWrapper(int argc, char* argv[], void* processEntry){
     int status = ((int(*)(int, char*[]))processEntry)(argc, argv);
     exit(status);
 }
@@ -58,7 +58,7 @@ int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], c
         return processIdx;
     uint64_t* baseAddr = memAlloc(sizeof(uint64_t) * PROCESS_STACK, SET_ZERO);
     processes[processIdx].argv = loadArgv(argc, argv);
-    processes[processIdx].pcb = createPCB(processWrapper, baseAddr+(PROCESS_STACK-2), entryPoint, argc, processes[processIdx].argv);
+    processes[processIdx].pcb = createPCB(processWrapper, baseAddr+(PROCESS_STACK-2), argc, processes[processIdx].argv, entryPoint);
     processes[processIdx].base = baseAddr;
     processes[processIdx].state = READY;
     processes[processIdx].priority = priority;
@@ -101,18 +101,9 @@ int sleep(int pid, size_t seconds){
     if(processes[pid].state == TERMINATED){
         return -1;
     }
-    /*
-    changeConsoleSide(1);
-    print("PASARON ");
-    printInt(seconds_elapsed(), 10);
-    print(" SEGUNDOS\n");
-    print("ME DESPIERTO A LOS ");
-    printInt(seconds, 10);
-    print(" SEGUNDOS\n");
-    changeConsoleSide(0);
-    */
     processes[pid].sleepTime = seconds + seconds_elapsed();
     processes[pid].state = SLEEP;
+    outsideRtc = 1;
     scheduleNext();
     return 0;
 }
@@ -133,6 +124,7 @@ int scheduleOutsideRtc(){
 void exit(int status){
     processes[currentProcess].state = TERMINATED;
     outsideRtc = 1;
+    activeProcesses--;
     scheduleNext();
 }
 
@@ -140,6 +132,7 @@ static int killProcess(int pid){
     if(processes[pid].state == TERMINATED)
         return -1;
     processes[pid].state = TERMINATED;
+    activeProcesses--;
     return 0;
 }
 
@@ -191,7 +184,6 @@ uint64_t* schedule(uint64_t* currentProcPCB){
             if(processes[currentProcess].state == TERMINATED){
                 memFree(processes[currentProcess].base);
                 memFree(processes[currentProcess].argv);
-                activeProcesses--;
             }
             if(processes[currentProcess].pcb < processes[currentProcess].base){         // If process' stack exceeded reserved space, kill it
                 kill(currentProcess, SIG_KILL);

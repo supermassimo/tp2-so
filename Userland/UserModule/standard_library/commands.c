@@ -224,8 +224,14 @@ void psHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
 
 int loop(int argc, char* argv[]) {
     int pid = getpid();
-    // size_t seconds = strToNum(argv[0]);
-    size_t seconds = 5;
+    printf("Recibo ");
+    printf(argv[0]);
+    printf("segundos\n");
+    size_t seconds = strToNum(argv[0]);
+    printf("Mando ");
+    printInt(seconds, 10, 10);
+    printf("segunds\n");
+    // size_t seconds = 5;
     while(1){
         sleep(pid, seconds);
         printf("Hi, process ");
@@ -249,7 +255,10 @@ void loopHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
         printErr("Too many parameters for command 'loop'");
         return;
     }
-    char* time[] = {params[0]};
+    char* time[paramAmount];
+    for(int i=0 ; i < paramAmount ; i++){
+        time[i] = params[i];
+    }
     if(createProcess(loop, LOW, 1, time, "loop") == -1){
         printErr("Cannot create a new process; process limit reached");
         return;
@@ -398,22 +407,16 @@ static void clearHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount
 }
 
 int testProcess(int argc, char* argv[]){
-    /*
-    for(size_t i=0 ; i < 10000000000 ; i++){
-        if(i % 100000000 == 0)
-            printf(argv[0]);
-    }
-    */
     printf("PID: ");
     printInt(getpid(), 10, 10);
     printf("\n");
-    /*
-    printf("RECIBIDA: ");
-    printInt(argv, 100, 16);
-    printf("\n");
-    printf("VALOR: ");
+    printf("(T) RECIBO:\n");
+    printf("- argv[0]: ");
     printf(argv[0]);
-    */
+    printf("\n");
+    printf("- argv[1]: ");
+    printf(argv[1]);
+    printf("\n");
     return 0;
 }
 
@@ -472,7 +475,6 @@ void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
             return;
         }
     }
-    // createProcess(testProcessB, LOW, 2, msg);
 }
 
 static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount);
