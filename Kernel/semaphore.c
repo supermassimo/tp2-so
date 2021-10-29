@@ -4,6 +4,7 @@
 
 static sem_t semaphores[MAX_SEMAPHORES] = {0};
 
+/*
 static void sleepCurrent(sem_t sem){
     int pid = getpid();
     sem.waitingProcesses[sem.waitingProcessesCount++] = pid;
@@ -40,3 +41,4 @@ void sem_post(sem_t sem){
 void sem_set_value (sem_t sem, int value){
     sem.value = value;
 }
+*/

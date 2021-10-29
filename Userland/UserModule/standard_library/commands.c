@@ -23,10 +23,13 @@ extern void skip();
 
 #define PRINTMEM_BYTES 32
 
+typedef enum CommandType {BUILT_IN, PROCESS} CommandType;
+
 typedef struct commandStruct{
     char* name;
     void* handler;
     char* help_message;
+    CommandType type;
 } commandStruct;
 
 typedef struct exceptionTestStruct{
@@ -34,49 +37,11 @@ typedef struct exceptionTestStruct{
     void* thrower;
 } exceptionTestStruct;
 
-static const size_t commandAmount = 23;
+static const size_t commandAmount = 24;
 static const size_t exceptionAmount = 2;
 
 #define QUADRATIC_PRECISION 2
 #define FLOAT_STRING_SIZE 100
-
-void * memcpy(void * destination, const void * source, uint64_t length)
-{
-	/*
-	* memcpy does not support overlapping buffers, so always do it
-	* forwards. (Don't change this without adjusting memmove.)
-	*
-	* For speedy copying, optimize the common case where both pointers
-	* and the length are word-aligned, and copy word-at-a-time instead
-	* of byte-at-a-time. Otherwise, copy by bytes.
-	*
-	* The alignment logic below should be portable. We rely on
-	* the compiler to be reasonably intelligent about optimizing
-	* the divides and modulos out. Fortunately, it is.
-	*/
-	uint64_t i;
-
-	if ((uint64_t)destination % sizeof(uint32_t) == 0 &&
-		(uint64_t)source % sizeof(uint32_t) == 0 &&
-		length % sizeof(uint32_t) == 0)
-	{
-		uint32_t *d = (uint32_t *) destination;
-		const uint32_t *s = (const uint32_t *)source;
-
-		for (i = 0; i < length / sizeof(uint32_t); i++)
-			d[i] = s[i];
-	}
-	else
-	{
-		uint8_t * d = (uint8_t*)destination;
-		const uint8_t * s = (const uint8_t*)source;
-
-		for (i = 0; i < length; i++)
-			d[i] = s[i];
-	}
-
-	return destination;
-}
 
 static void echoHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount < 1){
@@ -477,33 +442,70 @@ void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
     }
 }
 
+static void printCommandTypeMessage(commandStruct command){
+    printf(command.name);
+    printf(" is a ");
+    switch(command.type){
+        case BUILT_IN:
+            printf("shell built-in");
+            break;
+        case PROCESS:
+            printf("process");
+            break;
+        default:
+            break;
+    }
+    printf("\n");
+}
+
+static void typeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount);
 static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount);
 
 static commandStruct commands[] = {
-    {"help", &helpHandler, "'help': Get information on how to use commands\nUse: 'help [command]'\n'command': Command to get use information about\n"},
-    {"echo", &echoHandler, "'echo': Print a message on the console\nUse: 'echo [message]'\n'message': Message to print in console\n"},
-    {"cpufeatures", &cpufeaturesHandler, "'cpufeatures': Print cpu support for key features like mmx, sse, avx, etc\nUse: 'cpufeatures'\n"},
-    {"exception", &testHandler, "'exception': Throws the provided exception\nUse: 'test [exception]'\n'exception': Type of exception to be thrown\nAvailable exceptions:\ndiv-by-zero\ninvalid-opcode\n"},
-    {"inforeg", &inforegHandler, "'inforeg': Print the states of the registries\nUse: 'inforeg'\n"},
-    {"printmem", &printmemHandler, "'printmem': Print the first 32 bytes following a place in memory\nUse: 'printmem [pointer]'\n'pointer': Memory address of first byte to print\n"},
-    {"mem", &memHandler, "'mem': Displays memory info\nUse: 'mem' [units]\n'units': Determines which unit the info will be displayed on\nOptions:\n-b: Bytes (Default)\n-k: Kilobytes\n"},
-    {"testalloc", &testallocHandler, "'testalloc': Tests the functionality of memory allocation\nUse: 'testalloc' [test num]\n'test num': A test integer number that will be saved in memory and then read\n"},
-    {"ps", &psHandler, "'ps': Displays running process information\n"},
-    {"loop", &loopHandler, "'loop': Displays process Id and a greeting every few seconds"},
-    {"kill", &killHandler, "'kill': Kills process with pid sent\nUse: 'kill' [pid]\n'pid': Id of process\n"},
-    {"nice", &niceHandler, "'nice': Change priority of given process\nUse: 'nice' [pid] [priority]\n'pid': Id of process\n'priority': New priority to assign to process\n"},
-    {"block", &blockHandler, "'block': Toggles a process state between ready and blocked\nUse: 'block' [pid]\n'pid': Id of process\n"},
-    {"skip", &skipHandler, "'skip': Skips execution of current process. Do not confound with 'kill'\nUse: 'skip'\n"},
-    {"sem", &semHandler, "'sem': Displays current semaphores information\nUse: sem [?] ..."},
-    {"cat", &catHandler, "'cat': "},
-    {"wc", &wcHandler, "'wc': "},
-    {"filter", &filterHandler, "'filter': "},
-    {"pipe", &pipeHandler, "'pipe': "},
-    {"phylo", &phyloHandler, "'phylo': "},
-    {"clear", &clearHandler, "'clear': Clears the current console\nUse: 'clear'\n"},
-    {"sleep", &sleepHandler, "'sleep': Causes the given process to sleep for the seconds specified\nUse: 'sleep' [pid] [seconds]\n'pid': Process id\n'seconds': Number of seconds for the system to sleep\n"},    
-    {"testprocess", &testProcessHandler, "'testprocess': Creates new process\nUse: 'testprocess'\n"}
+    {"help", &helpHandler, "'help': Get information on how to use commands\nUse: 'help [command]'\n'command': Command to get use information about\n", BUILT_IN},
+    {"echo", &echoHandler, "'echo': Print a message on the console\nUse: 'echo [message]'\n'message': Message to print in console\n", BUILT_IN},
+    {"cpufeatures", &cpufeaturesHandler, "'cpufeatures': Print cpu support for key features like mmx, sse, avx, etc\nUse: 'cpufeatures'\n", BUILT_IN},
+    {"exception", &testHandler, "'exception': Throws the provided exception\nUse: 'test [exception]'\n'exception': Type of exception to be thrown\nAvailable exceptions:\ndiv-by-zero\ninvalid-opcode\n", BUILT_IN},
+    {"inforeg", &inforegHandler, "'inforeg': Print the states of the registries\nUse: 'inforeg'\n", BUILT_IN},
+    {"printmem", &printmemHandler, "'printmem': Print the first 32 bytes following a place in memory\nUse: 'printmem [pointer]'\n'pointer': Memory address of first byte to print\n", BUILT_IN},
+    {"mem", &memHandler, "'mem': Displays memory info\nUse: 'mem' [units]\n'units': Determines which unit the info will be displayed on\nOptions:\n-b: Bytes (Default)\n-k: Kilobytes\n", BUILT_IN},
+    {"testalloc", &testallocHandler, "'testalloc': Tests the functionality of memory allocation\nUse: 'testalloc' [test num]\n'test num': A test integer number that will be saved in memory and then read\n", BUILT_IN},
+    {"ps", &psHandler, "'ps': Displays running process information\n", BUILT_IN},
+    {"loop", &loopHandler, "'loop': Displays process Id and a greeting every few seconds", PROCESS},
+    {"kill", &killHandler, "'kill': Kills process with pid sent\nUse: 'kill' [pid]\n'pid': Id of process\n", BUILT_IN},
+    {"nice", &niceHandler, "'nice': Change priority of given process\nUse: 'nice' [pid] [priority]\n'pid': Id of process\n'priority': New priority to assign to process\n", BUILT_IN},
+    {"block", &blockHandler, "'block': Toggles a process state between ready and blocked\nUse: 'block [pid]'\n'pid': Id of process\n", BUILT_IN},
+    {"skip", &skipHandler, "'skip': Skips execution of current process. Do not confound with 'kill'\nUse: 'skip'\n", BUILT_IN},
+    {"sem", &semHandler, "'sem': Displays current semaphores information\nUse: sem [?] ...", BUILT_IN},
+    {"cat", &catHandler, "'cat': ", PROCESS},
+    {"wc", &wcHandler, "'wc': ", PROCESS},
+    {"filter", &filterHandler, "'filter': ", PROCESS},
+    {"pipe", &pipeHandler, "'pipe': ", BUILT_IN},
+    {"phylo", &phyloHandler, "'phylo': ", PROCESS},
+    {"clear", &clearHandler, "'clear': Clears the current console\nUse: 'clear'\n", BUILT_IN},
+    {"sleep", &sleepHandler, "'sleep': Causes the given process to sleep for the seconds specified\nUse: 'sleep [pid] [seconds]'\n'pid': Process id\n'seconds': Number of seconds for the system to sleep\n", BUILT_IN},    
+    {"testprocess", &testProcessHandler, "'testprocess': Creates new process\nUse: 'testprocess'\n", PROCESS},
+    {"type", &typeHandler, "'type': Prints a command type\nUse: 'type [command]'\n'command': Command name\n", BUILT_IN}
 };
+
+static void typeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount == 0){
+        printErr("Missing parameter for command 'type'");
+        return;
+    }
+    if(paramAmount > 1){
+        printErr("Too many parameters for command 'type'");
+        return;
+    }
+    for(int i=0 ; i < commandAmount ; i++){
+        if(strcmp(commands[i].name, params[0]) == 0){
+            printCommandTypeMessage(commands[i]);
+            return;
+        }
+    }
+    printErr("No command with sent name was found");
+    return;
+}
 
 static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if (paramAmount > 1){
