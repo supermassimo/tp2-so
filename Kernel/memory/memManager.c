@@ -14,7 +14,7 @@ static MemHeader* freeList = NULL;
 static uint8_t* nextToMap= (uint8_t*)MEM_BASE;
 static long occupiedMemory = 0;
 
-static void* memMap(size_t size){
+void* memMap(size_t size){
     if((size_t)nextToMap + size > MEM_LIMIT)
         return NULL;
     void* blockp = nextToMap;
