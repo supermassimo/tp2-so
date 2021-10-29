@@ -8,6 +8,7 @@
 #include <time.h>
 #include <console.h>
 
+#define MAX_PROCESSES  10
 #define PROCESS_STACK  4080         // PAGE_SIZE - MEM_HEADER_SIZE
 
 typedef enum Priority {LOW, MEDIUM, HIGH, SYSTEM} Priority;

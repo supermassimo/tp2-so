@@ -1,6 +1,5 @@
 #include <scheduler.h>
 
-#define MAX_PROCESSES  10
 #define PCB_REGISTERS  21
 
 extern uint64_t* createPCB(uint64_t* wrapper, uint64_t* pcbAddr, int argc, char* argv[], void* entryPoint);
