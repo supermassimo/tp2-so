@@ -1,7 +1,6 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <lib.h>
-#include <console.h>
 
 /******************************************************************************
  *
@@ -37,7 +36,7 @@ typedef struct buddy {
   uint8_t pool[POOLSIZE];
 } buddy_t;
 
-static buddy_t* BUDDY = 0x900000;
+static buddy_t* BUDDY = (buddy_t*)MEM_BASE;
 static int wasInitialized = 0;
 
 void buddy_init() {
@@ -45,7 +44,7 @@ void buddy_init() {
     BUDDY->freelist[MAX_ORDER] = BUDDY->pool;
 }
 
-void* memAlloc(size_t size, int options) {
+void* _memAlloc(size_t size) {
     if(wasInitialized == 0){
         buddy_init();
         wasInitialized = 1;
@@ -83,7 +82,7 @@ void* memAlloc(size_t size, int options) {
     return blockp;
 }
 
-int memFree(void* blockp) {
+int _memFree(void* blockp) {
     int i;
     void* buddy;
     void* * p;
@@ -113,10 +112,6 @@ int memFree(void* blockp) {
         *p = *(void**) *p;
     }
     return 0;
-}
-
-void getMemInfo(MemoryInfo* meminfo){
-    return NULL;
 }
 
 /*
