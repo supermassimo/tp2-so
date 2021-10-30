@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "./include/commands.h"
 #include "./include/mystdio.h"
 #include "./include/mystdlib.h"
@@ -141,6 +143,8 @@ static void testallocHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAm
     }
     int num = strToNum(params[0]);
     void* mem = malloc(sizeof(int));
+    if(mem == NULL)
+        return;
     *((int*)mem) = num;
 
     int num2 = *((int*)mem);
@@ -217,14 +221,16 @@ int loop(int argc, char* argv[]) {
 }
 
 void loopHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount == 0){
+        printErr("Missing parameter for command 'loop'");
+        return;
+    }
     if(paramAmount > 1){
         printErr("Too many parameters for command 'loop'");
         return;
     }
     char* time[paramAmount];
-    for(int i=0 ; i < paramAmount ; i++){
-        time[i] = params[i];
-    }
+    time[0] = params[0];
     if(createProcess(loop, LOW, 1, time, "loop") == -1){
         printErr("Cannot create a new process; process limit reached");
         return;

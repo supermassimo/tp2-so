@@ -1,15 +1,17 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <console.h>
 #include <lib.h>
 #include <rtc.h>
 #include <standardIn.h>
 
-#define SCR_BASE_ADDR 	(char*)0xB8000
+#define SCR_BASE_ADDR 	0xB8000
 #define SCR_ROWS 		25
 #define SCR_COLS 		80
 #define SCR_SIDE_COLS	39
 #define LIMITER_GIRTH	2
 
-static char* scrPos = (char*) SCR_BASE_ADDR; 		// Current position on the screen
+static char* scrPos = (char*)SCR_BASE_ADDR; 		// Current position on the screen
 static uint8_t foreColor = White;			// Default Forecolor
 static uint8_t backColor = Black;			// Default Backcolor
 static uint8_t errorColor = Red;
@@ -268,7 +270,7 @@ void printErr(const char* msg){
 }
 
 void clearScreen(){
-	char* scr = SCR_BASE_ADDR;
+	char* scr = (char*)SCR_BASE_ADDR;
 	for(int i=0 ; i < SCR_ROWS ; i++){
 		for(int j=0 ; j < SCR_COLS ; j++){
 			*(scr) = 0;
@@ -276,7 +278,7 @@ void clearScreen(){
 			scr += 2;
 		}
 	}
-	scrPos = SCR_BASE_ADDR;
+	scrPos = (char*)SCR_BASE_ADDR;
 }
 
 void clearActiveConsole(){

@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdint.h>
 #include <moduleLoader.h>
 #include <lib.h>
@@ -15,8 +17,8 @@ extern void load_idt();
 
 static const uint64_t PageSize = 0x1000;
 
-static void * const userCodeModuleAddress = (void*)0x400000;
-static void * const dataModuleAddress = (void*)0x500000;
+static void * const userCodeModuleAddress = 0x400000;
+static void * const dataModuleAddress = 0x500000;
 
 typedef int (*EntryPoint)();
 
@@ -63,8 +65,7 @@ int main()
 	initializeConsole();
 
 	// loadUserModuleAdress();
-	char** args;
-	createProcess(userCodeModuleAddress, SYSTEM, 0, args, "init");
+	createProcess(userCodeModuleAddress, SYSTEM, 0, NULL, "init");
 	enableScheduler();
 
 	while(1);

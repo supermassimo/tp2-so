@@ -1,9 +1,13 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <keyboard.h>
 #include <console.h>
 #include <standardIn.h>
 #include <dualDisplayManager.h>
 #include <lib.h>                        // For testing purposes. DO NOT DELETE
 #include <sysCalls.h>                   // For testing purposes. DO NOT DELETE
+
+#define KEYTABLE_SIZE 94
 
 extern void captureRegistries();
 
@@ -15,7 +19,7 @@ static unsigned int nextToStore_1 = 0;
 
 static int isEnabled = 1;
 
-static const int keyTable[] = {
+static const int keyTable[KEYTABLE_SIZE] = {
 	0, 27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\'', 168,			// 1:ESC
 	'\b', '\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 0, '+',		// 14:BACKSPACE
 	'\n', 0, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 164, '{', '~',		// 29:CTRL
@@ -107,7 +111,7 @@ static int readKey(){
     int key = -1;
     uint8_t keyCode = pollKeyRaw();
     // If it´s a MAKE, a key was pressed
-    if(keyCode < 127){
+    if(keyCode < KEYTABLE_SIZE){        //if(keyCode < 127) on full table (table only contains 94 keys)
         key = keyTable[keyCode];
     }
     return key;
