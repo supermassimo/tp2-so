@@ -1,9 +1,5 @@
 #include <memManager.h>
 
-#define PAGE_SIZE   0x1000
-#define MEM_LIMIT   536870912             // 512MB
-#define MEM_BASE    9437184
-
 typedef struct MemHeader {
     struct MemHeader* next;
     size_t size;
@@ -11,27 +7,6 @@ typedef struct MemHeader {
 
 static MemHeader baseHeader;
 static MemHeader* freeList = NULL;
-static uint8_t* nextToMap= (uint8_t*)MEM_BASE;
-static long occupiedMemory = 0;
-
-static void* memMap(size_t size){
-    if((size_t)nextToMap + size > MEM_LIMIT)
-        return NULL;
-    void* blockp = nextToMap;
-    nextToMap += size;
-    occupiedMemory += size;
-    return blockp;
-}
-
-static void applyOptions(MemHeader *memBlock, int options){
-    switch(options){
-        case 1:
-            memset(memBlock+1, 0, memBlock->size);
-            break;
-        default:
-            break;
-    }
-}
 
 static MemHeader* getBlocks(size_t blockAmount){
     uint8_t *auxp;
@@ -49,7 +24,7 @@ static MemHeader* getBlocks(size_t blockAmount){
     return freeList;        // returns block added to free list
 }
 
-void* memAlloc(size_t size, int options){
+void* _memAlloc(size_t size){
     MemHeader *auxp, *currentBlock;
     size_t headerBlocks = (size + sizeof(MemHeader) - 1)/sizeof(MemHeader) + 1;         // Always round up # of block needed
     size_t blockBytes = headerBlocks * sizeof(MemHeader);
@@ -69,8 +44,8 @@ void* memAlloc(size_t size, int options){
                 auxp->size = blockBytes;
             }
             freeList = currentBlock;
-            applyOptions(auxp, options);
-            occupiedMemory += blockBytes;
+            incrementOccupiedMemory(blockBytes);
+            // occupiedMemory += blockBytes;
             return (void*)(auxp+1);
         }
         if(auxp == freeList)
@@ -79,7 +54,7 @@ void* memAlloc(size_t size, int options){
     }
 }
 
-int memFree(void *blockp){
+int _memFree(void *blockp){
     MemHeader *headp, *auxp;
 
     headp = (MemHeader*)blockp - 1;
@@ -87,7 +62,8 @@ int memFree(void *blockp){
         if(auxp >= auxp->next && (headp > auxp || headp < auxp->next))
             break;
     
-    occupiedMemory -= headp->size;
+    decrementOccupiedMemory(headp->size);
+    //occupiedMemory -= headp->size;
     /*
     print("LIBERO: ");
     printInt(headp->size, 10);
@@ -107,9 +83,4 @@ int memFree(void *blockp){
     }
     freeList = auxp;
     return 0;
-}
-
-void getMemInfo(MemoryInfo *meminfo){
-    meminfo->totalMemory = MEM_LIMIT - MEM_BASE;
-    meminfo->occupiedMemory = occupiedMemory;
 }
