@@ -10,3 +10,6 @@
 
 #Object files
 *.o
+
+#Test folders
+/Tests

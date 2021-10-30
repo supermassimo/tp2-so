@@ -1,6 +1,9 @@
 
 all:  bootloader kernel userland image
 
+cppcheck:
+	cppcheck --quiet --enable=all --force --inconclusive . 2> Tests/cppcheck/cppcheck-report.txt
+
 bootloader:
 	cd Bootloader; make all
 

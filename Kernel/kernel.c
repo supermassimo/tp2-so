@@ -49,9 +49,11 @@ void * initializeKernelBinary()
 	return getStackBase();
 }
 
+/* Previously used to jump directly to userlands' _start
 void loadUserModuleAdress(){
 	((EntryPoint)userCodeModuleAddress)();
 }
+*/
 
 int main()
 {

@@ -9,6 +9,8 @@ void timer_handler() {
 	ticks++;
 }
 
+// Previously used to sleep shell. Delete on final version
+/*
 void timerTickSleep(long seconds){
 	long currentSeconds = seconds_elapsed();
 	long finalSeconds = currentSeconds + seconds;
@@ -20,6 +22,7 @@ void timerTickSleep(long seconds){
 	print("SALGOOO");
 	enableKeyboardInt();
 }
+*/
 
 int ticks_elapsed() {
 	return ticks;

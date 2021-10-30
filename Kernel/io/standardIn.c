@@ -21,15 +21,14 @@ int bufferIsEmpty(){
         return currentToRead_1 == endOfContent_1;
     else
         return currentToRead_0 == endOfContent_0;
-    
 }
 
 void setInputBuffer(char* newBuffer, int end){
     int auxIdx = 0;
     if (getCurrentDisplay())
         endOfContent_1 = 0;
-     else 
-        endOfContent_1 = 0;
+    else 
+        endOfContent_0 = 0;
 
     while(auxIdx != end){
         if (getCurrentDisplay())

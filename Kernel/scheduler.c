@@ -144,6 +144,7 @@ int kill(int pid, ProcessSignal sig){
     }
 }
 
+// For testing. Delete on final version
 void printProcess(uint64_t* currentProcPCB) {
     changeConsoleSide(1);
     print("PCB ACTUAL:\n");

@@ -119,8 +119,9 @@ static void memHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     printMemInfo(meminfo, params[0]);
 }
 
+// Previously used to test div-by-zero exception
 static void divByZeroThrower(){
-    int value = 1/0;
+    return 1/0;
 }
 
 static exceptionTestStruct exceptions[] = {
@@ -385,14 +386,6 @@ int testProcess(int argc, char* argv[]){
     return 0;
 }
 
-int testProcessLooping(int argc, char* argv[]){
-    for(size_t i=0 ; i < 10000000000 ; i++){
-        if(i % 1000000 == 0)
-            printf("C");
-    }
-    return 0;
-}
-
 int testProcessA(int argc, char* argv[]){
     for(size_t i=0 ; i < 10000000000 ; i++){
         if(i % 100000000 == 0)
@@ -532,13 +525,14 @@ static int isEnd(int c){
 }
 
 static int getCommandAndParams(char* command, char params[][MAX_PARAMETER_LENGTH], char* input){
-    int inputIdx, j=0, paramIdx=0;
+    int inputIdx, paramIdx=0;
     for(inputIdx=0 ; input[inputIdx] != ' ' && !isEnd(input[inputIdx]); inputIdx++){
         if (inputIdx < MAX_COMMAND_LENGTH)
             command[inputIdx] = input[inputIdx];
     }
     command[inputIdx] = 0;
     if(!isEnd(input[inputIdx])){
+        int j=0;
         inputIdx++;
         while(!isEnd(input[inputIdx])){
             if(input[inputIdx] == ' '){

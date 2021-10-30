@@ -100,7 +100,6 @@ static int digitToStr(int num, int base){
 
 // Transforms an integer to string and stores it on target. Returns final string length
 size_t numToStr(long value, char* target, size_t base){
-	int digit;
 	int sign = 1;		// 0 if negative, 1 if positive
 	int i = -1, j = 0;
 	char aux[100];
@@ -110,7 +109,7 @@ size_t numToStr(long value, char* target, size_t base){
 	}
 	do{
 		i++;
-		digit = value % base;
+		int digit = value % base;
 		aux[i] = digitToStr(digit, base);
 		value /= base;
 	} while(value > 0);

@@ -66,7 +66,6 @@ static int digitToStr(int num, int base){
 
 // Transforms an integer to string and stores it on target. Returns final string length
 size_t numToStr(long value, char* target, size_t base){
-	int digit;
 	int sign = 1;		// 0 if negative, 1 if positive
 	int i = -1, j = 0;
 	char aux[100];
@@ -76,7 +75,7 @@ size_t numToStr(long value, char* target, size_t base){
 	}
 	do{
 		i++;
-		digit = value % base;
+		int digit = value % base;
 		aux[i] = digitToStr(digit, base);
 		value /= base;
 	} while(value > 0);
@@ -107,7 +106,7 @@ void numToStrSized(long value, char* target, size_t base, size_t length){
 
 // Transforms string to unsigned number. Returns -1 if number sent was negative
 long strToNumPos(char* string){
-    size_t num = 0, digit, i=0;
+    size_t num = 0, i=0;
     size_t length = strlen(string);
     if(string[0] == '-'){
         printErr("String sent must be positive");
@@ -115,7 +114,7 @@ long strToNumPos(char* string){
     }
     while(i < length){
         num *= 10;
-        digit = string[i] - '0';
+        int digit = string[i] - '0';
         if(!isDigit(digit))
             break;
         num += digit;
@@ -125,7 +124,7 @@ long strToNumPos(char* string){
 }
 
 long strToNum(char* string){
-    int isNegative=0, digit;
+    int isNegative=0;
     long num = 0;
     size_t i=0, length = strlen(string);
     if(string[0] == '-'){
@@ -134,7 +133,7 @@ long strToNum(char* string){
     }
     while(i < length){
         num *= 10;
-        digit = string[i] - '0';
+        int digit = string[i] - '0';
         if(!isDigit(digit))
             break;
         num += digit;
@@ -147,7 +146,6 @@ long strToNum(char* string){
 
 //precision es el numero de caracteres despues de la coma
 size_t floatToStr(float value, char* target, size_t precision, size_t base){
-    int digit;
     int j = numToStr((int)value, target, base);
 
 	if(value < 0)
@@ -160,7 +158,7 @@ size_t floatToStr(float value, char* target, size_t precision, size_t base){
     else {
         for (int p=0; p<precision; p++){
             value2 *= base;
-		    digit = (int)value2;
+		    int digit = (int)value2;
 		    target[j++] = digitToStr(digit, base);
             value2 -= digit;
         }
