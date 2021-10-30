@@ -97,3 +97,23 @@ int sysGetpid(){
 void sysSkip(){
     return skip();
 }
+
+sem_t sysSemInit(int value){
+    return sem_init(value);
+}
+
+int sysSemDestroy(sem_t sem){
+    return sem_destroy(sem);
+}
+
+void sysSemWait(sem_t sem){
+    sem_wait(sem);
+}
+
+void sysSemPost(sem_t sem){
+    sem_post(sem);
+}
+
+void sysSemSetValue(sem_t sem, int value){
+    sem_set_value(sem, value);
+}

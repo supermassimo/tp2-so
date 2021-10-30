@@ -184,6 +184,17 @@ _sysCallHandler:
 		je syscall_60
 		cmp rax, 62
 		je syscall_62
+		
+		cmp rax, 64
+		je syscall_64
+		cmp rax, 65
+		je syscall_65
+		cmp rax, 66
+		je syscall_66
+		cmp rax, 67
+		je syscall_67
+		cmp rax, 68
+		je syscall_68
 	syscall_0:
 		call sysReadInput
 		jmp endSysCallHandler
@@ -255,6 +266,21 @@ _sysCallHandler:
 	syscall_62:
 		call sysKill
 		jmp endSysCallHandler
+	syscall_64:
+		call sysSemInit
+		jmp endSysCallHandler
+	syscall_65:
+		call sysSemDestroy
+		jmp endSysCallHandler
+	syscall_66:
+		call sysSemWait
+		jmp endSysCallHandler
+	syscall_67:
+		call sysSemPost
+		jmp endSysCallHandler		
+	syscall_68:
+		call sysSemSetValue
+		jmp endSysCallHandler	
 	endSysCallHandler:
 		mov rbx, [reg_stack_pointer]
 		mov [rbx], rax

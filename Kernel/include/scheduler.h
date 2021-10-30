@@ -13,7 +13,7 @@
 
 typedef enum Priority {LOW, MEDIUM, HIGH, SYSTEM} Priority;
 typedef enum ProcessSignal {SIG_KILL} ProcessSignal;
-typedef enum State {TERMINATED, READY, BLOCKED, SLEEP} State;
+typedef enum State {TERMINATED, READY, BLOCKED, SLEEP, WAITING} State;
 
 typedef struct Process {
     char* name;
@@ -33,6 +33,8 @@ void printAllProcesses();
 char* getStateString(State state);
 int scheduleOutsideRtc();
 int sleep(int pid, size_t seconds);
+int makeWait(int pid);
+int wakeup(int pid);
 
 void exit(int status);
 int kill(int pid, ProcessSignal sig);

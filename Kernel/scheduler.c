@@ -28,6 +28,8 @@ char* getStateString(State state){
             return "B";
         case SLEEP:
             return "S";
+        case WAITING:
+            return "W";
         default:
             return "?";
     }
@@ -106,6 +108,29 @@ int sleep(int pid, size_t seconds){
     processes[pid].state = SLEEP;
     outsideRtc = 1;
     scheduleNext();
+    return 0;
+}
+
+//parecido a sleep
+//deja al proceso en espera por un tiempo indefinido, hasta wakeup()
+int makeWait(int pid){
+    if(processes[pid].state == TERMINATED){
+        return -1;
+    }
+    processes[pid].state = WAITING;
+    outsideRtc = 1;
+    scheduleNext();
+    return 0;
+}
+
+//despierta un proceso que este en espera o en sleep
+int wakeup(int pid){
+    if(processes[pid].state == TERMINATED){
+        return -1;
+    }
+    if(processes[pid].state == WAITING || processes[pid].state == SLEEP){
+        processes[pid].state = READY;
+    }
     return 0;
 }
 

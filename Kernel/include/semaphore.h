@@ -1,14 +1,14 @@
 #include <scheduler.h>
 #include <memManager.h>
 
-// NICO: Massi asignale los valores cuando crees el semaforo, asignandolos acá da error al compilar
 typedef struct {
     int value;
     int waitingProcesses[MAX_PROCESSES];
-    int waitingProcessCount;
-    /*
-    int waitingProcesses[MAX_PROCESSES] = {0};
-    int waitingProcessesCount = 0;
-    */
+    int waitingCount;
 } sem_t;
 
+sem_t sem_init(int value);
+int sem_destroy(sem_t sem);
+void sem_wait(sem_t sem);
+void sem_post(sem_t sem);
+void sem_set_value (sem_t sem, int value);

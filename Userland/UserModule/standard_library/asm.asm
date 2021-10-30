@@ -21,6 +21,11 @@ GLOBAL kill
 GLOBAL printAllProcesses
 GLOBAL getpid
 GLOBAL skip
+GLOBAL semInit
+GLOBAL semDestroy
+GLOBAL semWait
+GLOBAL semPost
+GLOBAL semUpdateValue
 
 section .text
 
@@ -152,6 +157,36 @@ exit:
 
 kill:
     mov rax, 62
+    int 80h
+
+    ret
+
+semInit:
+    mov rax, 64
+    int 80h
+
+    ret
+
+semDestroy:
+    mov rax, 65
+    int 80h
+
+    ret
+
+semWait:
+    mov rax, 66
+    int 80h
+
+    ret
+
+semPost:
+    mov rax, 67
+    int 80h
+
+    ret
+
+semUpdateValue:
+    mov rax, 68
     int 80h
 
     ret

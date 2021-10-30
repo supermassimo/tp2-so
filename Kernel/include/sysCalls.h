@@ -10,6 +10,7 @@
 #include <stddef.h>
 #include <rtc.h>
 #include <scheduler.h>
+#include <semaphore.h>
 
 void sysReadInput(char* buffer, size_t buffer_size);
 void sysWrite(int output, const char* buffer, size_t buffer_size);
@@ -33,6 +34,10 @@ int sysKill(int pid, ProcessSignal sig);
 void sysPrintAllProcesses();
 int sysGetpid();
 void sysSkip();
-
+sem_t sysSemInit(int value);
+int sysSemDestroy(sem_t sem);
+void sysSemWait(sem_t sem);
+void sysSemPost(sem_t sem);
+void sysSemSetValue(sem_t sem, int value);
 
 #endif
