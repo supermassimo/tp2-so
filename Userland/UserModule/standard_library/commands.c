@@ -4,6 +4,13 @@
 #include "./include/mystdio.h"
 #include "./include/mystdlib.h"
 
+/*              TEST MM HEADERS             */
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include <string.h>
+#include "./include/test_util.h"
+/*******************************************/
+
 extern void getRegistries(Registries* regs);
 extern void getMemContent(uint64_t startPos, uint8_t* target, size_t amount);
 extern void invalidOpcodeThrower();
@@ -39,7 +46,7 @@ typedef struct exceptionTestStruct{
     void* thrower;
 } exceptionTestStruct;
 
-static const size_t commandAmount = 24;
+static const size_t commandAmount = 25;
 static const size_t exceptionAmount = 2;
 
 #define QUADRATIC_PRECISION 2
@@ -441,6 +448,82 @@ void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
     }
 }
 
+/****               TEST_MM             ****/
+#define MAX_BLOCKS 128
+#define MAX_MEMORY (0x19266666)/3 //Should be around 80% of memory managed by the MM
+
+typedef struct MM_rq{
+  void *address;
+  uint32_t size;
+}mm_rq;
+
+int test_mm(int argc, char* argv[]){
+    mm_rq mm_rqs[MAX_BLOCKS];
+    uint8_t rq;
+    uint64_t total;
+
+    // while (1){
+    rq = 0;
+    total = 0;
+
+    // Request as many blocks as we can
+    while(rq < MAX_BLOCKS && total < MAX_MEMORY){
+        mm_rqs[rq].size = GetUniform(MAX_MEMORY - total - 1) + 1;
+        printf("Request block of ");
+        printInt(mm_rqs[rq].size, 10, 10);
+        printf("b\n");
+        mm_rqs[rq].address = malloc(mm_rqs[rq].size); // TODO: Port this call as required
+        /*
+        if(mm_rqs[rq].address == NULL){
+            printErr("No more memory left\n");
+            return -1;
+        }
+        */
+        printf("on addr: ");
+        printInt(mm_rqs[rq].address, 10, 16);
+        printf("\n");
+        //TODO: check if NULL
+        total += mm_rqs[rq].size;
+        rq++;
+    }
+
+    // Set
+    uint32_t i;
+    for (i = 0; i < rq; i++){
+        printf("Seteando el bloque ");
+        printInt(i, 10, 10);
+        printf("\n");
+        if (mm_rqs[i].address != NULL){
+            for(int j=0 ; j < mm_rqs[i].size ; j++)
+                *(char*)(mm_rqs[i].address+j) = i;
+        }
+    }
+
+    // Check
+    for (i = 0; i < rq; i++)
+        if (mm_rqs[i].address != NULL)
+            if(!memcheck(mm_rqs[i].address, i, mm_rqs[i].size))
+                printf("ERROR!\n");
+
+    // Free
+    for (i = 0; i < rq; i++)
+        if (mm_rqs[i].address != NULL)
+            free(mm_rqs[i].address);
+  // }
+  printf("FINISH testMM\n");
+  return 0; 
+}
+
+static void testMMHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount > 0){
+        printErr("Too many parameters for command 'testmm'");
+        return;
+    }
+    // char *args[1] = {"Hola\n"};
+    // createProcess(test_mm, HIGH, 1, args, "testMM");
+    test_mm(0, NULL);
+}
+
 static void printCommandTypeMessage(commandStruct command){
     printf(command.name);
     printf(" is a ");
@@ -484,7 +567,8 @@ static commandStruct commands[] = {
     {"clear", &clearHandler, "'clear': Clears the current console\nUse: 'clear'\n", BUILT_IN},
     {"sleep", &sleepHandler, "'sleep': Causes the given process to sleep for the seconds specified\nUse: 'sleep [pid] [seconds]'\n'pid': Process id\n'seconds': Number of seconds for the system to sleep\n", BUILT_IN},    
     {"testprocess", &testProcessHandler, "'testprocess': Creates new process\nUse: 'testprocess'\n", PROCESS},
-    {"type", &typeHandler, "'type': Prints a command type\nUse: 'type [command]'\n'command': Command name\n", BUILT_IN}
+    {"type", &typeHandler, "'type': Prints a command type\nUse: 'type [command]'\n'command': Command name\n", BUILT_IN},
+    {"testmm", &testMMHandler, "", PROCESS}
 };
 
 static void typeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){

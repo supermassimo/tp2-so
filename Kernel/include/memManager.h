@@ -6,8 +6,8 @@
 #include <lib.h>
 
 #define PAGE_SIZE   0x1000
-#define MEM_LIMIT   536870912             // 512MB
-#define MEM_BASE    9437184
+#define MEM_LIMIT   0x20000000             // 512MB
+#define MEM_BASE    0x900000
 
 /* memAlloc options*/
 #define NO_ACTION 0

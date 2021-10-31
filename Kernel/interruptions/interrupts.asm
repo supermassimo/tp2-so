@@ -45,6 +45,11 @@ EXTERN sysKill
 EXTERN sysPrintAllProcesses
 EXTERN sysGetpid
 EXTERN sysSkip
+EXTERN sysSemInit
+EXTERN sysSemDestroy
+EXTERN sysSemWait
+EXTERN sysSemPost
+EXTERN sysSemSetValue
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
