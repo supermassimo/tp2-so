@@ -3,6 +3,7 @@
 #include "./include/commands.h"
 #include "./include/mystdio.h"
 #include "./include/mystdlib.h"
+#include "./include/processes.h"
 
 /*              TEST MM HEADERS             */
 // #include <stdio.h>
@@ -21,14 +22,6 @@ extern int sleep(int pid, size_t seconds);
 extern int getQuadratic(float a, float b, float c, float*, float*);
 extern void getDateTime(Date* date, Time* time, int utc);
 extern void getMemInfo(MemoryInfo* meminfo);
-extern int createProcess(void* entryPoint, UserPriority priority, int argc, char* argv[], char* name);
-extern void exit(int status);
-extern int kill(int pid, ProcessSignal sig);
-extern int nice(int pid, UserPriority priority);
-extern int block(int pid);
-extern void printAllProcesses();
-extern int getpid();
-extern void skip();
 
 #define PRINTMEM_BYTES 32
 
@@ -46,7 +39,7 @@ typedef struct exceptionTestStruct{
     void* thrower;
 } exceptionTestStruct;
 
-static const size_t commandAmount = 25;
+static const size_t commandAmount = 26;
 static const size_t exceptionAmount = 2;
 
 #define QUADRATIC_PRECISION 2
@@ -238,7 +231,7 @@ void loopHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     }
     char* time[paramAmount];
     time[0] = params[0];
-    if(createProcess(loop, LOW, 1, time, "loop") == -1){
+    if(createFullProcess(loop, LOW, 1, time, "loop") == -1){
         printErr("Cannot create a new process; process limit reached");
         return;
     }
@@ -255,7 +248,7 @@ void killHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
         return;
     }
     int pid = strToNum(params[0]);
-    if(kill(pid, SIG_KILL) == -1){
+    if(killProcess(pid) == -1){
         printErr("No process with pid sent");
         return;
     }
@@ -292,18 +285,35 @@ void blockHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
         return;
     }
     int pid = strToNum(params[0]);
-    if(block(pid) == -1){
+    if(blockProcess(pid) == -1){
         printErr("Cannot change sent process state");
         return;
     }
 }
+
+void unblockHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount == 0){
+        printErr("Missing parameters for command 'unblock'");
+        return;
+    }
+    if(paramAmount > 1){
+        printErr("Too many parameters for command 'unblock'");
+        return;
+    }
+    int pid = strToNum(params[0]);
+    if(unblockProcess(pid) == -1){
+        printErr("Cannot change sent process state");
+        return;
+    }
+}
+
 
 void skipHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount != 0){
         printErr("Too many parameters for command 'skip'");
         return;
     }
-    skip();
+    skipExecution();
 }
 
 void semHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
@@ -437,11 +447,11 @@ void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
             return;
         }
         */
-        if(createProcess(testProcessB, HIGH, 2, msg, "testPB") == -1){
+        if(createFullProcess(testProcessB, LOW, 2, msg, "testPB") == -1){
             printErr("Cannot create a new process; process limit reached");
             return;
         }
-        if(createProcess(testProcessA, HIGH, 2, msg, "testPA") == -1){
+        if(createFullProcess(testProcessA, LOW, 2, msg, "testPA") == -1){
             printErr("Cannot create a new process; process limit reached");
             return;
         }
@@ -455,7 +465,7 @@ void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
 typedef struct MM_rq{
   void *address;
   uint32_t size;
-}mm_rq;
+} mm_rq;
 
 int test_mm(int argc, char* argv[]){
     mm_rq mm_rqs[MAX_BLOCKS];
@@ -537,7 +547,95 @@ static void testMMHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmoun
         return;
     }
     char *args[1] = {"Hola\n"};
-    createProcess(test_mm, HIGH, 1, args, "testMM");
+    createFullProcess(test_mm, HIGH, 1, args, "testMM");
+}
+
+/****           TEST_PROCESSES          ****/
+#define MAX_PROCESSES 10 //Should be around 80% of the the processes handled by the kernel
+
+enum State {ERROR, RUNNING, BLOCKED, KILLED};
+
+typedef struct P_rq{
+  uint32_t pid;
+  enum State state;
+}p_rq;
+
+//TO BE INCLUDED
+int endless_loop(int argc, char* argv[]){
+    while(1);
+    return 0;
+}
+
+int test_processes(int agrc, char* argv[]){
+    p_rq p_rqs[MAX_PROCESSES];
+    uint8_t rq;
+    uint8_t alive = 0;
+    uint8_t action;
+
+    // Create MAX_PROCESSES processes
+    for(rq = 0; rq < MAX_PROCESSES; rq++){
+        p_rqs[rq].pid = createProcess(endless_loop, "endless_loop");
+        if (p_rqs[rq].pid == -1){                           // TODO: Port this as required
+            printf("Error creating process\n");               // TODO: Port this as required
+            return -1;
+        } else {
+            p_rqs[rq].state = RUNNING;
+            printf("Created process #");
+            printInt(rq, 10, 10);
+            alive++;
+        }
+    }
+
+    // Randomly kills, blocks or unblocks processes until every one has been killed
+    while (alive > 0){
+        for(rq = 0; rq < MAX_PROCESSES; rq++){
+            action = GetUniform(2) % 2; 
+            switch(action){
+                case 0:
+                    if (p_rqs[rq].state == RUNNING || p_rqs[rq].state == BLOCKED){
+                        if (killProcess(p_rqs[rq].pid) == -1){
+                            printf("Error killing process #");
+                            printInt(rq, 10, 10);
+                            printf("\n");
+                            return -1;
+                        }
+                        p_rqs[rq].state = KILLED;
+                        printf("Killed process #");
+                        printInt(rq, 10, 10);
+                        alive--;
+                    }
+                    break;
+                case 1:
+                    if (p_rqs[rq].state == RUNNING){
+                        if(blockProcess(p_rqs[rq].pid) == -1){
+                            printf("Error blocking process #");
+                            printInt(rq, 10, 10);
+                            printf("\n");
+                            return;
+                        }
+                        p_rqs[rq].state = BLOCKED;
+                        printf("Blocked process #");
+                        printInt(rq, 10, 10);
+                    }       
+                break;
+            }
+        }
+    
+        // Randomly unblocks processes
+        for(rq = 0; rq < MAX_PROCESSES; rq++){
+            if (p_rqs[rq].state == BLOCKED && GetUniform(2) % 2){
+                if(unblockProcess(p_rqs[rq].pid) == -1){            // TODO: Port this as required
+                    printf("Error unblocking process #");
+                    printInt(rq, 10, 10);
+                    printf("\n");         // TODO: Port this as required
+                    return;
+                }
+                p_rqs[rq].state = RUNNING; 
+                printf("Unblocked process #");
+                printInt(rq, 10, 10);
+            }
+        }
+    }
 }
 
 static void printCommandTypeMessage(commandStruct command){
@@ -572,7 +670,8 @@ static commandStruct commands[] = {
     {"loop", &loopHandler, "'loop': Displays process Id and a greeting every few seconds", PROCESS},
     {"kill", &killHandler, "'kill': Kills process with pid sent\nUse: 'kill' [pid]\n'pid': Id of process\n", BUILT_IN},
     {"nice", &niceHandler, "'nice': Change priority of given process\nUse: 'nice' [pid] [priority]\n'pid': Id of process\n'priority': New priority to assign to process\n", BUILT_IN},
-    {"block", &blockHandler, "'block': Toggles a process state between ready and blocked\nUse: 'block [pid]'\n'pid': Id of process\n", BUILT_IN},
+    {"block", &blockHandler, "'block': Blocks a process\nUse: 'block [pid]'\n'pid': Id of process\n", BUILT_IN},
+    {"unblock", &unblockHandler, "'block': Unblocks a process\nUse: 'unblock [pid]'\n'pid': Id of process\n", BUILT_IN},
     {"skip", &skipHandler, "'skip': Skips execution of current process. Do not confound with 'kill'\nUse: 'skip'\n", BUILT_IN},
     {"sem", &semHandler, "'sem': Displays current semaphores information\nUse: sem [?] ...", BUILT_IN},
     {"cat", &catHandler, "'cat': ", PROCESS},

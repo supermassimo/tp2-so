@@ -14,6 +14,7 @@
 typedef enum Priority {LOW, MEDIUM, HIGH, SYSTEM} Priority;
 typedef enum ProcessSignal {SIG_KILL} ProcessSignal;
 typedef enum State {TERMINATED, READY, BLOCKED, SLEEP, WAITING} State;
+typedef enum BlockOption {BLOCK, UNBLOCK} BlockOption;
 
 typedef struct Process {
     char* name;
@@ -28,7 +29,7 @@ typedef struct Process {
 void enableScheduler();
 int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], char* name);
 int nice(int pid, Priority priority);
-int block(int pid);
+int block(int pid, BlockOption option);
 void printAllProcesses();
 char* getStateString(State state);
 int scheduleOutsideRtc();
