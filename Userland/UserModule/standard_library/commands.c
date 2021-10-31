@@ -39,7 +39,6 @@ typedef struct exceptionTestStruct{
     void* thrower;
 } exceptionTestStruct;
 
-static const size_t commandAmount = 26;
 static const size_t exceptionAmount = 2;
 
 #define QUADRATIC_PRECISION 2
@@ -551,7 +550,7 @@ static void testMMHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmoun
 }
 
 /****           TEST_PROCESSES          ****/
-#define MAX_PROCESSES 10 //Should be around 80% of the the processes handled by the kernel
+#define MAX_PROCESSES 16
 
 enum State {ERROR, RUNNING, BLOCKED, KILLED};
 
@@ -576,12 +575,15 @@ int test_processes(int agrc, char* argv[]){
     for(rq = 0; rq < MAX_PROCESSES; rq++){
         p_rqs[rq].pid = createProcess(endless_loop, "endless_loop");
         if (p_rqs[rq].pid == -1){                           // TODO: Port this as required
-            printf("Error creating process\n");               // TODO: Port this as required
+            printf("Error creating process #");
+            printInt(rq, 10, 10);
+            printf("\n");               // TODO: Port this as required
             return -1;
         } else {
             p_rqs[rq].state = RUNNING;
             printf("Created process #");
             printInt(rq, 10, 10);
+            printf("\n");
             alive++;
         }
     }
@@ -602,6 +604,7 @@ int test_processes(int agrc, char* argv[]){
                         p_rqs[rq].state = KILLED;
                         printf("Killed process #");
                         printInt(rq, 10, 10);
+                        printf("\n");
                         alive--;
                     }
                     break;
@@ -611,11 +614,12 @@ int test_processes(int agrc, char* argv[]){
                             printf("Error blocking process #");
                             printInt(rq, 10, 10);
                             printf("\n");
-                            return;
+                            return -1;
                         }
                         p_rqs[rq].state = BLOCKED;
                         printf("Blocked process #");
                         printInt(rq, 10, 10);
+                        printf("\n");
                     }       
                 break;
             }
@@ -628,14 +632,25 @@ int test_processes(int agrc, char* argv[]){
                     printf("Error unblocking process #");
                     printInt(rq, 10, 10);
                     printf("\n");         // TODO: Port this as required
-                    return;
+                    return -1;
                 }
                 p_rqs[rq].state = RUNNING; 
                 printf("Unblocked process #");
                 printInt(rq, 10, 10);
+                printf("\n");
             }
         }
     }
+    printf("FINISH test_processes");
+    return 0;
+}
+
+static void testPHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount > 0){
+        printErr("Too many parameters for command 'testP'");
+        return;
+    }
+    createProcessWithPriority(test_processes, HIGH, "test_processes");
 }
 
 static void printCommandTypeMessage(commandStruct command){
@@ -657,6 +672,7 @@ static void printCommandTypeMessage(commandStruct command){
 static void typeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount);
 static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount);
 
+static const size_t commandAmount = 27;
 static commandStruct commands[] = {
     {"help", &helpHandler, "'help': Get information on how to use commands\nUse: 'help [command]'\n'command': Command to get use information about\n", BUILT_IN},
     {"echo", &echoHandler, "'echo': Print a message on the console\nUse: 'echo [message]'\n'message': Message to print in console\n", BUILT_IN},
@@ -683,7 +699,8 @@ static commandStruct commands[] = {
     {"sleep", &sleepHandler, "'sleep': Causes the given process to sleep for the seconds specified\nUse: 'sleep [pid] [seconds]'\n'pid': Process id\n'seconds': Number of seconds for the system to sleep\n", BUILT_IN},    
     {"testprocess", &testProcessHandler, "'testprocess': Creates new process\nUse: 'testprocess'\n", PROCESS},
     {"type", &typeHandler, "'type': Prints a command type\nUse: 'type [command]'\n'command': Command name\n", BUILT_IN},
-    {"testmm", &testMMHandler, "", PROCESS}
+    {"testmm", &testMMHandler, "", PROCESS},
+    {"testp", &testPHandler, "", PROCESS}
 };
 
 static void typeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
