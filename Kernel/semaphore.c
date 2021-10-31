@@ -8,11 +8,9 @@ static sem_t semaphores[MAX_SEMAPHORES] = {0};
 
 static void sleepCurrent(sem_t sem){
     int pid = getpid();
-    /*
-    if (sem.nextSleep == MAX_PROCESSES){
+    if (sem.waitingCount == MAX_PROCESSES){
         return; // no hay mas espacio para procesos
     } 
-    */
     sem.waitingProcesses[sem.waitingCount++] = pid;
     makeWait(pid); //sleep indefinido, necesita wakeup()
 }
@@ -27,21 +25,21 @@ static void wakeupNext(sem_t sem){
 
 sem_t sem_init(int value){
     sem_t *sem = memAlloc(sizeof(sem_t), 0);
-    /*
-    if (sem == NULL)
-        return NULL;
-    */
+    
+    // if (sem == NULL)
+    //     return 0; //tirar algun tipo de error (?)
+    
     sem->value = value;
-    // sem->waitingProcesses = arr;
-    // sem->waitingProcessCount = 0;
-    // sem->pointerNext = 0;
+    sem->waitingCount = 0;
+    for (int i=0;i<MAX_PROCESSES;i++){
+        sem->waitingProcesses[i] = 0;
+    }
     return *sem;
 }
 
 //free
 int sem_destroy(sem_t sem){
-    // return memFree(*sem);
-    return 0;
+    return memFree(&sem);
 }
 
 //sleep if semaphore is busy
