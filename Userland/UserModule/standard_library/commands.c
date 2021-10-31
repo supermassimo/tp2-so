@@ -450,8 +450,7 @@ void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
 
 /****               TEST_MM             ****/
 #define MAX_BLOCKS 10
-#define MAX_MEMORY 0x19266666 //Should be around 80% of memory managed by the MM
-// #define MAX_MEMORY 0x9266666 //Should be around 80% of memory managed by the MM
+#define MAX_MEMORY 0x19266666 //80% of memory managed by the MM
 
 typedef struct MM_rq{
   void *address;
@@ -537,9 +536,8 @@ static void testMMHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmoun
         printErr("Too many parameters for command 'testmm'");
         return;
     }
-    // char *args[1] = {"Hola\n"};
-    // createProcess(test_mm, HIGH, 1, args, "testMM");
-    test_mm(0, NULL);
+    char *args[1] = {"Hola\n"};
+    createProcess(test_mm, HIGH, 1, args, "testMM");
 }
 
 static void printCommandTypeMessage(commandStruct command){
