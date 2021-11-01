@@ -2,6 +2,7 @@ include ../Makefile.inc
 
 MODULE=0000-userModule.bin
 SOURCES=$(wildcard [^_]*.c)
+LIB=standard_library
 LIB_SOURCES=$(wildcard ./standard_library/*.c)
 LIB_SOURCES_ASM=$(wildcard ./standard_library/*.asm)
 LIB_OBJECTS=$(LIB_SOURCES:.c=.o)
@@ -24,5 +25,6 @@ $(MODULE): $(SOURCES) $(ALL_LIB_OBJECTS)
 
 clean:
 	rm -rf *.o
+	rm -rf $(LIB)/*.o
 
 .PHONY: all clean print

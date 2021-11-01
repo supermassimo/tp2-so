@@ -3,6 +3,7 @@
 #include "./include/commands.h"
 #include "./include/mystdio.h"
 #include "./include/mystdlib.h"
+#include "./include/processes.h"
 
 /*              TEST MM HEADERS             */
 // #include <stdio.h>
@@ -21,14 +22,6 @@ extern int sleep(int pid, size_t seconds);
 extern int getQuadratic(float a, float b, float c, float*, float*);
 extern void getDateTime(Date* date, Time* time, int utc);
 extern void getMemInfo(MemoryInfo* meminfo);
-extern int createProcess(void* entryPoint, UserPriority priority, int argc, char* argv[], char* name);
-extern void exit(int status);
-extern int kill(int pid, ProcessSignal sig);
-extern int nice(int pid, UserPriority priority);
-extern int block(int pid);
-extern void printAllProcesses();
-extern int getpid();
-extern void skip();
 extern int createPipe();
 extern void closePipe(int id);
 extern int writePipe(int id, const char *buf, int count);
@@ -46,12 +39,18 @@ typedef struct commandStruct{
     CommandType type;
 } commandStruct;
 
+/*
 typedef struct exceptionTestStruct{
     char* exception;
     void* thrower;
 } exceptionTestStruct;
+*/
 
-static const size_t commandAmount = 25;
+typedef struct testProgramStruct{
+    char* name;
+    void* entryPoint;
+} testProgramStruct;
+
 static const size_t exceptionAmount = 2;
 
 #define QUADRATIC_PRECISION 2
@@ -138,10 +137,12 @@ static void divByZeroThrower(){
     return 1/0;
 }
 
+/*
 static exceptionTestStruct exceptions[] = {
     {"div-by-zero", &divByZeroThrower},
     {"invalid-opcode", &invalidOpcodeThrower}
 };
+*/
 
 // for testing purposes
 static void testallocHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
@@ -182,6 +183,7 @@ static void testallocHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAm
     return;
 }
 
+/*
 static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount == 0){
         printErr("Missing parameter for command 'test'");
@@ -194,6 +196,7 @@ static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
             ((void(*)())exceptions[i].thrower)();
     }
 }
+*/
 
 void psHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount > 0){
@@ -233,7 +236,7 @@ void loopHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     }
     char* time[paramAmount];
     time[0] = params[0];
-    if(createProcess(loop, LOW, 1, time, "loop") == -1){
+    if(createFullProcess(loop, LOW, 1, time, "loop") == -1){
         printErr("Cannot create a new process; process limit reached");
         return;
     }
@@ -250,7 +253,7 @@ void killHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
         return;
     }
     int pid = strToNum(params[0]);
-    if(kill(pid, SIG_KILL) == -1){
+    if(killProcess(pid) == -1){
         printErr("No process with pid sent");
         return;
     }
@@ -287,7 +290,23 @@ void blockHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
         return;
     }
     int pid = strToNum(params[0]);
-    if(block(pid) == -1){
+    if(blockProcess(pid) == -1){
+        printErr("Cannot change sent process state");
+        return;
+    }
+}
+
+void unblockHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount == 0){
+        printErr("Missing parameters for command 'unblock'");
+        return;
+    }
+    if(paramAmount > 1){
+        printErr("Too many parameters for command 'unblock'");
+        return;
+    }
+    int pid = strToNum(params[0]);
+    if(unblockProcess(pid) == -1){
         printErr("Cannot change sent process state");
         return;
     }
@@ -298,7 +317,7 @@ void skipHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
         printErr("Too many parameters for command 'skip'");
         return;
     }
-    skip();
+    skipExecution();
 }
 
 void semHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
@@ -433,47 +452,47 @@ void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
     char *id;
     numToStr(pipe,id,10);
     char* argv[] = {id};
-    if(createProcess(testProcessA, MEDIUM, 1, argv, "TpipeA") == -1){
+    if(createFullProcess(testProcessA, MEDIUM, 1, argv, "TpipeA") == -1){
         printErr("Cannot create a new process; process limit reached");
         return;
     }
-    if(createProcess(testProcessB, LOW, 1, argv, "TpipeB") == -1){
+    if(createFullProcess(testProcessB, LOW, 1, argv, "TpipeB") == -1){
         printErr("Cannot create a new process; process limit reached");
         return;
     }
 }
 
 /****               TEST_MM             ****/
-#define MAX_BLOCKS 128
-#define MAX_MEMORY (0x19266666)/3 //Should be around 80% of memory managed by the MM
+#define MAX_BLOCKS 10
+#define MAX_MEMORY 0x19266666 //80% of memory managed by the MM
 
 typedef struct MM_rq{
   void *address;
   uint32_t size;
-}mm_rq;
+} mm_rq;
 
 int test_mm(int argc, char* argv[]){
     mm_rq mm_rqs[MAX_BLOCKS];
     uint8_t rq;
     uint64_t total;
 
-    // while (1){
     rq = 0;
     total = 0;
 
+    printf("\nREQUESTING BLOCKS...\n");
     // Request as many blocks as we can
     while(rq < MAX_BLOCKS && total < MAX_MEMORY){
         mm_rqs[rq].size = GetUniform(MAX_MEMORY - total - 1) + 1;
-        printf("Request block of ");
-        printInt(mm_rqs[rq].size, 10, 10);
+        printf("Request block #");
+        printInt(rq, 10, 10);
+        printf(" of 0x");
+        printInt(mm_rqs[rq].size, 10, 16);
         printf("b\n");
         mm_rqs[rq].address = malloc(mm_rqs[rq].size); // TODO: Port this call as required
-        /*
         if(mm_rqs[rq].address == NULL){
             printErr("No more memory left\n");
             return -1;
         }
-        */
         printf("on addr: ");
         printInt(mm_rqs[rq].address, 10, 16);
         printf("\n");
@@ -482,41 +501,326 @@ int test_mm(int argc, char* argv[]){
         rq++;
     }
 
+    printf("\nSETTING BLOCKS...\n");
     // Set
-    uint32_t i;
-    for (i = 0; i < rq; i++){
-        printf("Seteando el bloque ");
+    for (uint32_t i = 0; i < rq; i++){
+        printf("Setting block #");
         printInt(i, 10, 10);
         printf("\n");
         if (mm_rqs[i].address != NULL){
             for(int j=0 ; j < mm_rqs[i].size ; j++)
                 *(char*)(mm_rqs[i].address+j) = i;
         }
+        printf("Block #");
+        printInt(i, 11, 10);
+        printf(" was successfully set\n");
     }
 
+    printf("\nCHECKING BLOCKS...\n");
     // Check
-    for (i = 0; i < rq; i++)
-        if (mm_rqs[i].address != NULL)
-            if(!memcheck(mm_rqs[i].address, i, mm_rqs[i].size))
-                printf("ERROR!\n");
+    for (uint32_t i = 0; i < rq; i++){
+        if (mm_rqs[i].address != NULL){
+            if(!memcheck(mm_rqs[i].address, i, mm_rqs[i].size)){
+                printf("ERROR checking block #");
+                printInt(i, 10, 10);
+                printf("\n");
+            }
+            else{
+                printf("Block #");
+                printInt(i, 10, 10);
+                printf(" successfully checked\n");
+            }
+        }
+    }
 
+    printf("\nFREEING BLOCKS...\n");
     // Free
-    for (i = 0; i < rq; i++)
-        if (mm_rqs[i].address != NULL)
+    for (uint32_t i = 0; i < rq; i++){
+        if (mm_rqs[i].address != NULL){
             free(mm_rqs[i].address);
-  // }
-  printf("FINISH testMM\n");
-  return 0; 
+            printf("Freeing block #");
+            printInt(i, 10, 10);
+            printf("\n");
+        }
+    }
+    printf("\nFINISH mm test\n");
+    return 0; 
 }
 
-static void testMMHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 0){
-        printErr("Too many parameters for command 'testmm'");
+/****           TEST_PROCESSES          ****/
+#define MAX_PROCESSES 16
+
+enum State {ERROR, RUNNING, BLOCKED, KILLED};
+
+typedef struct P_rq{
+  uint32_t pid;
+  enum State state;
+}p_rq;
+
+int endless_loop(int argc, char* argv[]){
+    while(1);
+    return 0;
+}
+
+int test_processes(int agrc, char* argv[]){
+    p_rq p_rqs[MAX_PROCESSES];
+    uint8_t rq;
+    uint8_t alive = 0;
+    uint8_t action;
+
+    printf("\nCREATING PROCESSES...\n");
+    // Create MAX_PROCESSES processes
+    for(rq = 0; rq < MAX_PROCESSES; rq++){
+        p_rqs[rq].pid = createProcess(endless_loop, "endless_loop");
+        if (p_rqs[rq].pid == -1){                           // TODO: Port this as required
+            printf("Error creating process #");
+            printInt(rq, 10, 10);
+            printf("\n");               // TODO: Port this as required
+            return -1;
+        } else {
+            p_rqs[rq].state = RUNNING;
+            printf("Created process #");
+            printInt(rq, 10, 10);
+            printf("\n");
+            alive++;
+        }
+    }
+
+    printf("\nRANDOM ACTIONS ON PROCESSES...\n");
+    // Randomly kills, blocks or unblocks processes until every one has been killed
+    while (alive > 0){
+        for(rq = 0; rq < MAX_PROCESSES; rq++){
+            action = GetUniform(2) % 2; 
+            switch(action){
+                case 0:
+                    if (p_rqs[rq].state == RUNNING || p_rqs[rq].state == BLOCKED){
+                        if (killProcess(p_rqs[rq].pid) == -1){
+                            printf("Error killing process #");
+                            printInt(rq, 10, 10);
+                            printf("\n");
+                            return -1;
+                        }
+                        p_rqs[rq].state = KILLED;
+                        printf("Killed process #");
+                        printInt(rq, 10, 10);
+                        printf("\n");
+                        alive--;
+                    }
+                    break;
+                case 1:
+                    if (p_rqs[rq].state == RUNNING){
+                        if(blockProcess(p_rqs[rq].pid) == -1){
+                            printf("Error blocking process #");
+                            printInt(rq, 10, 10);
+                            printf("\n");
+                            return -1;
+                        }
+                        p_rqs[rq].state = BLOCKED;
+                        printf("Blocked process #");
+                        printInt(rq, 10, 10);
+                        printf("\n");
+                    }       
+                break;
+            }
+        }
+    
+        // Randomly unblocks processes
+        for(rq = 0; rq < MAX_PROCESSES; rq++){
+            if (p_rqs[rq].state == BLOCKED && GetUniform(2) % 2){
+                if(unblockProcess(p_rqs[rq].pid) == -1){            // TODO: Port this as required
+                    printf("Error unblocking process #");
+                    printInt(rq, 10, 10);
+                    printf("\n");         // TODO: Port this as required
+                    return -1;
+                }
+                p_rqs[rq].state = RUNNING; 
+                printf("Unblocked process #");
+                printInt(rq, 10, 10);
+                printf("\n");
+            }
+        }
+    }
+    printf("\nFINISH processes test\n");
+    return 0;
+}
+
+/****           TEST_PRIORITY           ****/
+#define MINOR_WAIT 1000000                               // TODO: To prevent a process from flooding the screen
+#define WAIT      10000000                              // TODO: Long enough to see theese processes beeing run at least twice
+
+void bussy_wait(uint64_t n){     //u64int_t n
+    uint64_t i;
+    for (i = 0; i < n; i++);
+}
+
+int endless_loop_2(int argc, char* argv[]){
+    uint64_t pid = getpid();
+
+    while(1){
+        printInt(pid, 10, 10);
+        printf("\n");
+        bussy_wait(MINOR_WAIT);
+    }
+    return 0;
+}
+
+#define TOTAL_PROCESSES 3
+
+void test_priority(){
+    uint64_t pids[TOTAL_PROCESSES];
+    uint64_t i;
+
+    for(i = 0; i < TOTAL_PROCESSES; i++){
+        pids[i] = createProcess(endless_loop_2, "endless_loop_2");      // By default, on lowest priority (0)
+        if(pids[i] == -1){
+            printf("Error creating process #");
+            printInt(i, 10, 10);
+            printf("\n");
+            return;
+        }
+        printf("Created process #");
+        printInt(i, 10, 10);
+        printf("\n");
+    }
+
+    bussy_wait(WAIT);
+    printf("\nCHANGING PRIORITIES...\n");
+
+    for(i = 0; i < TOTAL_PROCESSES; i++){
+        switch (i % 3){
+            case LOW:
+                if(nice(pids[i], LOW) == -1) {          //lowest priority
+                    printf("Error changing process #");
+                    printInt(i, 10, 10);
+                    printf(" priority\n");
+                    return;
+                }
+                break;
+            case MEDIUM:
+                if(nice(pids[i], MEDIUM) == -1){        //medium priority
+                    printf("Error changing process #");
+                    printInt(i, 10, 10);
+                    printf(" priority\n");
+                    return;
+                }
+                break;
+            case HIGH:
+                if(nice(pids[i], HIGH) == -1){ //highest priority
+                    printf("Error changing process #");
+                    printInt(i, 10, 10);
+                    printf(" priority\n");
+                    return;
+                }
+                break;
+        }
+        printf("Changed process #");
+        printInt(i, 10, 10);
+        printf(" priority\n");
+    }
+
+    bussy_wait(WAIT);
+    printf("\nBLOCKING...\n");
+
+    for(i = 0; i < TOTAL_PROCESSES; i++){
+        if(blockProcess(pids[i]) == -1){
+            printErr("Error blocking process #");
+            printInt(i, 10, 10);
+            printf("\n");
+            return;
+        }
+        printf("Blocked process #");
+        printInt(i, 10, 10);
+        printf("\n");
+    }
+
+    printf("\nCHANGING PRIORITIES WHILE BLOCKED...\n");
+    for(i = 0; i < TOTAL_PROCESSES; i++){
+        switch (i % 3){
+            case LOW:
+                if(nice(pids[i], LOW) == -1) {          //lowest priority
+                    printf("Error changing process #");
+                    printInt(i, 10, 10);
+                    printf(" priority\n");
+                    return;
+                }
+                break;
+            case MEDIUM:
+                if(nice(pids[i], MEDIUM) == -1){        //medium priority
+                    printf("Error changing process #");
+                    printInt(i, 10, 10);
+                    printf(" priority\n");
+                    return;
+                }
+                break;
+            case HIGH:
+                if(nice(pids[i], HIGH) == -1){ //highest priority
+                    printf("Error changing process #");
+                    printInt(i, 10, 10);
+                    printf(" priority\n");
+                    return;
+                }
+                break;
+        }
+        printf("Changed process #");
+        printInt(i, 10, 10);
+        printf(" priority\n");
+    }
+
+    printf("\nUNBLOCKING...\n");
+
+    for(i = 0; i < TOTAL_PROCESSES; i++){
+        if(unblockProcess(pids[i]) == -1){
+            printErr("Error unblocking process #");
+            printInt(i, 10, 10);
+            printf("\n");
+            return;
+        }
+        printf("Unblocked process #");
+        printInt(i, 10, 10);
+        printf("\n");
+    }
+
+    bussy_wait(WAIT);
+    printf("\nKILLING...\n");
+
+    for(i = 0; i < TOTAL_PROCESSES; i++){
+        if(killProcess(pids[i]) == -1){
+            printErr("Error killing process #");
+            printInt(i, 10, 10);
+            printf("\n");
+            return;
+        }
+        printf("Killed process #");
+        printInt(i, 10, 10);
+        printf("\n");
+    }
+    printf("\nFINISH priority test\n");
+}
+
+static size_t testProgramAmount = 3;
+
+static testProgramStruct testPrograms[] = {
+    {"mm", &test_mm},
+    {"processes", &test_processes},
+    {"priority", &test_priority}
+};
+
+static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount == 0){
+        printErr("Missing parameters for command 'sleep'");
         return;
     }
-    // char *args[1] = {"Hola\n"};
-    // createProcess(test_mm, HIGH, 1, args, "testMM");
-    test_mm(0, NULL);
+    if(paramAmount > 1){
+        printErr("Too many parameters for command 'sleep'");
+        return;
+    }
+    for(int i=0 ; i < testProgramAmount ; i++){
+        if(strcmp(params[0], testPrograms[i].name) == 0){
+            createProcessWithPriority(testPrograms[i].entryPoint, HIGH, testPrograms[i].name);
+            return;
+        }
+    }
+    printErr("Not test program found with name sent\n");
 }
 
 static void printCommandTypeMessage(commandStruct command){
@@ -538,11 +842,12 @@ static void printCommandTypeMessage(commandStruct command){
 static void typeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount);
 static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount);
 
+static const size_t commandAmount = 25;
 static commandStruct commands[] = {
     {"help", &helpHandler, "'help': Get information on how to use commands\nUse: 'help [command]'\n'command': Command to get use information about\n", BUILT_IN},
     {"echo", &echoHandler, "'echo': Print a message on the console\nUse: 'echo [message]'\n'message': Message to print in console\n", BUILT_IN},
     {"cpufeatures", &cpufeaturesHandler, "'cpufeatures': Print cpu support for key features like mmx, sse, avx, etc\nUse: 'cpufeatures'\n", BUILT_IN},
-    {"exception", &testHandler, "'exception': Throws the provided exception\nUse: 'test [exception]'\n'exception': Type of exception to be thrown\nAvailable exceptions:\ndiv-by-zero\ninvalid-opcode\n", BUILT_IN},
+    // {"exception", &testHandler, "'exception': Throws the provided exception\nUse: 'test [exception]'\n'exception': Type of exception to be thrown\nAvailable exceptions:\ndiv-by-zero\ninvalid-opcode\n", BUILT_IN},
     {"inforeg", &inforegHandler, "'inforeg': Print the states of the registries\nUse: 'inforeg'\n", BUILT_IN},
     {"printmem", &printmemHandler, "'printmem': Print the first 32 bytes following a place in memory\nUse: 'printmem [pointer]'\n'pointer': Memory address of first byte to print\n", BUILT_IN},
     {"mem", &memHandler, "'mem': Displays memory info\nUse: 'mem' [units]\n'units': Determines which unit the info will be displayed on\nOptions:\n-b: Bytes (Default)\n-k: Kilobytes\n", BUILT_IN},
@@ -551,7 +856,8 @@ static commandStruct commands[] = {
     {"loop", &loopHandler, "'loop': Displays process Id and a greeting every few seconds", PROCESS},
     {"kill", &killHandler, "'kill': Kills process with pid sent\nUse: 'kill' [pid]\n'pid': Id of process\n", BUILT_IN},
     {"nice", &niceHandler, "'nice': Change priority of given process\nUse: 'nice' [pid] [priority]\n'pid': Id of process\n'priority': New priority to assign to process\n", BUILT_IN},
-    {"block", &blockHandler, "'block': Toggles a process state between ready and blocked\nUse: 'block [pid]'\n'pid': Id of process\n", BUILT_IN},
+    {"block", &blockHandler, "'block': Blocks a process\nUse: 'block [pid]'\n'pid': Id of process\n", BUILT_IN},
+    {"unblock", &unblockHandler, "'block': Unblocks a process\nUse: 'unblock [pid]'\n'pid': Id of process\n", BUILT_IN},
     {"skip", &skipHandler, "'skip': Skips execution of current process. Do not confound with 'kill'\nUse: 'skip'\n", BUILT_IN},
     {"sem", &semHandler, "'sem': Displays current semaphores information\nUse: sem [?] ...", BUILT_IN},
     {"cat", &catHandler, "'cat': ", PROCESS},
@@ -563,7 +869,8 @@ static commandStruct commands[] = {
     {"sleep", &sleepHandler, "'sleep': Causes the given process to sleep for the seconds specified\nUse: 'sleep [pid] [seconds]'\n'pid': Process id\n'seconds': Number of seconds for the system to sleep\n", BUILT_IN},    
     {"testprocess", &testProcessHandler, "'testprocess': Creates new process\nUse: 'testprocess'\n", PROCESS},
     {"type", &typeHandler, "'type': Prints a command type\nUse: 'type [command]'\n'command': Command name\n", BUILT_IN},
-    {"testmm", &testMMHandler, "", PROCESS}
+    {"test", &testHandler, "'test': Runs given test program\nUse: 'test [program]'\n'program': Must be one of the following"
+    "- 'mm': Memory manager test\n- 'processes': Process creation, blocking and killing test\n- 'priority': Process priority test\n", PROCESS}
 };
 
 static void typeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){

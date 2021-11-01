@@ -11,12 +11,9 @@
 #define NO_ACTION   0
 #define SET_ZERO    1
 
-typedef enum UserPriority {LOW, MEDIUM, HIGH} UserPriority;
-typedef enum ProcessSignal {SIG_KILL} ProcessSignal;
-
 size_t numToStr(long value, char* target, size_t base);
 void numToStrSized(long value, char* target, size_t base, size_t length);
-long strToNum(char* string);
+long long strToNum(char* string);
 long strToNumPos(char* string);
 int strcmp(char* s1, char* s2);
 size_t strlen(char *string);

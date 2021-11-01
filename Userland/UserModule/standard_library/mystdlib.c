@@ -125,7 +125,7 @@ long strToNumPos(char* string){
     return num;
 }
 
-long strToNum(char* string){
+long long strToNum(char* string){
     int isNegative=0;
     long num = 0;
     size_t i=0, length = strlen(string);

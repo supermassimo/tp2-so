@@ -85,19 +85,24 @@ int nice(int pid, Priority priority){
     return 0;
 }
 
-int block(int pid){
-    if(processes[pid].state == TERMINATED)      // Might be useless. Remove if no more states are added (apart from READY/BLOCKED/TERMINATED)
+int block(int pid, BlockOption option){
+    if(processes[pid].state == TERMINATED)
         return -1;
-    switch(processes[pid].state){
-        case READY:
+    switch(option){
+        case BLOCK:
+            if(processes[pid].state == BLOCKED)
+                return -1;
             processes[pid].state = BLOCKED;
-            return 0;
-        case BLOCKED:
+            break;
+        case UNBLOCK:
+            if(processes[pid].state != BLOCKED)
+                return -1;
             processes[pid].state = READY;
-            return 1;
-        default:        // Process was terminated
+            break;
+        default:            // Any other case
             return -1;
     }
+    return 0;
 }
 
 int sleep(int pid, size_t seconds){

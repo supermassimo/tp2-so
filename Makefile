@@ -1,6 +1,7 @@
+export BUDDY=buddy
 
 all:  bootloader kernel userland image
-buddy: bootloader kernel_buddy userland image
+$(BUDDY): bootloader kernel_buddy userland image
 
 cppcheck:
 	cppcheck --quiet --enable=all --force --inconclusive . 2> Tests/cppcheck/cppcheck-report.txt
@@ -19,7 +20,7 @@ kernel:
 	cd Kernel; make all
 
 kernel_buddy:
-	cd Kernel; make buddy
+	cd Kernel; make $(BUDDY)
 
 userland:
 	cd Userland; make all

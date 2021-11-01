@@ -75,8 +75,8 @@ int sysNice(int pid, Priority priority){
     return nice(pid, priority);
 }
 
-int sysBlock(int pid){
-    return block(pid);
+int sysBlock(int pid, BlockOption option){
+    return block(pid, option);
 }
 
 void sysExit(int status){

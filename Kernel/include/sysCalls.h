@@ -28,7 +28,7 @@ int sysMemFree(void *blockp);
 void sysGetMemInfo(MemoryInfo* meminfo);
 int sysCreateProcess(void* entryPoint, Priority priority, int argc, char* argv[], char* name);
 int sysNice(int pid, Priority priority);
-int sysBlock(int pid);
+int sysBlock(int pid, BlockOption option);
 void sysExit(int status);
 int sysKill(int pid, ProcessSignal sig);
 void sysPrintAllProcesses();

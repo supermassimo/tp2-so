@@ -5,9 +5,9 @@ KERNEL=kernel.bin
 SOURCES=$(wildcard *.c)
 SOURCES_INTERRUPTIONS=$(wildcard interruptions/*.c)
 SOURCES_IO=$(wildcard io/*.c)
-SOURCES_HEAP=$(wildcard memory/heap.c)
-SOURCES_BUDDY=$(wildcard memory/buddy.c)
-SOURCES_MEM_MANAGER=$(wildcard memory/memManager.c)
+SOURCES_HEAP=memory/heap.c
+SOURCES_BUDDY=memory/buddy.c
+SOURCES_MEM_MANAGER=memory/memManager.c
 SOURCES_INTERRUPTIONS_ASM=$(wildcard interruptions/*.asm)
 SOURCES_ASM=$(wildcard asm/*.asm)
 OBJECTS=$(SOURCES:.c=.o)
@@ -29,7 +29,7 @@ $(KERNEL): $(STATICLIBS) $(ALL_OBJECTS) $(OBJECTS_HEAP)
 	$(LD) $(LDFLAGS) -T kernel.ld -o $@ $^
 	$(LD) $(LDFLAGS) -T kernel.ld --oformat=elf64-x86-64 -o kernel.elf $^
 
-buddy: $(STATICLIBS) $(ALL_OBJECTS) $(OBJECTS_BUDDY)
+$(BUDDY): $(STATICLIBS) $(ALL_OBJECTS) $(OBJECTS_BUDDY)
 	$(LD) $(LDFLAGS) -T kernel.ld -o $(KERNEL) $^
 	$(LD) $(LDFLAGS) -T kernel.ld --oformat=elf64-x86-64 -o kernel.elf $^
 
