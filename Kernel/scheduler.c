@@ -63,10 +63,10 @@ int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], c
     processes[processIdx].argv = loadArgv(argc, argv);
     processes[processIdx].pcb = createPCB(processWrapper, baseAddr+(PROCESS_STACK-2), argc, processes[processIdx].argv, entryPoint);
     processes[processIdx].base = baseAddr;
-    processes[processIdx].state = READY;
     processes[processIdx].priority = priority;
     processes[processIdx].name = name;
     activeProcesses++;
+    processes[processIdx].state = READY;
     return processIdx;
 }
 

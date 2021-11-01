@@ -6,6 +6,25 @@ static sem_t *first = NULL;
 static sem_t *last = NULL;
 static int semAmount = 0;
 
+static void printSemaphore(sem_t* s){
+    print(s->id);
+    print("\t\t");
+    printInt(s->value, 10);
+    print("\n");
+}
+
+void printAllSemaphores(){
+    sem_t *s = first;
+    print("Name\t\tValue\n");
+    for(int i=0;i<semAmount;i++) {
+        if(s == NULL) {
+            break;
+        }
+        printSemaphore(s);
+        s = s->next;
+    }
+}
+
 int sem_init(const char *sem_id, int value) {
     size_t idLen = strlen(sem_id);
     sem_t *sem = memAlloc(sizeof(sem_t), NO_ACTION);
@@ -13,8 +32,9 @@ int sem_init(const char *sem_id, int value) {
         return -1;
     }
     // sem->id = sem_id;    //Copia de string esta mal
-    sem->id = (char*)memAlloc(idLen+2, NO_ACTION);
-    memcpy(sem->id, sem_id, idLen+2);
+    sem->id = (char*)memAlloc(idLen+1, NO_ACTION);
+    memcpy(sem->id, sem_id, idLen+1);
+    sem->value = memAlloc(sizeof(int), NO_ACTION);
     sem->value = value;
     sem->wp = NULL;
     sem->next = NULL;
@@ -25,6 +45,7 @@ int sem_init(const char *sem_id, int value) {
     }
     last = sem;
     semAmount++;
+    printAllSemaphores();
     /*
     print("Creo semaforo ");
     print(sem->id);
@@ -87,21 +108,27 @@ static void sleepCurrent(sem_t *s){
         return;
     }
     WProcess *aux = s->wp;
+    printAllSemaphores();
     while(aux->next != NULL) {
         aux = aux->next;
-    } 
+    }
     aux->next = wp;
     makeWait(wp->pid); //sleep indefinido, necesita wakeup()
     return;
 }
 
-int sem_wait(const char *sem_id) {
+int sem_wait(char *sem_id) {
     sem_t *s = first;
     for(int i=0;i<semAmount;i++) {
         if(s == NULL) {
             return -1;
-        } 
+        }
         if(strcmp(s->id, sem_id) == 0) {       //comparacion de string esta mal
+            print("ENCONTRE EL SEMAFORO ");
+            print(s->id);
+            print(" con ");
+            printInt(s->value, 10);
+            print("\n");
             break;
         }
         s = s->next;
@@ -171,25 +198,6 @@ int sem_get_value (const char *sem_id){
         s = s->next;
     }
     return -1;
-}
-
-static void printSemaphore(sem_t* s){
-    print(s->id);
-    print("\t\t");
-    printInt(s->value, 10);
-    print("\n");
-}
-
-void printAllSemaphores(){
-    sem_t *s = first;
-    print("Name\t\tValue\n");
-    for(int i=0;i<semAmount;i++) {
-        if(s == NULL) {
-            break;
-        }
-        printSemaphore(s);
-        s = s->next;
-    }
 }
 
 /*#define MAX_SEMAPHORES  1000

@@ -75,6 +75,7 @@ int writePipe(int id, char* const buf, int count) {
         } 
         p = p->next;
     }
+    printAllSemaphores();
     sem_wait(p->semName);
     print("Writing pipe\n\n");
     print("     Before: ");
