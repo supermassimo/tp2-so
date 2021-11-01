@@ -153,7 +153,7 @@ int scheduleOutsideRtc(){
 }
 
 void exit(int status){
-    processes[currentProcess].state = TERMINATED;
+    processes[currentProcess].state = TO_TERMINATE;
     outsideRtc = 1;
     activeProcesses--;
     scheduleNext();
@@ -162,7 +162,7 @@ void exit(int status){
 static int killProcess(int pid){
     if(processes[pid].state == TERMINATED)
         return -1;
-    processes[pid].state = TERMINATED;
+    processes[pid].state = TO_TERMINATE;
     activeProcesses--;
     return 0;
 }
@@ -191,8 +191,18 @@ void printProcess(uint64_t* currentProcPCB) {
 }
 
 static int getNextReady(int current){
+    if(processes[current].state == TO_TERMINATE){             // Process garbage collector
+        processes[current].state = TERMINATED;
+        memFree(processes[current].base);
+        memFree(processes[current].argv);
+    }
     while(processes[current+1].state != READY){
         current++;
+        if(processes[current].state == TO_TERMINATE){             // Process garbage collector
+            processes[current].state = TERMINATED;
+            memFree(processes[current].base);
+            memFree(processes[current].argv);
+        }
         if(processes[current].state == SLEEP && processes[current].sleepTime <= seconds_elapsed()){
             processes[current].state = READY;
             current--;
@@ -213,10 +223,6 @@ uint64_t* schedule(uint64_t* currentProcPCB){
             processes[currentProcess].pcb = currentProcPCB;
         }
         if(processes[currentProcess].state != READY || processes[currentProcess].priority < currentProcessQuantums){
-            if(processes[currentProcess].state == TERMINATED){
-                memFree(processes[currentProcess].base);
-                memFree(processes[currentProcess].argv);
-            }
             if(processes[currentProcess].pcb < processes[currentProcess].base){         // If process' stack exceeded reserved space, kill it
                 kill(currentProcess, SIG_KILL);
             }

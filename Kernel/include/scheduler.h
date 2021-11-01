@@ -13,7 +13,7 @@
 
 typedef enum Priority {LOW, MEDIUM, HIGH, SYSTEM} Priority;
 typedef enum ProcessSignal {SIG_KILL} ProcessSignal;
-typedef enum State {TERMINATED, READY, BLOCKED, SLEEP, WAITING} State;
+typedef enum State {TERMINATED, READY, BLOCKED, SLEEP, WAITING, TO_TERMINATE} State;
 typedef enum BlockOption {BLOCK, UNBLOCK} BlockOption;
 
 typedef struct Process {

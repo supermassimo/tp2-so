@@ -452,11 +452,11 @@ void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
     char *id;
     numToStr(pipe,id,10);
     char* argv[] = {id};
-    if(createFullProcess(testProcessA, MEDIUM, 1, argv, "TpipeA") == -1){
+    if(createFullProcess(testProcess, LOW, 1, argv, "TpipeA") == -1){
         printErr("Cannot create a new process; process limit reached");
         return;
     }
-    if(createFullProcess(testProcessB, LOW, 1, argv, "TpipeB") == -1){
+    if(createFullProcess(testProcess, LOW, 1, argv, "TpipeB") == -1){
         printErr("Cannot create a new process; process limit reached");
         return;
     }
