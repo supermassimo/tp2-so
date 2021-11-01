@@ -27,6 +27,7 @@ extern void closePipe(int id);
 extern int writePipe(int id, const char *buf, int count);
 extern int readPipe(int id, char *buf, int count);
 extern void printPipes();
+extern void printAllSemaphores();
 
 #define PRINTMEM_BYTES 32
 
@@ -325,7 +326,7 @@ void semHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
         printErr("Too many parameters for command 'sem'");
         return;
     }
-    printf("Here comes sem\n");
+    printAllSemaphores();
     return;
 }
 
@@ -334,12 +335,25 @@ void catHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
         printErr("Too many parameters for command 'cat'");
         return;
     }
+    char catInput[20];
+    while(1) {
+        scanf(catInput,20);
+        if(strlen(catInput) <= 1) {
+            printf("Not working\n");
+        } else {
+            printf(catInput);
+        }
+    }
     return;
 }
 
 void wcHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 0){
+    if(paramAmount > 1){
         printErr("Too many parameters for command 'wc'");
+        return;
+    }
+    if(paramAmount == 0){
+        printErr("Not enough parameters for command 'wc'");
         return;
     }
     printf("Here comes wc\n");
@@ -361,17 +375,6 @@ void pipeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
         return;
     }
     printPipes();
-    /*int pipe = createPipe();
-    printInt(pipe,2,10);
-    printf("\n");
-    char test[15] = "It works!!\n";
-    char fl[15];
-    writePipe(pipe,test,15);
-    readPipe(pipe,fl,15);
-    printf("Final: ");
-    printf(fl);
-    printf("Closing pipe\n");
-    closePipe(pipe);*/
     return;
 }
 
@@ -449,6 +452,7 @@ void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
         return;
     }
     int pipe = createPipe();
+    
     char *id;
     numToStr(pipe,id,10);
     char* argv[] = {id};
