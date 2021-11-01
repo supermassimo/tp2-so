@@ -98,7 +98,7 @@ void sysSkip(){
     return skip();
 }
 
-sem_t sysSemInit(int value){
+sem_t* sysSemInit(int value){
     return sem_init(value);
 }
 

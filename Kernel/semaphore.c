@@ -23,7 +23,7 @@ static void wakeupNext(sem_t sem){
     }
 }
 
-sem_t sem_init(int value){
+sem_t* sem_init(int value){
     sem_t *sem = memAlloc(sizeof(sem_t), 0);
     
     // if (sem == NULL)
@@ -34,7 +34,7 @@ sem_t sem_init(int value){
     for (int i=0;i<MAX_PROCESSES;i++){
         sem->waitingProcesses[i] = 0;
     }
-    return *sem;
+    return sem;
 }
 
 //free
