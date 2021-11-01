@@ -29,6 +29,9 @@ int main() {
 		printf("> ");
 		initialized = 1;
 	}
+
+	//Aca debería llamar al proceso shell.c
 	waitForInput();
+	
 	return 0xDEADBEEF;
 }
