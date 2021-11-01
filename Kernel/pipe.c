@@ -103,7 +103,6 @@ int readPipe(int id, char* buf, int count) {
         } 
         p = p->next;
     }
-    print("ESPEROO");
     sem_wait(p->semName);
     print("Reading pipe\n\n");
     print("     Before: ");

@@ -6,14 +6,15 @@ static sem_t *first = NULL;
 static sem_t *last = NULL;
 static int semAmount = 0;
 
-int sem_init(char *sem_id, int value) {
+int sem_init(const char *sem_id, int value) {
     size_t idLen = strlen(sem_id);
-    sem_t *sem = memAlloc(sizeof(sem_t), 0);
+    sem_t *sem = memAlloc(sizeof(sem_t), NO_ACTION);
     if(sem == NULL || idLen > MAX_ID_LENGTH) {
         return -1;
     }
     // sem->id = sem_id;    //Copia de string esta mal
-    memcpy(sem->id, sem_id, idLen);
+    sem->id = (char*)memAlloc(idLen+2, NO_ACTION);
+    memcpy(sem->id, sem_id, idLen+2);
     sem->value = value;
     sem->wp = NULL;
     sem->next = NULL;
@@ -24,10 +25,12 @@ int sem_init(char *sem_id, int value) {
     }
     last = sem;
     semAmount++;
+    /*
     print("Creo semaforo ");
     print(sem->id);
     print("\ncon valor ");
     printInt(sem->value, 10);
+    */
     return 0;
 }
 
@@ -43,7 +46,7 @@ void freeSem(sem_t *s) {
     memFree(s);
 }
 
-int sem_destroy(char *sem_id) {
+int sem_destroy(const char *sem_id) {
     if(first == NULL) {
         return -1;
     }
@@ -92,7 +95,7 @@ static void sleepCurrent(sem_t *s){
     return;
 }
 
-int sem_wait(char *sem_id) {
+int sem_wait(const char *sem_id) {
     sem_t *s = first;
     for(int i=0;i<semAmount;i++) {
         if(s == NULL) {
@@ -121,7 +124,7 @@ static void wakeupNext(sem_t *s){
     return;
 }
 
-int sem_post(char *sem_id) {
+int sem_post(const char *sem_id) {
     sem_t *s = first;
     for(int i=0;i<semAmount;i++) {
         if(s == NULL) {
@@ -141,7 +144,7 @@ int sem_post(char *sem_id) {
     return 0;
 }
 
-int sem_set_value (char *sem_id, int value) {
+int sem_set_value (const char *sem_id, int value) {
     sem_t *s = first;
     for(int i=0;i<semAmount;i++) {
         if(s == NULL) {
@@ -156,7 +159,38 @@ int sem_set_value (char *sem_id, int value) {
     return 0;
 }
 
+int sem_get_value (const char *sem_id){
+    sem_t *s = first;
+    for(int i=0;i<semAmount;i++) {
+        if(s == NULL) {
+            return -1;
+        }
+        if(strcmp(s->id, sem_id) == 0) {
+            return s->value;
+        }
+        s = s->next;
+    }
+    return -1;
+}
 
+static void printSemaphore(sem_t* s){
+    print(s->id);
+    print("\t\t");
+    printInt(s->value, 10);
+    print("\n");
+}
+
+void printAllSemaphores(){
+    sem_t *s = first;
+    print("Name\t\tValue\n");
+    for(int i=0;i<semAmount;i++) {
+        if(s == NULL) {
+            break;
+        }
+        printSemaphore(s);
+        s = s->next;
+    }
+}
 
 /*#define MAX_SEMAPHORES  1000
 

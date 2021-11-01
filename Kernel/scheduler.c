@@ -212,7 +212,7 @@ uint64_t* schedule(uint64_t* currentProcPCB){
         if(processes[currentProcess].state != TERMINATED){
             processes[currentProcess].pcb = currentProcPCB;
         }
-        if(processes[currentProcess].state == TERMINATED || processes[currentProcess].priority < currentProcessQuantums){
+        if(processes[currentProcess].state != READY || processes[currentProcess].priority < currentProcessQuantums){
             if(processes[currentProcess].state == TERMINATED){
                 memFree(processes[currentProcess].base);
                 memFree(processes[currentProcess].argv);
