@@ -1,17 +1,20 @@
 #include <pipe.h>
 
-
 static Pipe *first = NULL;
 static Pipe *last = NULL;
 static int pipeAmount = 0;
 static int id = 0;
 
 int createPipe() {
+    char pipeIdStr[10] = {0};
     Pipe *pipe = memAlloc(sizeof(Pipe),0);
     pipe->id = id;
     pipe->nwrite = 0;
     pipe->nread = 0;
-    pipe->sem = sem_init(1);
+    memcpy(pipe->semName, "pipe", 5);
+    numToStr(pipe->id, pipeIdStr, 10);
+    strcat(pipe->semName, pipeIdStr);
+    sem_init(pipe->semName, 1);
     pipe->next = NULL;
     if(first == NULL) {
         first = pipe;
@@ -24,7 +27,7 @@ int createPipe() {
 }
 
 void freePipe(Pipe *p) {
-    sem_destroy(p->sem);
+    sem_destroy(p->semName);
     p->next = NULL;
     memFree(p);
     return;
@@ -72,7 +75,7 @@ int writePipe(int id, char* const buf, int count) {
         } 
         p = p->next;
     }
-    sem_wait(p->sem);
+    sem_wait(p->semName);
     print("Writing pipe\n\n");
     print("     Before: ");
     print(buf);
@@ -82,7 +85,7 @@ int writePipe(int id, char* const buf, int count) {
     print("     After: ");
     print(p->buffer);
     print("\n");
-    sem_post(p->sem);
+    sem_post(p->semName);
     if(p->nwrite == BUFFER_SIZE) {
         return -1;
     }
@@ -100,7 +103,7 @@ int readPipe(int id, char* buf, int count) {
         } 
         p = p->next;
     }
-    sem_wait(p->sem);
+    sem_wait(p->semName);
     print("Reading pipe\n\n");
     print("     Before: ");
     print(p->buffer);
@@ -110,7 +113,7 @@ int readPipe(int id, char* buf, int count) {
     print("     After: ");
     print(p->buffer);
     print("\n");
-    sem_post(p->sem);
+    sem_post(p->semName);
     if(p->nread == BUFFER_SIZE) {
         return -1;
     }
@@ -123,8 +126,8 @@ void printPipe(Pipe *pipe) {
     printInt(pipe,16);
     print("\nID = ");
     printInt(pipe->id,10);
-    print("\nsem.value = ");
-    printInt(pipe->sem.value,10);
+    print("\nsemName = ");
+    print(/char*)pipe->semName);
     print("\nnwrite = ");
     printInt(pipe->nwrite,10);
     print("\nnread = ");  

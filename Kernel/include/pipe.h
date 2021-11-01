@@ -1,4 +1,5 @@
 #include <semaphore.h>
+#include <console.h>
 
 #define BUFFER_SIZE 512
 
@@ -7,7 +8,7 @@ typedef struct Pipe {
     char buffer[BUFFER_SIZE];
     int nwrite;
     int nread;
-    sem_t sem;
+    char semName[MAX_ID_LENGTH];
     struct Pipe *next;
 } Pipe;
 

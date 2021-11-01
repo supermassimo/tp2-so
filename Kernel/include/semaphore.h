@@ -1,16 +1,19 @@
 #include <scheduler.h>
 #include <memManager.h>
+#include <lib.h>
 
-typedef struct {
+#define MAX_ID_LENGTH 50
+
+typedef struct WProcess{
     int pid;
-    WProcess *next;
+    struct WProcess *next;
 } WProcess;
 
-typedef struct {
-    char *id;
+typedef struct sem_t{
+    char id[MAX_ID_LENGTH];
     int value;
     WProcess *wp;
-    sem_t *next;
+    struct sem_t *next;
 } sem_t;
 
 int sem_init(char *sem_id, int value);

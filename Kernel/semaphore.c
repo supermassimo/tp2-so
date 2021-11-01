@@ -7,11 +7,13 @@ static sem_t *last = NULL;
 static int semAmount = 0;
 
 int sem_init(char *sem_id, int value) {
+    size_t idLen = strlen(sem_id);
     sem_t *sem = memAlloc(sizeof(sem_t), 0);
-    if(sem == NULL) {
+    if(sem == NULL || idLen > MAX_ID_LENGTH) {
         return -1;
     }
-    sem->id = sem_id;    //Copia de string esta mal
+    // sem->id = sem_id;    //Copia de string esta mal
+    memcpy(sem->id, sem_id, idLen);
     sem->value = value;
     sem->wp = NULL;
     sem->next = NULL;
@@ -22,6 +24,10 @@ int sem_init(char *sem_id, int value) {
     }
     last = sem;
     semAmount++;
+    print("Creo semaforo ");
+    print(sem->id);
+    print("\ncon valor ");
+    printInt(sem->value, 10);
     return 0;
 }
 
@@ -42,7 +48,7 @@ int sem_destroy(char *sem_id) {
         return -1;
     }
     sem_t *aux = first;
-    if(first->id == sem_id) {
+    if(strcmp(first->id,sem_id) == 0) {
         aux = first;
         first = aux->next;
         //freeSem(aux);
@@ -54,11 +60,11 @@ int sem_destroy(char *sem_id) {
         if(s == NULL) {
             return -1;
         } 
-        if(s->next != NULL && s->next->id == sem_id) {
+        if(s->next != NULL && strcmp(s->next->id,sem_id) == 0) {
             aux = s->next;
             s->next = aux->next;
             if(s->next == NULL) {
-                last = p;
+                // last = p;
             }
             //freeSem(aux);
             semAmount--;
@@ -92,7 +98,7 @@ int sem_wait(char *sem_id) {
         if(s == NULL) {
             return -1;
         } 
-        if(s->id == sem_id) {       //comparacion de string esta mal
+        if(strcmp(s->id, sem_id) == 0) {       //comparacion de string esta mal
             break;
         }
         s = s->next;
@@ -121,7 +127,7 @@ int sem_post(char *sem_id) {
         if(s == NULL) {
             return -1;
         } 
-        if(s->id == sem_id) {       //comparacion de string esta mal
+        if(strcmp(s->id, sem_id) == 0) {       //comparacion de string esta mal
             break;
         }
         s = s->next;
@@ -141,7 +147,7 @@ int sem_set_value (char *sem_id, int value) {
         if(s == NULL) {
             return -1;
         }
-        if(s->id = sem_id) {
+        if(strcmp(s->id, sem_id) == 0) {
             s->value = value;
             break;
         }

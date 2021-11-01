@@ -98,23 +98,23 @@ void sysSkip(){
     return skip();
 }
 
-int sysSemInit(int value){
-    return sem_init(value);
+int sysSemInit(char* sem_id, int value){
+    return sem_init(sem_id, value);
 }
 
-int sysSemDestroy(int sem_id){
+int sysSemDestroy(char* sem_id){
     return sem_destroy(sem_id);
 }
 
-void sysSemWait(int sem_id){
+int sysSemWait(char* sem_id){
     sem_wait(sem_id);
 }
 
-void sysSemPost(int sem_id){
+int sysSemPost(char* sem_id){
     sem_post(sem_id);
 }
 
-void sysSemSetValue(int sem_id, int value){
+int sysSemSetValue(char* sem_id, int value){
     sem_set_value(sem_id, value);
 }
 

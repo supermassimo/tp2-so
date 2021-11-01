@@ -80,6 +80,15 @@ void getMemContent(uint64_t startPos, uint8_t* target, size_t count){
 	}
 }
 
+int strcmp(char* s1, char* s2){
+    int c, i=-1;
+    do{
+        i++;
+        c = s1[i] - s2[i];
+    } while(s1[i] != 0 && s2[i] != 0 && s1[i] == s2[i]);
+    return c;
+}
+
 size_t strlen(char *string){
     size_t c = 0;
     for(size_t i=0 ; string[i] != 0 ; i++){
@@ -94,6 +103,20 @@ size_t totalStrlen(int dim, char* strArr[]){
 		c += strlen(strArr[i]);
 	}
 	return c;
+}
+
+void strcat(char* destination, const char* source)
+{
+    // make `ptr` point to the end of the destination string
+    char* ptr = destination + strlen(destination);
+ 
+    // appends characters of the source to the destination string
+    while (*source != '\0') {
+        *ptr++ = *source++;
+    }
+ 
+    // null terminate destination string
+    *ptr = '\0';
 }
 
 static int digitToStr(int num, int base){

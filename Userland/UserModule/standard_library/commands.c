@@ -406,7 +406,8 @@ int testProcess(int argc, char* argv[]){
 
 int testProcessA(int argc, char* argv[]){
     char test[15] = "Could it be?\n";
-    if(writePipe(argv[0],test,15) == -1) {
+    int id = strToNum(argv[0]);
+    if(writePipe(id,test,15) == -1) {
         printf("Error writing in pipe\n");
         return 0;
     }
@@ -415,7 +416,8 @@ int testProcessA(int argc, char* argv[]){
 
 int testProcessB(int argc, char* argv[]){
     char test[15];
-    if(readPipe(argv[0],test,15) == -1) {
+    int id = strToNum(argv[0]);
+    if(readPipe(id,test,15) == -1) {
         printf("Error reading in pipe\n");
         return 0;
     }
@@ -431,7 +433,7 @@ void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
     char *id;
     numToStr(pipe,id,10);
     char* argv[] = {id};
-    if(createProcess(testProcessA, LOW, 1, argv, "TpipeA") == -1){
+    if(createProcess(testProcessA, MEDIUM, 1, argv, "TpipeA") == -1){
         printErr("Cannot create a new process; process limit reached");
         return;
     }
