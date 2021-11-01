@@ -15,8 +15,9 @@ int createPipe() {
     pipe->next = NULL;
     if(first == NULL) {
         first = pipe;
-    } 
-    last->next = pipe;
+    } else {
+        last->next = pipe;
+    }
     last = pipe;
     pipeAmount++;
     return id++;

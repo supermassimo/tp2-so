@@ -2,7 +2,157 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <semaphore.h>
 
-#define MAX_SEMAPHORES  1000
+static sem_t *first = NULL;
+static sem_t *last = NULL;
+static int semAmount = 0;
+
+int sem_init(char *sem_id, int value) {
+    sem_t *sem = memAlloc(sizeof(sem_t), 0);
+    if(sem == NULL) {
+        return -1;
+    }
+    sem->id = sem_id;    //Copia de string esta mal
+    sem->value = value;
+    sem->wp = NULL;
+    sem->next = NULL;
+    if(first == NULL) {
+        first = sem;
+    } else {
+        last->next = sem;
+    }
+    last = sem;
+    semAmount++;
+    return 0;
+}
+
+void freeSem(sem_t *s) {
+    WProcess *aux;
+    while(s->wp != NULL) {
+        aux = s->wp->next;
+        s->wp->next = NULL;
+        memFree(s->wp);
+        s->wp = aux;
+    }
+    s->next = NULL;
+    memFree(s);
+}
+
+int sem_destroy(char *sem_id) {
+    if(first == NULL) {
+        return -1;
+    }
+    sem_t *aux = first;
+    if(first->id == sem_id) {
+        aux = first;
+        first = aux->next;
+        //freeSem(aux);
+        semAmount--;
+        return;
+    }
+    sem_t *s = first;
+    for(int i=1; i<semAmount; i++) {
+        if(s == NULL) {
+            return -1;
+        } 
+        if(s->next != NULL && s->next->id == sem_id) {
+            aux = s->next;
+            s->next = aux->next;
+            if(s->next == NULL) {
+                last = p;
+            }
+            //freeSem(aux);
+            semAmount--;
+            return 0;
+        }
+    }
+    return 0;
+}
+
+static void sleepCurrent(sem_t *s){
+    WProcess *wp = memAlloc(sizeof(WProcess),0);
+    wp->pid = getpid();
+    wp->next = NULL;
+    if(s->wp == NULL) {
+        s->wp = wp;
+        makeWait(wp->pid);
+        return;
+    }
+    WProcess *aux = s->wp;
+    while(aux->next != NULL) {
+        aux = aux->next;
+    } 
+    aux->next = wp;
+    makeWait(wp->pid); //sleep indefinido, necesita wakeup()
+    return;
+}
+
+int sem_wait(char *sem_id) {
+    sem_t *s = first;
+    for(int i=0;i<semAmount;i++) {
+        if(s == NULL) {
+            return -1;
+        } 
+        if(s->id == sem_id) {       //comparacion de string esta mal
+            break;
+        }
+        s = s->next;
+    }
+    if(s->value <= 0) {
+        sleepCurrent(s);
+    }
+    s->value--;
+    return 0;
+}
+
+// despierta a un proceso en la lista
+static void wakeupNext(sem_t *s){
+    if(s->wp == NULL) {
+        return;
+    }
+    int nextPid = s->wp->pid;
+    s->wp = s->wp->next;
+    wakeup(nextPid);
+    return;
+}
+
+int sem_post(char *sem_id) {
+    sem_t *s = first;
+    for(int i=0;i<semAmount;i++) {
+        if(s == NULL) {
+            return -1;
+        } 
+        if(s->id == sem_id) {       //comparacion de string esta mal
+            break;
+        }
+        s = s->next;
+    }
+    if(s->value <= 0) {
+        s->value++;
+        wakeupNext(s);
+    } else {
+        s->value++;
+    }
+    return 0;
+}
+
+int sem_set_value (char *sem_id, int value) {
+    sem_t *s = first;
+    for(int i=0;i<semAmount;i++) {
+        if(s == NULL) {
+            return -1;
+        }
+        if(s->id = sem_id) {
+            s->value = value;
+            break;
+        }
+        s = s->next;
+    }
+    return 0;
+}
+
+
+
+/*#define MAX_SEMAPHORES  1000
 
 typedef struct {
     int value;
@@ -10,25 +160,9 @@ typedef struct {
     int waitingCount;
 } sem_t;
 
-static sem_t* semaphores[MAX_SEMAPHORES] = {0};
+static sem_t *semaphores = NULL;
+static int semAmount = 0;
 static int max_semaphore_id = 0;
-
-static void sleepCurrent(sem_t sem){
-    int pid = getpid();
-    if (sem.waitingCount == MAX_PROCESSES){
-        return; // no hay mas espacio para procesos
-    } 
-    sem.waitingProcesses[sem.waitingCount++] = pid;
-    makeWait(pid); //sleep indefinido, necesita wakeup()
-}
-
-// despierta a un proceso en la lista, funciona como stack pero sería mejor como queue (?)
-static void wakeupNext(sem_t sem){
-    if (sem.waitingCount > 0){
-        int nextPid = sem.waitingProcesses[sem.waitingCount--];
-        wakeup(nextPid);
-    }
-}
 
 int sem_init(int value){
     sem_t *sem = memAlloc(sizeof(sem_t), 0);
@@ -86,3 +220,4 @@ void sem_set_value (int sem_id, int value){
     sem_t sem = *semaphores[sem_id];
     sem.value = value;
 }
+*/
