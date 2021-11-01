@@ -173,16 +173,52 @@ int sem_get_value (const char *sem_id){
     return -1;
 }
 
+void printWaitingProcess(const char *sem_id) {
+    sem_t *s = first;
+    for(int i=0;i<semAmount;i++) {
+        if(s == NULL) {
+            return;
+        }
+        if(strcmp(s->id, sem_id) == 0) {
+            break;
+        }
+        s = s->next;
+    }
+    if(s->wp == NULL) {
+        print("-");
+        return;
+    }
+    WProcess *wp = s->wp;
+    while(wp != NULL) {
+        printInt(wp->pid,10);
+        if(wp->next != NULL) {
+            print(", ");
+        }
+    }
+    return;
+}
+
 static void printSemaphore(sem_t* s){
     print(s->id);
-    print("\t\t");
+    int len = strlen(s->id); 
+    for(int i=0;i<15;i++) {
+        if(i>len) {
+            print(" ");
+        }
+    }
     printInt(s->value, 10);
+    print("     ");
+    printWaitingProcess(s->id);
     print("\n");
 }
 
 void printAllSemaphores(){
+    if(first == NULL) {
+        print("No sem open\n");
+        return;
+    }
     sem_t *s = first;
-    print("Name\t\tValue\n");
+    print("Name          Value PID-Blocked\n");
     for(int i=0;i<semAmount;i++) {
         if(s == NULL) {
             break;
