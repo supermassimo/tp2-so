@@ -1,14 +1,8 @@
 #include <scheduler.h>
 #include <memManager.h>
 
-typedef struct {
-    int value;
-    int waitingProcesses[MAX_PROCESSES];
-    int waitingCount;
-} sem_t;
-
-sem_t sem_init(int value);
-int sem_destroy(sem_t sem);
-void sem_wait(sem_t sem);
-void sem_post(sem_t sem);
-void sem_set_value (sem_t sem, int value);
+int sem_init(int value);
+int sem_destroy(int sem_id);
+void sem_wait(int sem_id);
+void sem_post(int sem_id);
+void sem_set_value (int sem_id, int value);

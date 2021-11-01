@@ -98,24 +98,24 @@ void sysSkip(){
     return skip();
 }
 
-sem_t* sysSemInit(int value){
+int sysSemInit(int value){
     return sem_init(value);
 }
 
-int sysSemDestroy(sem_t sem){
-    return sem_destroy(sem);
+int sysSemDestroy(int sem_id){
+    return sem_destroy(sem_id);
 }
 
-void sysSemWait(sem_t sem){
-    sem_wait(sem);
+void sysSemWait(int sem_id){
+    sem_wait(sem_id);
 }
 
-void sysSemPost(sem_t sem){
-    sem_post(sem);
+void sysSemPost(int sem_id){
+    sem_post(sem_id);
 }
 
-void sysSemSetValue(sem_t sem, int value){
-    sem_set_value(sem, value);
+void sysSemSetValue(int sem_id, int value){
+    sem_set_value(sem_id, value);
 }
 
 int sysCreatePipe() {

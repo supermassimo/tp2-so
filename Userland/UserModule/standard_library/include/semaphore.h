@@ -9,10 +9,10 @@ typedef struct {
     int waitingCount;
 } sem_t;
 
-sem_t binary_semaphore_init();
-sem_t semaphore_init(int value);
-int semaphore_destroy(sem_t sem);
-int semaphore_wait(sem_t sem);
-int semaphore_post(sem_t sem);
+int binary_semaphore_init();
+int semaphore_init(int value);
+int semaphore_destroy(int sem_id);
+int semaphore_wait(int sem_id);
+int semaphore_post(int sem_id);
 
 #endif
