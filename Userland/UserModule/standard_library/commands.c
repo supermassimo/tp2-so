@@ -940,16 +940,34 @@ static int getCommandAndParams(char* command, char params[][MAX_PARAMETER_LENGTH
     return paramIdx;
 }
 
+void parseCommand(){
+
+}
+
 void commandHandler(char* string){
     char commandName[MAX_COMMAND_LENGTH+1] = "";
     char params[MAX_PARAMETER_AMOUNT][MAX_PARAMETER_LENGTH];
     int paramAmount = getCommandAndParams(commandName, params, string);
+    int isBackground = 0;
+    if(strcmp("&", commandName[0]) == 0){
+        char c; int i=0;
+        do {
+            c = commandName[i];
+            if (i != 0) commandName[i] = commandName[i-1];
+            i++;
+        } while (c != 0 && i < MAX_COMMAND_LENGTH);
+        isBackground = 1;
+    }
     for(int i=0 ; i < commandAmount ; i++){
         if(strcmp(commands[i].name, commandName) == 0){
-            setIdle(0);
-            ((void(*)(char[][MAX_PARAMETER_LENGTH], size_t))commands[i].handler)(params, paramAmount);
+            if (isBackground){
+                createFullProcess(commands[i].handler, LOW, paramAmount, params, "process_test"); //change name and priority
+            } else {
+                setIdle(0);
+                ((void(*)(char[][MAX_PARAMETER_LENGTH], size_t))commands[i].handler)(params, paramAmount);
+                setIdle(1);
+            }
             printf("> ");
-            setIdle(1);
             return;
         }
     }
