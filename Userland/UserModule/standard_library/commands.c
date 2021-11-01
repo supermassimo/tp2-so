@@ -29,6 +29,11 @@ extern int block(int pid);
 extern void printAllProcesses();
 extern int getpid();
 extern void skip();
+extern int createPipe();
+extern void closePipe(int id);
+extern int writePipe(int id, const char *buf, int count);
+extern int readPipe(int id, char *buf, int count);
+extern void printPipes();
 
 #define PRINTMEM_BYTES 32
 
@@ -201,14 +206,13 @@ void psHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
 
 int loop(int argc, char* argv[]) {
     int pid = getpid();
-    printf("Recibo ");
+    /*printf("Recibo ");
     printf(argv[0]);
-    printf("segundos\n");
+    printf("segundos\n");*/
     size_t seconds = strToNum(argv[0]);
-    printf("Mando ");
+    /*printf("Mando ");
     printInt(seconds, 10, 10);
-    printf("segunds\n");
-    // size_t seconds = 5;
+    printf("segunds\n");*/
     while(1){
         sleep(pid, seconds);
         printf("Hi, process ");
@@ -216,15 +220,6 @@ int loop(int argc, char* argv[]) {
         printf(" here\n");
     }
     return 0;
-    /*
-    for(size_t i=0 ; i < 10000000000 ; i++){
-        if(i % 100000000 == 0) {
-            printf("Hi, process ");
-            printInt(pid,2,10);
-            printf(" here\n");
-        }
-    }
-    */
 }
 
 void loopHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
@@ -320,7 +315,6 @@ void catHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
         printErr("Too many parameters for command 'cat'");
         return;
     }
-    printf("Here comes cat\n");
     return;
 }
 
@@ -347,7 +341,18 @@ void pipeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
         printErr("Too many parameters for command 'pipe'");
         return;
     }
-    printf("Here comes pipes\n");
+    printPipes();
+    /*int pipe = createPipe();
+    printInt(pipe,2,10);
+    printf("\n");
+    char test[15] = "It works!!\n";
+    char fl[15];
+    writePipe(pipe,test,15);
+    readPipe(pipe,fl,15);
+    printf("Final: ");
+    printf(fl);
+    printf("Closing pipe\n");
+    closePipe(pipe);*/
     return;
 }
 
@@ -400,51 +405,39 @@ int testProcess(int argc, char* argv[]){
 }
 
 int testProcessA(int argc, char* argv[]){
-    for(size_t i=0 ; i < 10000000000 ; i++){
-        if(i % 100000000 == 0)
-            printf("A");
+    char test[15] = "Could it be?\n";
+    if(writePipe(argv[0],test,15) == -1) {
+        printf("Error writing in pipe\n");
+        return 0;
     }
     return 0;
 }
 
 int testProcessB(int argc, char* argv[]){
-    for(size_t i=0 ; i < 10000000000 ; i++){
-        if(i % 100000000 == 0)
-            printf("B");
+    char test[15];
+    if(readPipe(argv[0],test,15) == -1) {
+        printf("Error reading in pipe\n");
+        return 0;
     }
     return 0;
 }
 
 void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 1){
+    if(paramAmount > 0){
         printErr("Too many parameters for command 'test'");
         return;
     }
-    if(paramAmount == 1 && strcmp("b", params[0]) != 0){
-        printErr("Wrong parameter sent. Check 'help testprocess' for more info");
+    int pipe = createPipe();
+    char *id;
+    numToStr(pipe,id,10);
+    char* argv[] = {id};
+    if(createProcess(testProcessA, LOW, 1, argv, "TpipeA") == -1){
+        printErr("Cannot create a new process; process limit reached");
         return;
     }
-    char* msg[] = {"Estoy vivo\n", "Me muero\n"};
-    printf("MANDADA: ");
-    printInt(msg[0], 100, 16);
-    printf("\n");
-    if(paramAmount == 0)
-        testProcess(2, msg);
-    else {
-        /*
-        if(createProcess(testProcess, HIGH, 2, msg, "testProcess") == -1){
-            printErr("Cannot create a new process; process limit reached");
-            return;
-        }
-        */
-        if(createProcess(testProcessB, HIGH, 2, msg, "testPB") == -1){
-            printErr("Cannot create a new process; process limit reached");
-            return;
-        }
-        if(createProcess(testProcessA, HIGH, 2, msg, "testPA") == -1){
-            printErr("Cannot create a new process; process limit reached");
-            return;
-        }
+    if(createProcess(testProcessB, LOW, 1, argv, "TpipeB") == -1){
+        printErr("Cannot create a new process; process limit reached");
+        return;
     }
 }
 

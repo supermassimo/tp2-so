@@ -117,3 +117,23 @@ void sysSemPost(sem_t sem){
 void sysSemSetValue(sem_t sem, int value){
     sem_set_value(sem, value);
 }
+
+int sysCreatePipe() {
+    return createPipe();
+}
+
+void sysClosePipe(int index) {
+    return closePipe(index);
+}
+
+int sysWritePipe(int index, const char* buf, int count) {
+    return writePipe(index,buf,count);
+}
+
+int sysReadPipe(int index, char* buf, int count) {
+    return readPipe(index,buf,count);
+}
+
+int sysPrintPipes() {
+    return printPipes();
+}

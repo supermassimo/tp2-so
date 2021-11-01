@@ -39,5 +39,10 @@ int sysSemDestroy(sem_t sem);
 void sysSemWait(sem_t sem);
 void sysSemPost(sem_t sem);
 void sysSemSetValue(sem_t sem, int value);
+int sysCreatePipe();
+void sysClosePipe(int index);
+int sysWritePipe(int index, const char* buf, int count);
+int sysReadPipe(int index, char* buf, int count);
+int sysPrintPipes();
 
 #endif

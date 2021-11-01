@@ -50,6 +50,11 @@ EXTERN sysSemDestroy
 EXTERN sysSemWait
 EXTERN sysSemPost
 EXTERN sysSemSetValue
+EXTERN sysCreatePipe
+EXTERN sysClosePipe
+EXTERN sysWritePipe
+EXTERN sysReadPipe
+EXTERN sysPrintPipes
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
@@ -200,6 +205,16 @@ _sysCallHandler:
 		je syscall_67
 		cmp rax, 68
 		je syscall_68
+		cmp rax, 70
+		je syscall_70
+		cmp rax, 71
+		je syscall_71
+		cmp rax, 72
+		je syscall_72
+		cmp rax, 73
+		je syscall_73
+		cmp rax, 74
+		je syscall_74
 	syscall_0:
 		call sysReadInput
 		jmp endSysCallHandler
@@ -285,7 +300,22 @@ _sysCallHandler:
 		jmp endSysCallHandler		
 	syscall_68:
 		call sysSemSetValue
-		jmp endSysCallHandler	
+		jmp endSysCallHandler
+	syscall_70:
+		call sysCreatePipe
+		jmp endSysCallHandler
+	syscall_71:
+		call sysClosePipe
+		jmp endSysCallHandler
+	syscall_72:
+		call sysWritePipe
+		jmp endSysCallHandler
+	syscall_73:
+		call sysReadPipe
+		jmp endSysCallHandler
+	syscall_74:
+		call sysPrintPipes
+		jmp endSysCallHandler
 	endSysCallHandler:
 		mov rbx, [reg_stack_pointer]
 		mov [rbx], rax

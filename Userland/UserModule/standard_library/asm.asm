@@ -26,6 +26,12 @@ GLOBAL semDestroy
 GLOBAL semWait
 GLOBAL semPost
 GLOBAL semUpdateValue
+GLOBAL createPipe
+GLOBAL closePipe
+GLOBAL writePipe
+GLOBAL readPipe
+GLOBAL printPipes
+
 
 section .text
 
@@ -187,6 +193,36 @@ semPost:
 
 semUpdateValue:
     mov rax, 68
+    int 80h
+
+    ret
+
+createPipe:
+    mov rax, 70
+    int 80h
+
+    ret
+
+closePipe:
+    mov rax, 71
+    int 80h
+
+    ret
+
+writePipe:
+    mov rax, 72
+    int 80h
+
+    ret
+
+readPipe:
+    mov rax, 73
+    int 80h
+
+    ret
+
+printPipes:
+    mov rax, 74
     int 80h
 
     ret
