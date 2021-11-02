@@ -58,16 +58,16 @@ static const size_t exceptionAmount = 2;
 #define FLOAT_STRING_SIZE 100
 
 static void echoHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount < 1){
+    if(paramAmount < 2){
         printErr("Missing parameter for command 'echo'");
         return;
     }
     size_t finalLength = 0, actualLength;
-    for(int i=0 ; i < paramAmount ; i++){
+    for(int i=0 ; i < paramAmount-1 ; i++){
         finalLength += strlen(params[i]) + 1;
     }
     char output[finalLength + 1];
-    actualLength = concatStrings(params, paramAmount, output);
+    actualLength = concatStrings(params, paramAmount-1, output);
     printf(output);
     printf("\n");
     if(actualLength != finalLength - 1){            // finalLength computes the '\0' while actualLength doesn't
@@ -77,7 +77,7 @@ static void echoHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
 }
 
 static void cpufeaturesHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 0){
+    if(paramAmount > 1){
         printErr("Too many parameters for command 'cpufeatures'");
         return;
     }
@@ -92,7 +92,7 @@ static void cpufeaturesHandler(char params[][MAX_PARAMETER_LENGTH], size_t param
 }
 
 static void inforegHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 0){
+    if(paramAmount > 2){
         printErr("Too many parameters for command 'inforeg'");
         return;
     }
@@ -107,11 +107,11 @@ static void inforegHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmou
 }
 
 static void printmemHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount < 1){
+    if(paramAmount < 2){
         printErr("Missing parameter for command 'printmem'");
         return;
     }
-    if(paramAmount > 1){
+    if(paramAmount > 2){
         printErr("Too many parameters for command 'printmem'");
         return;
     }
@@ -124,7 +124,7 @@ static void printmemHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmo
 }
 
 static void memHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 1){
+    if(paramAmount > 2){
         printErr("Too many parameters for command 'mem'");
         return;
     }
@@ -147,11 +147,11 @@ static exceptionTestStruct exceptions[] = {
 
 // for testing purposes
 static void testallocHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount < 1){
+    if(paramAmount < 2){
         printErr("Missing parameter for command 'testalloc'");
         return;
     }
-    if(paramAmount > 1){
+    if(paramAmount > 2){
         printErr("Too many parameters for command 'testalloc'");
         return;
     }
@@ -200,7 +200,7 @@ static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
 */
 
 void psHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 0){
+    if(paramAmount > 1){
         printErr("Too many parameters for command 'ps'");
         return;
     }
@@ -227,11 +227,11 @@ int loop(int argc, char* argv[]) {
 }
 
 void loopHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount == 0){
+    if(paramAmount == 1){
         printErr("Missing parameter for command 'loop'");
         return;
     }
-    if(paramAmount > 1){
+    if(paramAmount > 2){
         printErr("Too many parameters for command 'loop'");
         return;
     }
@@ -245,11 +245,11 @@ void loopHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
 }
 
 void killHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount == 0){
+    if(paramAmount == 1){
         printErr("Missing parameter for command 'kill'");
         return;
     }
-    if(paramAmount > 1){
+    if(paramAmount > 2){
         printErr("Too many parameters for command 'kill'");
         return;
     }
@@ -261,15 +261,15 @@ void killHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
 }
 
 void niceHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount == 0){
+    if(paramAmount == 1){
         printErr("Missing parameters for command 'nice'");
         return;
     }
-    if(paramAmount == 1){
+    if(paramAmount == 2){
         printErr("Missing process new priority");
         return;
     }
-    if(paramAmount > 2){
+    if(paramAmount > 3){
         printErr("Too many parameters for command 'nice'");
         return;
     }
@@ -282,11 +282,11 @@ void niceHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
 }
 
 void blockHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount == 0){
+    if(paramAmount == 1){
         printErr("Missing parameters for command 'block'");
         return;
     }
-    if(paramAmount > 1){
+    if(paramAmount > 2){
         printErr("Too many parameters for command 'block'");
         return;
     }
@@ -298,11 +298,11 @@ void blockHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
 }
 
 void unblockHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount == 0){
+    if(paramAmount == 1){
         printErr("Missing parameters for command 'unblock'");
         return;
     }
-    if(paramAmount > 1){
+    if(paramAmount > 2) {
         printErr("Too many parameters for command 'unblock'");
         return;
     }
@@ -314,7 +314,7 @@ void unblockHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
 }
 
 void skipHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount != 0){
+    if(paramAmount > 1){
         printErr("Too many parameters for command 'skip'");
         return;
     }
@@ -322,7 +322,7 @@ void skipHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
 }
 
 void semHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 0){
+    if(paramAmount > 1){
         printErr("Too many parameters for command 'sem'");
         return;
     }
@@ -331,7 +331,7 @@ void semHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
 }
 
 void catHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 0){
+    if(paramAmount > 1){
         printErr("Too many parameters for command 'cat'");
         return;
     }
@@ -350,7 +350,7 @@ void catHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
 }
 
 void wcHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 0){
+    if(paramAmount > 1){
         printErr("Too many parameters for command 'wc'");
         return;
     }
@@ -376,7 +376,7 @@ void wcHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
 }
 
 void filterHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 0){
+    if(paramAmount > 1){
         printErr("Too many parameters for command 'filter'");
         return;
     }
@@ -389,7 +389,6 @@ void filterHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
 		} else if(strcmp(input, "") != 0) {
             int j=0;
 			for(int i=0; i<120 ;i++) {
-                //printf("It enters here\n");
                 if(input[i] != 'a' && input[i] != 'e' && input[i] != 'i' && input[i] != 'o' && input[i] != 'u') {
                     input[j] = input[i];
                     j++;
@@ -403,7 +402,7 @@ void filterHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
 }
 
 void pipeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 0){
+    if(paramAmount > 1){
         printErr("Too many parameters for command 'pipe'");
         return;
     }
@@ -412,7 +411,7 @@ void pipeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
 }
 
 void phyloHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 0){
+    if(paramAmount > 1){
         printErr("Too many parameters for command 'phylo'");
         return;
     }
@@ -420,11 +419,11 @@ void phyloHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
 }
 
 static void sleepHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount < 2){
+    if(paramAmount < 3){
         printErr("Missing parameters for command 'sleep'");
         return;
     }
-    if(paramAmount > 2){
+    if(paramAmount > 3){
         printErr("Too many parameters for command 'sleep'");
         return;
     }
@@ -437,7 +436,7 @@ static void sleepHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount
 }
 
 static void clearHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 0){
+    if(paramAmount > 1){
         printErr("Too many parameters for command 'clear'");
         return;
     }
@@ -479,7 +478,7 @@ int testProcessB(int argc, char* argv[]){
 }
 
 void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 0){
+    if(paramAmount > 1){
         printErr("Too many parameters for command 'test'");
         return;
     }
@@ -842,11 +841,11 @@ static testProgramStruct testPrograms[] = {
 };
 
 static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount == 0){
+    if(paramAmount == 1){
         printErr("Missing parameters for command 'sleep'");
         return;
     }
-    if(paramAmount > 1){
+    if(paramAmount > 2){
         printErr("Too many parameters for command 'sleep'");
         return;
     }
@@ -910,11 +909,11 @@ static commandStruct commands[] = {
 };
 
 static void typeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount == 0){
+    if(paramAmount == 1){
         printErr("Missing parameter for command 'type'");
         return;
     }
-    if(paramAmount > 1){
+    if(paramAmount > 2){
         printErr("Too many parameters for command 'type'");
         return;
     }
@@ -929,20 +928,21 @@ static void typeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
 }
 
 static void helpHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if (paramAmount > 1){
+    if (paramAmount > 2){
         printErr("Too many parameters for command 'help'\nUse: help [command]");
     }
-    if (paramAmount == 0){
+    if (paramAmount == 1){
         printf("Available Commands:\n");
         printf("help [command]\n");
         for(int i=1; i<commandAmount; i++) {
             printf(commands[i].name);
             printf("\n");
         }
-    }
-    for(int i=0 ; i < commandAmount ; i++){
-        if(strcmp(commands[i].name, params[0]) == 0){
-            printf(commands[i].help_message);
+    } else {
+        for(int i=0 ; i < commandAmount ; i++){
+            if(strcmp(commands[i].name, params[0]) == 0){
+                printf(commands[i].help_message);
+            }
         }
     }
 }
@@ -952,38 +952,99 @@ static int isEnd(int c){
     return 0;
 }
 
-static int getCommandAndParams(char* command, char params[][MAX_PARAMETER_LENGTH], char* input){
-    int inputIdx, paramIdx=0;
-    for(inputIdx=0 ; input[inputIdx] != ' ' && !isEnd(input[inputIdx]); inputIdx++){
-        if (inputIdx < MAX_COMMAND_LENGTH)
-            command[inputIdx] = input[inputIdx];
-    }
-    command[inputIdx] = 0;
-    if(!isEnd(input[inputIdx])){
-        int j=0;
-        inputIdx++;
-        while(!isEnd(input[inputIdx])){
-            if(input[inputIdx] == ' '){
-                params[paramIdx++][j] = 0;
-                j = 0;
-                inputIdx++;
-                continue;
-            }
-            params[paramIdx][j++] = input[inputIdx++];
+static int getCommandAndParams(char* command1, char params1[][MAX_PARAMETER_LENGTH], int *params1Idx, 
+                               char* command2, char params2[][MAX_PARAMETER_LENGTH], int *params2Idx,
+                               char* input) {
+    int param1Idx=0; 
+    int param2Idx=0;    
+    int j=0;
+    int fd=0;
+    int state = COMMAND1;
+    for(int inputIdx=0; !isEnd(input[inputIdx]); inputIdx++) {
+        switch (state) {
+            case COMMAND1:
+                if(input[inputIdx] == ' ') {
+                    if(j == 0) {
+                        //ignore space
+                    } else {
+                        command1[j] = 0;
+                        j=0;
+                        state = PARAM1;
+                    } 
+                } else if(input[inputIdx] == '+' && j != 0) {
+                    command1[j] = 0;
+                    j=0;
+                    state = COMMAND2;
+                    fd = PIPED;
+                } else {
+                    command1[j++] = input[inputIdx];
+                    if(isEnd(input[inputIdx + 1])) {
+                        command1[j] = 0;
+                    }
+                }
+                break;
+            
+            case PARAM1:
+                if(input[inputIdx] == ' ') {
+                    if(j == 0) {
+                        //ignore space
+                    } else {
+                        params1[param1Idx++][j] = 0;
+                        j=0;
+                    }
+                } else if (input[inputIdx] == '+') {
+                    params1[param1Idx][j] = 0;
+                    j=0;
+                    state = COMMAND2;
+                    fd = PIPED;
+                } else {
+                    params1[param1Idx][j++] = input[inputIdx];
+                    if(isEnd(input[inputIdx + 1])) {
+                        params1[param1Idx++][j] = 0;
+                    }
+                }
+                break;
+
+            case COMMAND2:
+                if(input[inputIdx] == ' ') {
+                    if(j == 0) {
+                        //ignore space
+                    } else {
+                        command2[j] = 0;
+                        j=0;
+                        state = PARAM2;
+                    } 
+                } else {
+                    command2[j++] = input[inputIdx];
+                    if(isEnd(input[inputIdx + 1])) {
+                        command2[j] = 0;
+                    }
+                }
+                break;
+        
+            case PARAM2:
+                if(input[inputIdx] == ' ') {
+                    if(j == 0) {
+                        //ignore space
+                    } else {
+                        params2[param2Idx++][j] = 0;
+                        j=0;
+                    }
+                } else {
+                    params2[param2Idx][j++] = input[inputIdx];
+                    if(isEnd(input[inputIdx + 1])) {
+                        params2[param2Idx++][j] = 0;
+                    }
+                }
+                break;
         }
-        params[paramIdx++][j] = 0;
+        *params1Idx = param1Idx;
+        *params2Idx = param2Idx;
     }
-    return paramIdx;
+    return fd;
 }
 
-void parseCommand(){
-
-}
-
-void commandHandler(char* string){
-    char commandName[MAX_COMMAND_LENGTH+1] = "";
-    char params[MAX_PARAMETER_AMOUNT][MAX_PARAMETER_LENGTH];
-    int paramAmount = getCommandAndParams(commandName, params, string);
+void executeCommand(char commandName[MAX_COMMAND_LENGTH+1], char params[MAX_PARAMETER_AMOUNT][MAX_PARAMETER_LENGTH], int paramAmount) {
     int isBackground = 0;
     if(strcmp("&", commandName[0]) == 0){
         char c; int i=0;
@@ -1009,4 +1070,58 @@ void commandHandler(char* string){
     }
     printErr("Unknown command. Use 'help' for a list of commands");
     printf("> ");
+    return;
+}
+
+void commandHandler(char* string){
+    char commandName1[MAX_COMMAND_LENGTH+1] = "";
+    char commandName2[MAX_COMMAND_LENGTH+1] = "";
+    char params1[MAX_PARAMETER_AMOUNT][MAX_PARAMETER_LENGTH];
+    char params2[MAX_PARAMETER_AMOUNT][MAX_PARAMETER_LENGTH];
+    int paramsAmount1;
+    int paramsAmount2;
+    char fd[10] = "";
+    if(getCommandAndParams(commandName1, params1, &paramsAmount1, commandName2, params2, &paramsAmount2, string) == PIPED) {
+        int id = createPipe();
+        numToStr(id, fd, 10);
+        for(int i=0; i < 10; i++) {
+            params1[paramsAmount1][i] = fd[i];
+            params2[paramsAmount2][i] = fd[i];
+        }
+        paramsAmount1++;
+        paramsAmount2++;
+        executeCommand(commandName1, params1, paramsAmount1);
+        executeCommand(commandName2, params2, paramsAmount2);
+    } else {
+        numToStr(0, fd, 10);
+        for(int i=0; i < 10; i++) {
+            params1[paramsAmount1][i] = fd[i];
+        }
+        paramsAmount1++;
+        executeCommand(commandName1, params1, paramsAmount1);
+    }
+    /*
+    printf("Command 1   = ");
+    printf(commandName1);
+    printf("\nargc        = ");
+    printInt(paramsAmount1,2,10);
+    for(int i=0;i<paramsAmount1;i++) {
+        printf("\nargv[");
+        printInt(i,2,10);
+        printf("]     = ");
+        printf(params1[i]);
+    }
+    printf("\nCommand 2   = ");
+    printf(commandName2);
+    printf("\nargc        = ");
+    printInt(paramsAmount2,2,10);
+    for(int i=0;i<paramsAmount2;i++) {
+        printf("\nargv[");
+        printInt(i,2,10);
+        printf("]     = ");
+        printf(params2[i]);
+    }
+    printf("\n");
+    */
+    return;
 }
