@@ -797,21 +797,94 @@ void test_priority(){
     printf("\nFINISH priority test\n");
 }
 
-static size_t testProgramAmount = 3;
+/****           TEST_SYNC & TEST_NO_SYNC           ****/
+#define TOTAL_PAIR_PROCESSES 2
+#define SEM_ID "sem"
+
+int64_t global;  //shared memory
+
+void slowInc(int64_t *p, int64_t inc){
+  int64_t aux = *p;
+  aux += inc;
+  // yield();
+  *p = aux;
+}
+
+int inc(int argc, char* argv[]){
+    uint64_t sem = strToNum(argv[0]);
+    int64_t value = strToNum(argv[1]);
+    uint64_t N = strToNum(argv[2]);
+    uint64_t i;
+
+    if (sem && sem_open(SEM_ID, 1) == -1){
+        printf("ERROR OPENING SEM\n");
+        return;
+    }
+  
+    for (i = 0; i < N; i++){
+        if (sem) sem_wait(SEM_ID);
+        slowInc(&global, value);
+        if (sem) sem_post(SEM_ID);
+    }
+
+    if (sem){
+        sem_destroy(SEM_ID);
+    }
+  
+    printf("Final value: ");
+    printInt(global, 10, 10);
+    printf("\n");
+}
+
+void test_sync(){
+  uint64_t i;
+
+  global = 0;
+
+  printf("CREATING PROCESSES...(WITH SEM)\n");
+
+  char* argv1[] = {"1", "1", "1000000"}; //1000000
+  char* argv2[] = {"1", "-1", "1000000"}; //1000000
+
+  for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
+    createFullProcess(inc, HIGH, 3, argv1, "inc");
+    createFullProcess(inc, HIGH, 3, argv2, "inc");
+  }
+}
+
+void test_no_sync(){
+  uint64_t i;
+
+  global = 0;
+
+  printf("CREATING PROCESSES...(WITHOUT SEM)\n");
+
+  char* argv1[] = {"0", "1", "1000000"};
+  char* argv2[] = {"0", "-1", "1000000"};
+
+  for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
+    createFullProcess(inc, HIGH, 3, argv1, "inc");
+    createFullProcess(inc, HIGH, 3, argv2, "inc");
+  }
+}
+
+static size_t testProgramAmount = 5;
 
 static testProgramStruct testPrograms[] = {
     {"mm", &test_mm},
     {"processes", &test_processes},
-    {"priority", &test_priority}
+    {"priority", &test_priority},
+    {"sync", &test_sync},
+    {"nosync", &test_no_sync}
 };
 
 static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount == 0){
-        printErr("Missing parameters for command 'sleep'");
+        printErr("Missing parameters for command 'test'");
         return;
     }
     if(paramAmount > 1){
-        printErr("Too many parameters for command 'sleep'");
+        printErr("Too many parameters for command 'test'");
         return;
     }
     for(int i=0 ; i < testProgramAmount ; i++){

@@ -34,7 +34,7 @@ int sysKill(int pid, ProcessSignal sig);
 void sysPrintAllProcesses();
 int sysGetpid();
 void sysSkip();
-int sysSemInit(char* sem_id, int value);
+int sysSemOpen(char* sem_id, int value);
 int sysSemDestroy(char* sem_id);
 int sysSemWait(char* sem_id);
 int sysSemPost(char* sem_id);

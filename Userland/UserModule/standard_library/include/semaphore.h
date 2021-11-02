@@ -2,10 +2,10 @@
 #define SEMAPHORE_H_
 
 
-int semaphore_init(const char *sem_id, int value);
-int semaphore_destroy(const char *sem_id);
-int semaphore_wait(const char* sem_id);
-int semaphore_post(const char* sem_id);
+int sem_open(const char *sem_id, int value);
+int sem_destroy(const char *sem_id);
+int sem_wait(const char* sem_id);
+int sem_post(const char* sem_id);
 
 
 #endif

@@ -13,6 +13,20 @@ static void printSemaphore(sem_t* s){
     print("\n");
 }
 
+static sem_t* get_semaphore(const char* sem_id){
+    sem_t* s = first;
+    for(int i=0;i<semAmount;i++) {
+        if(s == NULL) {
+            return NULL;
+        }
+        if(strcmp(s->id, sem_id) == 0) {       //comparacion de string esta mal
+            break;
+        }
+        s = s->next;
+    }
+    return s;
+}
+
 void printAllSemaphores(){
     sem_t *s = first;
     print("Name\t\tValue\n");
@@ -25,10 +39,19 @@ void printAllSemaphores(){
     }
 }
 
+int sem_open(const char *sem_id, int value){
+    sem_t* s = get_semaphore(sem_id);
+    if(s != NULL)
+        return 0;
+    return sem_init(sem_id, value);
+}
+
 int sem_init(const char *sem_id, int value) {
+    // print("ENTROOO");
     size_t idLen = strlen(sem_id);
     sem_t *sem = memAlloc(sizeof(sem_t), NO_ACTION);
     if(sem == NULL || idLen > MAX_ID_LENGTH) {
+        printInt(idLen, 10);
         return -1;
     }
     // sem->id = sem_id;    //Copia de string esta mal

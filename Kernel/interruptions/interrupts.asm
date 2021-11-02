@@ -45,7 +45,7 @@ EXTERN sysKill
 EXTERN sysPrintAllProcesses
 EXTERN sysGetpid
 EXTERN sysSkip
-EXTERN sysSemInit
+EXTERN sysSemOpen
 EXTERN sysSemDestroy
 EXTERN sysSemWait
 EXTERN sysSemPost
@@ -287,7 +287,7 @@ _sysCallHandler:
 		call sysKill
 		jmp endSysCallHandler
 	syscall_64:
-		call sysSemInit
+		call sysSemOpen
 		jmp endSysCallHandler
 	syscall_65:
 		call sysSemDestroy

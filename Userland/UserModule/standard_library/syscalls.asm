@@ -21,7 +21,7 @@ GLOBAL _kill
 GLOBAL _printAllProcesses
 GLOBAL _getpid
 GLOBAL _skip
-GLOBAL semInit
+GLOBAL semOpen
 GLOBAL semDestroy
 GLOBAL semWait
 GLOBAL semPost
@@ -167,7 +167,7 @@ _kill:
 
     ret
 
-semInit:
+semOpen:
     mov rax, 64
     int 80h
 

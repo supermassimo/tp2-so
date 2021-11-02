@@ -98,7 +98,7 @@ void sysSkip(){
     return skip();
 }
 
-int sysSemInit(char* sem_id, int value){
+int sysSemOpen(char* sem_id, int value){
     return sem_init(sem_id, value);
 }
 
