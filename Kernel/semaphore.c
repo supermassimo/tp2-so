@@ -6,6 +6,13 @@ static sem_t *first = NULL;
 static sem_t *last = NULL;
 static int semAmount = 0;
 
+static void printSemaphore(sem_t* s){
+    print(s->id);
+    print("\t\t");
+    printInt(s->value, 10);
+    print("\n");
+}
+
 static sem_t* get_semaphore(const char* sem_id){
     sem_t* s = first;
     for(int i=0;i<semAmount;i++) {
@@ -20,27 +27,9 @@ static sem_t* get_semaphore(const char* sem_id){
     return s;
 }
 
-static void printSemaphore(sem_t* s){
-    print(s->id);
-    int len = strlen(s->id); 
-    for(int i=0;i<15;i++) {
-        if(i>len) {
-            print(" ");
-        }
-    }
-    printInt(s->value, 10);
-    print("     ");
-    printWaitingProcess(s->id);
-    print("\n");
-}
-
 void printAllSemaphores(){
-    if(first == NULL) {
-        print("No sem open\n");
-        return;
-    }
     sem_t *s = first;
-    print("Name          Value PID-Blocked\n");
+    print("Name\t\tValue\n");
     for(int i=0;i<semAmount;i++) {
         if(s == NULL) {
             break;
@@ -225,31 +214,6 @@ int sem_get_value (const char *sem_id){
         s = s->next;
     }
     return -1;
-}
-
-void printWaitingProcess(const char *sem_id) {
-    sem_t *s = first;
-    for(int i=0;i<semAmount;i++) {
-        if(s == NULL) {
-            return;
-        }
-        if(strcmp(s->id, sem_id) == 0) {
-            break;
-        }
-        s = s->next;
-    }
-    if(s->wp == NULL) {
-        print("-");
-        return;
-    }
-    WProcess *wp = s->wp;
-    while(wp != NULL) {
-        printInt(wp->pid,10);
-        if(wp->next != NULL) {
-            print(", ");
-        }
-    }
-    return;
 }
 
 /*#define MAX_SEMAPHORES  1000

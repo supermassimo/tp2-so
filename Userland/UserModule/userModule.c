@@ -3,9 +3,21 @@
 /* userModule.c */
 #include "./standard_library/include/mystdio.h"
 #include "./standard_library/include/mystdlib.h"
-#include "./standard_library/include/processes.h"
+#include "./standard_library/include/commands.h"
 
-#include "./processes/shell.c"
+void waitForInput(){
+	char input[120];
+	while(1){
+	 	scanf(input, 120);
+		if(strlen(input) <= 1){
+			if(strcmp(input, "\t") == 0)
+				consoleSwap();
+			if(strcmp(input, "\b") == 0)
+				deleteKey();
+		} else if(strcmp(input, "") != 0)
+			commandHandler(input);
+	};
+}
 
 static int initialized = 0;
 
@@ -18,8 +30,8 @@ int main() {
 		initialized = 1;
 	}
 
-	char* args[0];
-	createFullProcess(&shell_init, LOW, 0, args, "shell");
+	//Aca debería llamar al proceso shell.c
+	waitForInput();
 	
 	return 0xDEADBEEF;
 }

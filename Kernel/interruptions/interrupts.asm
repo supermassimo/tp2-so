@@ -50,7 +50,6 @@ EXTERN sysSemDestroy
 EXTERN sysSemWait
 EXTERN sysSemPost
 EXTERN sysSemSetValue
-EXTERN sysPrintSemaphores
 EXTERN sysCreatePipe
 EXTERN sysClosePipe
 EXTERN sysWritePipe
@@ -206,8 +205,6 @@ _sysCallHandler:
 		je syscall_67
 		cmp rax, 68
 		je syscall_68
-		cmp rax, 69
-		je syscall_69
 		cmp rax, 70
 		je syscall_70
 		cmp rax, 71
@@ -303,9 +300,6 @@ _sysCallHandler:
 		jmp endSysCallHandler		
 	syscall_68:
 		call sysSemSetValue
-		jmp endSysCallHandler
-	syscall_69:
-		call sysPrintSemaphores
 		jmp endSysCallHandler
 	syscall_70:
 		call sysCreatePipe

@@ -26,7 +26,6 @@ GLOBAL semDestroy
 GLOBAL semWait
 GLOBAL semPost
 GLOBAL semUpdateValue
-GLOBAL printAllSemaphores
 GLOBAL createPipe
 GLOBAL closePipe
 GLOBAL writePipe
@@ -194,12 +193,6 @@ semPost:
 
 semUpdateValue:
     mov rax, 68
-    int 80h
-
-    ret
-
-printAllSemaphores:
-    mov rax, 69
     int 80h
 
     ret

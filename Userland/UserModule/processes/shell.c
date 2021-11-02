@@ -1,15 +1,15 @@
-#include "../standard_library/include/commands.h"
-#include "../standard_library/include/mystdio.h"
-#include "../standard_library/include/mystdlib.h"
+#include "./include/commands.h"
+#include "./include/mystdio.h"
+#include "./include/mystdlib.h"
 
 /*              TEST MM HEADERS             */
 // #include <stdio.h>
 // #include <stdlib.h>
 // #include <string.h>
-#include "../standard_library/include/test_util.h"
+#include "./include/test_util.h"
 /*******************************************/
 
-int shell_init(){
+int main(){
 
     char input[120];
 	while(1){
