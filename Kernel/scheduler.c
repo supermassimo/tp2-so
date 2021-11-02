@@ -2,17 +2,31 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <scheduler.h>
 
-#define PCB_REGISTERS  21
+#define PCB_REGISTERS   21
+#define SHELL_PID       1
 
 extern uint64_t* createPCB(uint64_t* wrapper, uint64_t* pcbAddr, int argc, char* argv[], void* entryPoint);
+extern void _hlt();
 extern void scheduleNext();
 
+static Process haltingProcess = {0};
 static Process processes[MAX_PROCESSES] = {0};
 static int currentProcess = -1;
 static int isSchedulerEnabled = 0;
 static int activeProcesses = 0;
 static size_t currentProcessQuantums = 0;
 static int outsideRtc = 0;
+
+static int haltShell(int argc, char* argv[]){
+    while(1){
+        _hlt();
+    }
+    return 0;
+}
+
+void createHaltingProcess(){
+    createProcess(haltShell, LOW, 0, NULL, "hlt");
+}
 
 void enableScheduler(){
     isSchedulerEnabled = 1;
@@ -155,7 +169,6 @@ int scheduleOutsideRtc(){
 void exit(int status){
     processes[currentProcess].state = TO_TERMINATE;
     outsideRtc = 1;
-    activeProcesses--;
     scheduleNext();
 }
 
@@ -163,7 +176,6 @@ static int killProcess(int pid){
     if(processes[pid].state == TERMINATED)
         return -1;
     processes[pid].state = TO_TERMINATE;
-    activeProcesses--;
     return 0;
 }
 
@@ -176,25 +188,12 @@ int kill(int pid, ProcessSignal sig){
     }
 }
 
-// For testing. Delete on final version
-void printProcess(uint64_t* currentProcPCB) {
-    changeConsoleSide(1);
-    print("PCB ACTUAL:\n");
-    for(int i=0 ; i < 21 ; i++){
-        printInt(currentProcPCB+i, 16);
-        print("\n");
-    }
-    print("\n");
-    print("\n");
-    print("\n");
-    changeConsoleSide(0);
-}
-
 static int getNextReady(int current){
     if(processes[current].state == TO_TERMINATE){             // Process garbage collector
         processes[current].state = TERMINATED;
         memFree(processes[current].base);
         memFree(processes[current].argv);
+        activeProcesses--;
     }
     while(processes[current+1].state != READY){
         current++;
@@ -202,13 +201,14 @@ static int getNextReady(int current){
             processes[current].state = TERMINATED;
             memFree(processes[current].base);
             memFree(processes[current].argv);
+            activeProcesses--;
         }
         if(processes[current].state == SLEEP && processes[current].sleepTime <= seconds_elapsed()){
             processes[current].state = READY;
             current--;
         }
         if(current+1 == MAX_PROCESSES)
-            current = -1;
+            current = 0;
     }
     return current+1;
 }
@@ -227,11 +227,15 @@ uint64_t* schedule(uint64_t* currentProcPCB){
                 kill(currentProcess, SIG_KILL);
             }
             currentProcessQuantums = 0;
-            currentProcess = getNextReady(currentProcess);
+            if(activeProcesses == 2 && currentProcess == SHELL_PID && keyboardBufferIsEmpty()){
+                currentProcess = 0;
+            }
+            else {
+                currentProcess = getNextReady(currentProcess);
+            }
         }
         currentProcPCB = processes[currentProcess].pcb;
         currentProcessQuantums++;
-        // printProcess(processes[currentProcess].pcb);
     }
     return currentProcPCB;
 }

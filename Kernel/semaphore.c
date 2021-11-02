@@ -45,7 +45,6 @@ int sem_init(const char *sem_id, int value) {
     }
     last = sem;
     semAmount++;
-    printAllSemaphores();
     /*
     print("Creo semaforo ");
     print(sem->id);
@@ -108,7 +107,6 @@ static void sleepCurrent(sem_t *s){
         return;
     }
     WProcess *aux = s->wp;
-    printAllSemaphores();
     while(aux->next != NULL) {
         aux = aux->next;
     }
@@ -124,11 +122,6 @@ int sem_wait(char *sem_id) {
             return -1;
         }
         if(strcmp(s->id, sem_id) == 0) {       //comparacion de string esta mal
-            print("ENCONTRE EL SEMAFORO ");
-            print(s->id);
-            print(" con ");
-            printInt(s->value, 10);
-            print("\n");
             break;
         }
         s = s->next;
