@@ -335,28 +335,43 @@ void catHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
         printErr("Too many parameters for command 'cat'");
         return;
     }
-    char catInput[20];
-    while(1) {
-        scanf(catInput,20);
-        if(strlen(catInput) <= 1) {
-            printf("Not working\n");
-        } else {
-            printf(catInput);
+    char input[120];
+	while(1){
+	 	scanf(input, 120);
+		if(strlen(input) <= 1){
+			if(strcmp(input, "\b") == 0)
+				deleteKey();
+		} else if(strcmp(input, "") != 0) {
+			printf(input);
+            break;
         }
-    }
+	};
     return;
 }
 
 void wcHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 1){
+    if(paramAmount > 0){
         printErr("Too many parameters for command 'wc'");
         return;
     }
-    if(paramAmount == 0){
-        printErr("Not enough parameters for command 'wc'");
-        return;
-    }
-    printf("Here comes wc\n");
+    char input[120];
+	while(1){
+	 	scanf(input, 120);
+		if(strlen(input) <= 1){
+			if(strcmp(input, "\b") == 0)
+				deleteKey();
+		} else if(strcmp(input, "") != 0) {
+            int lines = 0;
+			for(int i=0; i<120 ;i++) {
+                if(input[i] == '\n') {
+                    lines++;
+                }
+            }
+            printInt(lines,1,10);
+            printf("\n");
+            break;
+        }
+	};
     return;
 }
 
@@ -365,7 +380,25 @@ void filterHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
         printErr("Too many parameters for command 'filter'");
         return;
     }
-    printf("Here comes filter\n");
+    char input[120];
+	while(1){
+	 	scanf(input, 120);
+		if(strlen(input) <= 1){
+			if(strcmp(input, "\b") == 0)
+				deleteKey();
+		} else if(strcmp(input, "") != 0) {
+            int j=0;
+			for(int i=0; i<120 ;i++) {
+                //printf("It enters here\n");
+                if(input[i] != 'a' && input[i] != 'e' && input[i] != 'i' && input[i] != 'o' && input[i] != 'u') {
+                    input[j] = input[i];
+                    j++;
+                }
+            }
+            printf(input);
+            break;
+        }
+	};
     return;
 }
 
@@ -383,7 +416,6 @@ void phyloHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
         printErr("Too many parameters for command 'phylo'");
         return;
     }
-    printf("Here comes phylo\n");
     return;
 }
 
