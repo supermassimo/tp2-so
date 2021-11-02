@@ -118,6 +118,10 @@ int sysSemSetValue(char* sem_id, int value){
     sem_set_value(sem_id, value);
 }
 
+void sysPrintSemaphores() {
+    return printAllSemaphores(); 
+}
+
 int sysCreatePipe() {
     return createPipe();
 }

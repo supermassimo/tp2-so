@@ -39,6 +39,7 @@ int sysSemDestroy(char* sem_id);
 int sysSemWait(char* sem_id);
 int sysSemPost(char* sem_id);
 int sysSemSetValue(char* sem_id, int value);
+void sysPrintSemaphores();
 int sysCreatePipe();
 void sysClosePipe(int index);
 int sysWritePipe(int index, const char* buf, int count);

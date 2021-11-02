@@ -140,15 +140,29 @@ void printPipe(Pipe *pipe) {
 }
 
 void printPipes() {
+    if(first == NULL) {
+        print("No pipes open\n");
+        return;
+    }
     Pipe *p = first;
-    //print("Pipe PID IO State\n");
+    print("Pipe PID-Blocked\n");
+    int aux = 0;
     for(int i=0; i<pipeAmount; i++) {
         if(p == NULL) {
             return;
         } else {
-            /*printInt(p->id,10);
-            print("    \n");*/
-            printPipe(p);
+            printInt(p->id,10);
+            aux = p->id;
+            for(int j=0;j<4;j++) {
+                if(aux/10 == 0) {
+                    print(" ");
+                } else {
+                    aux = aux/10;
+                }
+            }
+            printWaitingProcess(p->semName);
+            print("\n");
+            //printPipe(p);
             p = p->next;
         }
     }
