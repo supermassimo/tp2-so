@@ -2,9 +2,22 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <semaphore.h>
 
+extern void lockAdd(int* pointer, int value_add);
+extern void lockSet(int* pointer, int new_value);
+
 static sem_t *first = NULL;
 static sem_t *last = NULL;
 static int semAmount = 0;
+
+static void set_sem_value(sem_t* sem, int value){
+    lockSet(&(sem->value), value);
+}
+static void increment_sem_value(sem_t* sem){
+    lockAdd(&(sem->value), 1);
+}
+static void decrement_sem_value(sem_t* sem){
+    lockAdd(&(sem->value), -1);
+}
 
 int sem_init(const char *sem_id, int value) {
     size_t idLen = strlen(sem_id);
@@ -15,7 +28,7 @@ int sem_init(const char *sem_id, int value) {
     // sem->id = sem_id;    //Copia de string esta mal
     sem->id = (char*)memAlloc(idLen+2, NO_ACTION);
     memcpy(sem->id, sem_id, idLen+2);
-    sem->value = value;
+    set_sem_value(sem, value);
     sem->wp = NULL;
     sem->next = NULL;
     if(first == NULL) {
@@ -109,7 +122,7 @@ int sem_wait(const char *sem_id) {
     if(s->value <= 0) {
         sleepCurrent(s);
     }
-    s->value--;
+    decrement_sem_value(s);
     return 0;
 }
 
@@ -134,13 +147,14 @@ int sem_post(const char *sem_id) {
             break;
         }
         s = s->next;
+
     }
+    
     if(s->value <= 0) {
-        s->value++;
         wakeupNext(s);
-    } else {
-        s->value++;
-    }
+    } 
+    increment_sem_value(s);
+
     return 0;
 }
 
@@ -151,7 +165,7 @@ int sem_set_value (const char *sem_id, int value) {
             return -1;
         }
         if(strcmp(s->id, sem_id) == 0) {
-            s->value = value;
+            set_sem_value(s, value);
             break;
         }
         s = s->next;
