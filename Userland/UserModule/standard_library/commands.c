@@ -243,6 +243,125 @@ void loopHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     return;
 }
 
+/****           PHYLO PROGRAM           ****/
+
+#define MAX_PHYLOS      5
+#define MAX_NAME_LEN    100
+#define LEFT            (phid + (MAX_PHYLOS-1)) % MAX_PHYLOS
+#define RIGHT           (phid + 1) % MAX_PHYLOS
+
+typedef enum {THINKING, HUNGRY, EATING} PhyloState;
+
+PhyloState state[MAX_PHYLOS] = {0};
+char* tableSem = "table";
+char* idSem = "phylo_id";
+char* chopstickSem[] = {"chopstick1", "chopstick2", "chopstick3", "chopstick4", "chopstick5"};
+int phyloBaseId = 0;
+
+static int left(int id){
+    return (id == 0) ? MAX_PHYLOS-1 : id-1;
+}
+
+static int right(int id){
+    return (id == MAX_PHYLOS-1) ? 0 : id+1;
+}
+
+void printPhylos(){
+    for(int i=0 ; i < MAX_PHYLOS ; i++){
+        if(state[i] == EATING)
+            printf("E");
+        else
+            printf("-");
+        printf(" ");
+    }
+    printf("\n");
+}
+
+void test(int phid)
+{
+    if (state[phid] == HUNGRY && state[left(phid)] != EATING && state[right(phid)] != EATING) {
+        // state that eating
+        state[phid] = EATING;
+        // sem_post(&S[phnum]) has no effect
+        // during takefork
+        // used to wake up hungry philosophers
+        // during putfork
+        sem_post(chopstickSem[phid]);
+    }
+}
+
+void take_chopsticks(int phid)
+{
+    sem_wait(tableSem);
+
+    // state that hungry
+    state[phid] = HUNGRY;
+ 
+    // eat if neighbours are not eating
+    test(phid);
+ 
+    sem_post(tableSem);
+    // if unable to eat wait to be signalled
+    sem_wait(chopstickSem[phid]);
+}
+
+void put_chopsticks(int phid)
+{
+    sem_wait(tableSem);
+ 
+    // state that thinking
+    state[phid] = THINKING;
+ 
+    test(left(phid));
+    test(right(phid));
+ 
+    sem_post(tableSem);
+}
+
+static int phylo(int argc, char* argv[]) //void* num
+{
+    sem_wait(idSem);
+    int phyloId = phyloBaseId % 5;
+    phyloBaseId++;
+    sem_post(idSem);
+    while(1){
+        sleep(getpid(), 1);
+        take_chopsticks(phyloId);
+        printPhylos();
+        sleep(getpid(), 1);
+        put_chopsticks(phyloId);
+    }
+    return 0;
+}
+
+void phyloHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount != 0){
+        printErr("Missing parameter for command 'phylo'");
+        return;
+    }
+    /*
+    if(paramAmount > 1){
+        printErr("Too many parameters for command 'phylo'");
+        return;
+    }
+    */
+    // int initialPhylos = strToNum(params[0]);
+    sem_open(tableSem, 1);
+    sem_open(idSem, 1);
+    for(int i=0 ; i < MAX_PHYLOS ; i++){
+        sem_open(chopstickSem[i], 0);
+    }
+    for(int i=0 ; i < MAX_PHYLOS ; i++){
+        // char id[10];
+        // numToStr(i, id, 10);
+        // char argv[][MAX_NAME_LEN] = {id};
+        createProcess(phylo, "phylo");
+        // printf("Creo al filosofo #");
+        // printInt(i, 10, 10);
+        // printf("\n");
+    }
+}
+
 void killHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount == 0){
         printErr("Missing parameter for command 'kill'");
@@ -372,15 +491,6 @@ void pipeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     printf(fl);
     printf("Closing pipe\n");
     closePipe(pipe);*/
-    return;
-}
-
-void phyloHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 0){
-        printErr("Too many parameters for command 'phylo'");
-        return;
-    }
-    printf("Here comes phylo\n");
     return;
 }
 

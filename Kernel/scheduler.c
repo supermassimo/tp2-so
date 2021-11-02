@@ -59,9 +59,8 @@ static int getFirstFree(){
 
 static void* loadArgv(int argc, char* argv[]){
     size_t argvLen = totalStrlen(argc, argv);
-    // void* argPtr = memAlloc(argvLen+argc*2, NO_ACTION);
-    void* argPtr = memAlloc(argvLen+argc*2+argc+1, NO_ACTION);
-    memcpy(argPtr, argv, argvLen+argc*2+argc+1);
+    void* argPtr = memAlloc(argvLen+argc*2+1+argc, SET_ZERO);
+    memcpy(argPtr, argv, argvLen+argc*2+1+argc);
     return argPtr;
 }
 
