@@ -1174,17 +1174,13 @@ static int getCommandAndParams(char* command1, char params1[][MAX_PARAMETER_LENG
 
 void executeCommand(char commandName[MAX_COMMAND_LENGTH+1], char params[MAX_PARAMETER_AMOUNT][MAX_PARAMETER_LENGTH], int paramAmount) {
     int isBackground = 0;
-    if(strcmp("&", commandName[0]) == 0){
-        char c; int i=0;
-        do {
-            c = commandName[i];
-            if (i != 0) commandName[i] = commandName[i-1];
-            i++;
-        } while (c != 0 && i < MAX_COMMAND_LENGTH);
+    char* name = commandName;
+    if(strcmp("&", name[0]) == 0){
+        name++;
         isBackground = 1;
     }
     for(int i=0 ; i < commandAmount ; i++){
-        if(strcmp(commands[i].name, commandName) == 0){
+        if(strcmp(commands[i].name, name) == 0){
             setIdle(0);
             ((void(*)(char[][MAX_PARAMETER_LENGTH], size_t))commands[i].handler)(params, paramAmount);
             printf("> ");
