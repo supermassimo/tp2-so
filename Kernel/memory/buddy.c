@@ -86,14 +86,14 @@ void* _memAlloc(size_t size) {
 
 int _memFree(void* blockp) {
     int i;
-    void* buddy;
-    void* * p;
 
     // fetch order in previous byte
     i = *((uint8_t*) (blockp - 1));
 
     for (;; i++) {
         // calculate buddy
+        void* buddy;
+        void* * p;
         buddy = BUDDYOF(blockp, i);
         p = &(BUDDY->freelist[i]);
 
