@@ -12,7 +12,7 @@
 #include <scheduler.h>
 #include <semaphore.h>
 
-void sysReadInput(char* buffer, size_t buffer_size);
+void sysReadInput(int fd, char* buffer, size_t buffer_size);
 void sysWrite(int output, const char* buffer, size_t buffer_size);
 void sysGetMemContent(uint64_t startPos, uint8_t* memContent, size_t amount);
 void sysGetDateTime(Date* date, Time* time, int utc);
@@ -43,6 +43,6 @@ int sysCreatePipe();
 void sysClosePipe(int index);
 int sysWritePipe(int index, const char* buf, int count);
 int sysReadPipe(int index, char* buf, int count);
-int sysPrintPipes();
+void sysPrintPipes();
 
 #endif
