@@ -2,11 +2,10 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "./include/mystdio.h"
 #include "./include/mystdlib.h"
+#include <stdint.h>
 
 #define STD_OUT 0
 #define STD_ERR 1
-
-typedef unsigned char uint8_t;
 
 extern void write(int fd, const char* buffer, size_t buffer_size);
 extern void readInput(int fd, char* buffer, size_t buffer_size);

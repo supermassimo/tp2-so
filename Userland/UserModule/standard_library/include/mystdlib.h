@@ -13,10 +13,12 @@
 
 size_t numToStr(long value, char* target, size_t base);
 void numToStrSized(long value, char* target, size_t base, size_t length);
+
 long long strToNum(char* string);
 long strToNumPos(char* string);
 int strcmp(char* s1, char* s2);
-size_t strlen(char *string);
+size_t strlen(const char *string);
+
 size_t concatStrings(char strings[][MAX_PARAMETER_LENGTH], size_t stringAmount, char* output);
 size_t floatToStr(float value, char* target, size_t precision, size_t base);
 int strToFloat(char* string, float* target);

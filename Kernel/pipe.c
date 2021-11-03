@@ -1,7 +1,5 @@
 #include <pipe.h>
 
-#define BUFFER_SIZE 512
-
 static Pipe *first = NULL;
 static Pipe *last = NULL;
 static int pipeAmount = 0;
@@ -66,7 +64,7 @@ void closePipe(int id) {
     return;
 }
 
-int writePipe(int id, char* const buf, int count) {
+int writePipe(int id, const char* const buf, int count) {
     Pipe *p = first;
     for(int i=0; i < pipeAmount; i++) {
         if(p == NULL) {
@@ -81,14 +79,14 @@ int writePipe(int id, char* const buf, int count) {
     print("Writing pipe\n\n");
     print("     Before: ");
     print(buf);
-    for(int i=0; p->nwrite < BUFFER_SIZE && i <= count; i++) {
+    for(int i=0; p->nwrite < PIPE_BUFFER_SIZE && i <= count; i++) {
         p->buffer[p->nwrite++] = buf[i];
     }
     print("     After: ");
     print(p->buffer);
     print("\n");
     sem_post(p->semName);
-    if(p->nwrite == BUFFER_SIZE) {
+    if(p->nwrite == PIPE_BUFFER_SIZE) {
         return -1;
     }
     return 0;
@@ -109,14 +107,14 @@ int readPipe(int id, char* buf, int count) {
     print("Reading pipe\n\n");
     print("     Before: ");
     print(p->buffer);
-    for(int i=0; p->nread < BUFFER_SIZE && i <= count; i++) {
+    for(int i=0; p->nread < PIPE_BUFFER_SIZE && i <= count; i++) {
         buf[i] = p->buffer[p->nread++];
     }
     print("     After: ");
     print(p->buffer);
     print("\n");
     sem_post(p->semName);
-    if(p->nread == BUFFER_SIZE) {
+    if(p->nread == PIPE_BUFFER_SIZE) {
         return -1;
     }
     return 0;
@@ -125,7 +123,7 @@ int readPipe(int id, char* buf, int count) {
 void printPipe(Pipe *pipe) {
     changeConsoleSide(1);
     print("Pipe = ");
-    printInt(pipe,16);
+    printInt((size_t)pipe,16);
     print("\nID = ");
     printInt(pipe->id,10);
     print("\nsemName = ");
@@ -135,7 +133,7 @@ void printPipe(Pipe *pipe) {
     print("\nnread = ");  
     printInt(pipe->nread,10);
     print("\nnext = ");
-    printInt(pipe->next,16);
+    printInt((size_t)pipe->next,16);
     print("\n\n");
     changeConsoleSide(0);
     return;

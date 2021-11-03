@@ -14,15 +14,15 @@ int sem_open(const char *sem_id, int value){
 
 //free
 int sem_destroy(const char *sem_id){
-    semDestroy(sem_id);
+    return semDestroy(sem_id);
 }
 
 //wait then decrement
 int sem_wait(const char* sem_id){
-    semWait(sem_id);
+    return semWait(sem_id);
 }
 
 //increment
 int sem_post(const char* sem_id){
-    semPost(sem_id);
+    return semPost(sem_id);
 }

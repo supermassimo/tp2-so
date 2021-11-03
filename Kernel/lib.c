@@ -80,7 +80,7 @@ void getMemContent(uint64_t startPos, uint8_t* target, size_t count){
 	}
 }
 
-int strcmp(char* s1, char* s2){
+int strcmp(const char* s1, const char* s2){
     int c, i=-1;
     do{
         i++;
@@ -89,7 +89,7 @@ int strcmp(char* s1, char* s2){
     return c;
 }
 
-size_t strlen(char *string){
+size_t strlen(const char *string){
     size_t c = 0;
     for(size_t i=0 ; string[i] != 0 ; i++){
         c++;

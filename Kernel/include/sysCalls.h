@@ -11,6 +11,7 @@
 #include <rtc.h>
 #include <scheduler.h>
 #include <semaphore.h>
+#include <pipe.h>
 
 void sysReadInput(int fd, char* buffer, size_t buffer_size);
 void sysWrite(int output, const char* buffer, size_t buffer_size);

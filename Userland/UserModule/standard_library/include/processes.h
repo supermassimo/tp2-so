@@ -1,3 +1,6 @@
+#ifndef PROCESSES_H
+#define PROCESSES_H
+
 #include <stddef.h>
 
 typedef enum UserPriority {LOW, MEDIUM, HIGH} UserPriority;
@@ -13,3 +16,5 @@ int unblockProcess(int pid);
 int getpid();
 void printAllProcesses();
 void skipExecution();
+
+#endif

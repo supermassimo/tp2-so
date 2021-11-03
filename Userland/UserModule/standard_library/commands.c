@@ -125,11 +125,6 @@ static void memHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     printMemInfo(meminfo, params[0]);
 }
 
-// Previously used to test div-by-zero exception
-static void divByZeroThrower(){
-    return 1/0;
-}
-
 // for testing purposes
 static void testallocHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount < 3){
@@ -584,7 +579,7 @@ int test_mm(int argc, char* argv[]){
             return -1;
         }
         printf("on addr: ");
-        printInt(mm_rqs[rq].address, 10, 16);
+        printInt((size_t)mm_rqs[rq].address, 10, 16);
         printf("\n");
         //TODO: check if NULL
         total += mm_rqs[rq].size;
@@ -908,7 +903,7 @@ int inc(int argc, char* argv[]){
 
     if (sem && sem_open(SEM_ID, 1) == -1){
         printf("ERROR OPENING SEM\n");
-        return;
+        return -1;
     }
   
     for (i = 0; i < N; i++){
@@ -924,6 +919,7 @@ int inc(int argc, char* argv[]){
     printf("Final value: ");
     printInt(global, 10, 10);
     printf("\n");
+    return 0;
 }
 
 void test_sync(){
@@ -1173,14 +1169,16 @@ static int getCommandAndParams(char* command1, char params1[][MAX_PARAMETER_LENG
 }
 
 void executeCommand(char commandName[MAX_COMMAND_LENGTH+1], char params[MAX_PARAMETER_AMOUNT][MAX_PARAMETER_LENGTH], int paramAmount) {
+    /*
     int isBackground = 0;
     char* name = commandName;
-    if(strcmp("&", name[0]) == 0){
+    if(strcmp("&", (char*)name[0]) == 0){
         name++;
         isBackground = 1;
     }
+    */
     for(int i=0 ; i < commandAmount ; i++){
-        if(strcmp(commands[i].name, name) == 0){
+        if(strcmp(commands[i].name, commandName) == 0){
             setIdle(0);
             ((void(*)(char[][MAX_PARAMETER_LENGTH], size_t))commands[i].handler)(params, paramAmount);
             printf("> ");

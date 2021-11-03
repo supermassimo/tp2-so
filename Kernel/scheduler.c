@@ -9,8 +9,7 @@ extern uint64_t* createPCB(uint64_t* wrapper, uint64_t* pcbAddr, int argc, char*
 extern void _hlt();
 extern void scheduleNext();
 
-static Process haltingProcess = {0};
-static Process processes[MAX_PROCESSES] = {0};
+static Process processes[MAX_PROCESSES] = {{0}};
 static int currentProcess = -1;
 static int isSchedulerEnabled = 0;
 static int activeProcesses = 0;
@@ -22,6 +21,34 @@ static int haltShell(int argc, char* argv[]){
         _hlt();
     }
     return 0;
+}
+
+void printProcesses(Process* processes, size_t amount){
+	size_t printed = 0;
+	size_t length = 0;
+	print("PID CMD      P  S  F  BP     SP\n");
+	for(int i=0 ; printed < amount ; i++){
+		if(processes[i].state != TERMINATED){
+			printInt(i, 10);
+			print("   ");
+			print(processes[i].name);
+			length = strlen(processes[i].name);
+			for(int j=length; j<9; j++) {
+				print(" ");
+			}
+			printInt(processes[i].priority, 10);
+			print("  ");
+			print(getStateString(processes[i].state));
+			print("  ");
+			print(i == 0 ? "Y" : "N");
+			print("  ");
+			printInt((size_t)processes[i].base, 16);
+			print(" ");
+			printInt((size_t)processes[i].pcb, 16);
+			print("\n");
+			printed++;
+		}
+	}
 }
 
 void createHaltingProcess(){
@@ -75,7 +102,7 @@ int createProcess(void* entryPoint, Priority priority, int argc, char* argv[], c
         return processIdx;
     uint64_t* baseAddr = memAlloc(sizeof(uint64_t) * PROCESS_STACK, SET_ZERO);
     processes[processIdx].argv = loadArgv(argc, argv);
-    processes[processIdx].pcb = createPCB(processWrapper, baseAddr+(PROCESS_STACK-2), argc, processes[processIdx].argv, entryPoint);
+    processes[processIdx].pcb = createPCB((uint64_t*)processWrapper, baseAddr+(PROCESS_STACK-2), argc, processes[processIdx].argv, entryPoint);
     processes[processIdx].base = baseAddr;
     processes[processIdx].priority = priority;
     processes[processIdx].name = name;

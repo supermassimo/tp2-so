@@ -1,3 +1,6 @@
+#ifndef SEMAPHORE_H
+#define SEMAPHORE_H
+
 #include <scheduler.h>
 #include <memManager.h>
 #include <lib.h>
@@ -18,6 +21,7 @@ typedef struct sem_t{
 } sem_t;
 
 int sem_open(const char *sem_id, int value);
+int sem_init(const char *sem_id, int value);
 int sem_destroy(const char *sem_id);
 int sem_wait(char *sem_id);
 int sem_post(const char *sem_id);
@@ -25,3 +29,5 @@ int sem_set_value (const char *sem_id, int value);
 int sem_get_value (const char *sem_id);
 
 void printAllSemaphores();
+
+#endif

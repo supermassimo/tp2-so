@@ -65,7 +65,7 @@ int main()
 
 	// loadUserModuleAdress();
 	createHaltingProcess();
-	createProcess(userCodeModuleAddress, SYSTEM, 0, NULL, "init");
+	createProcess(userCodeModuleAddress, SYSTEM, 0, NULL, "sh");
 	enableScheduler();
 
 	while(1);

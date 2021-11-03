@@ -105,6 +105,7 @@ void sysPrintAllProcesses(){
 int sysGetpid(){
     return getpid();
 }
+
 void sysSkip(){
     return skip();
 }
@@ -118,15 +119,15 @@ int sysSemDestroy(char* sem_id){
 }
 
 int sysSemWait(char* sem_id){
-    sem_wait(sem_id);
+    return sem_wait(sem_id);
 }
 
 int sysSemPost(char* sem_id){
-    sem_post(sem_id);
+    return sem_post(sem_id);
 }
 
 int sysSemSetValue(char* sem_id, int value){
-    sem_set_value(sem_id, value);
+    return sem_set_value(sem_id, value);
 }
 
 int sysCreatePipe() {

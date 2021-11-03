@@ -33,13 +33,6 @@ static sem_t* get_semaphore(const char* sem_id){
     return s;
 }
 
-int sem_open(const char *sem_id, int value){
-    sem_t* s = get_semaphore(sem_id);
-    if(s != NULL)
-        return 0;
-    return sem_init(sem_id, value);
-}
-
 int sem_init(const char *sem_id, int value) {
     // print("ENTROOO");
     size_t idLen = strlen(sem_id);
@@ -61,13 +54,14 @@ int sem_init(const char *sem_id, int value) {
     }
     last = sem;
     semAmount++;
-    /*
-    print("Creo semaforo ");
-    print(sem->id);
-    print("\ncon valor ");
-    printInt(sem->value, 10);
-    */
     return 0;
+}
+
+int sem_open(const char *sem_id, int value){
+    sem_t* s = get_semaphore(sem_id);
+    if(s != NULL)
+        return 0;
+    return sem_init(sem_id, value);
 }
 
 void freeSem(sem_t *s) {
@@ -90,9 +84,9 @@ int sem_destroy(const char *sem_id) {
     if(strcmp(first->id,sem_id) == 0) {
         aux = first;
         first = aux->next;
-        //freeSem(aux);
+        freeSem(aux);
         semAmount--;
-        return;
+        return 0;
     }
     sem_t *s = first;
     for(int i=1; i<semAmount; i++) {
@@ -105,10 +99,11 @@ int sem_destroy(const char *sem_id) {
             if(s->next == NULL) {
                 // last = p;
             }
-            //freeSem(aux);
+            freeSem(aux);
             semAmount--;
             return 0;
         }
+        s = s->next;
     }
     return 0;
 }
@@ -231,6 +226,7 @@ void printWaitingProcess(const char *sem_id) {
         if(wp->next != NULL) {
             print(", ");
         }
+        wp = wp->next;
     }
     return;
 }

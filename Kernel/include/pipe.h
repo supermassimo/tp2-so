@@ -1,11 +1,14 @@
+#ifndef PIPE_H
+#define PIPE_H
+
 #include <semaphore.h>
 #include <console.h>
 
-#define BUFFER_SIZE 512
+#define PIPE_BUFFER_SIZE 512
 
 typedef struct Pipe {
     int id;
-    char buffer[BUFFER_SIZE];
+    char buffer[PIPE_BUFFER_SIZE];
     int nwrite;
     int nread;
     char* semName;
@@ -14,6 +17,8 @@ typedef struct Pipe {
 
 int createPipe();
 void closePipe(int index);
-int writePipe(int index, char* const buf, int count);
+int writePipe(int index, const char* buf, int count);
 int readPipe(int index, char* buf, int count);
 void printPipes();
+
+#endif
