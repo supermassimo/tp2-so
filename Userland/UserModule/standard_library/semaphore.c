@@ -2,31 +2,27 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "./include/semaphore.h"
 
-extern int semInit (int value);
-extern int semDestroy(int sem_id);
-extern void semWait(int sem_id);
-extern void semPost(int sem_id);
-
-int binary_semaphore_init(){
-    return semaphore_init(1);
-}
+extern int semOpen(const char *sem_id, int value);
+extern int semDestroy(const char *sem_id);
+extern int semWait(const char *sem_id);
+extern int semPost(const char *sem_id);
 
 // May return null if malloc fails
-int semaphore_init(int value){
-    return semInit(value);
+int sem_open(const char *sem_id, int value){
+    return semOpen(sem_id, value);
 }
 
 //free
-int semaphore_destroy(int sem_id){
+int sem_destroy(const char *sem_id){
     semDestroy(sem_id);
 }
 
 //wait then decrement
-int semaphore_wait(int sem_id){
+int sem_wait(const char* sem_id){
     semWait(sem_id);
 }
 
 //increment
-int semaphore_post(int sem_id){
+int sem_post(const char* sem_id){
     semPost(sem_id);
 }

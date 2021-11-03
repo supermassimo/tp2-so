@@ -6,7 +6,7 @@ extern void* _memAlloc(size_t size);
 extern int _memFree(void *blockp);
 
 static uint8_t* nextToMap= (uint8_t*)MEM_BASE;
-static long long occupiedMemory = 0;
+static long long int occupiedMemory = 0;
 
 void incrementOccupiedMemory(size_t increment){
     occupiedMemory += increment;

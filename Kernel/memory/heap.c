@@ -23,7 +23,7 @@ static MemHeader* getBlocks(size_t blockAmount){
     newHeader = (MemHeader*)auxp;
     newHeader->size = bytes;
     memFree((void*)(newHeader+1));
-    return freeList;        // returns block added to free list
+    return freeList;                // Returns block added to free list
 }
 
 void* _memAlloc(size_t size){
@@ -31,7 +31,7 @@ void* _memAlloc(size_t size){
     size_t headerBlocks = (size + sizeof(MemHeader) - 1)/sizeof(MemHeader) + 1;         // Always round up # of block needed
     size_t blockBytes = headerBlocks * sizeof(MemHeader);
 
-    if((currentBlock = freeList) == NULL){     /* No free blocks to asign yet*/
+    if((currentBlock = freeList) == NULL){     // No free blocks to asign yet
         baseHeader.next = freeList = currentBlock = &baseHeader;
         baseHeader.size = 0;
     }
@@ -47,7 +47,6 @@ void* _memAlloc(size_t size){
             }
             freeList = currentBlock;
             incrementOccupiedMemory(blockBytes);
-            // occupiedMemory += blockBytes;
             return (void*)(auxp+1);
         }
         if(auxp == freeList)
@@ -56,6 +55,33 @@ void* _memAlloc(size_t size){
     }
 }
 
+/* free: put block ap in free list */
+int _memFree(void *blockp) {
+    MemHeader *headp, *p;
+    headp = (MemHeader *)blockp - 1; /* point to block header */
+    for (p = freeList; !(headp > p && headp < p->next); p = p->next)
+        if (p >= p->next && (headp > p || headp < p->next))
+            break; /* freed block at start or end of arena */
+    
+    decrementOccupiedMemory(headp->size);
+    if (headp + headp->size == p->next) {
+        headp->size += p->next->size;
+        headp->next = p->next->next;
+    } else {
+        headp->next = p->next;
+    }
+
+    if (p + p->size == headp) {
+        p->size += headp->size;
+        p->next = headp->next;
+    } else {
+        p->next = headp;
+    }
+    
+    freeList = p;
+    return 0;
+}
+/*
 int _memFree(void *blockp){
     MemHeader *headp, *auxp;
 
@@ -65,12 +91,11 @@ int _memFree(void *blockp){
             break;
     
     decrementOccupiedMemory(headp->size);
-    //occupiedMemory -= headp->size;
-    /*
-    print("LIBERO: ");
-    printInt(headp->size, 10);
-    print("\n");
-    */
+    
+    // print("LIBERO: ");
+    // printInt(headp->size, 10);
+    // print("\n");
+
     if(headp + headp->size == auxp->next){
         headp->size += auxp->next->size;
         headp->next = headp->next->next;
@@ -86,3 +111,4 @@ int _memFree(void *blockp){
     freeList = auxp;
     return 0;
 }
+*/

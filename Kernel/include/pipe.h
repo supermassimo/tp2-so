@@ -8,7 +8,7 @@ typedef struct Pipe {
     char buffer[BUFFER_SIZE];
     int nwrite;
     int nread;
-    char semName[MAX_ID_LENGTH];
+    char* semName;
     struct Pipe *next;
 } Pipe;
 

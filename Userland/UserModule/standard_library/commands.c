@@ -27,7 +27,6 @@ extern void closePipe(int id);
 extern int writePipe(int id, const char *buf, int count);
 extern int readPipe(int id, char *buf, int count);
 extern void printPipes();
-extern void printAllSemaphores();
 
 #define PRINTMEM_BYTES 32
 
@@ -39,13 +38,6 @@ typedef struct commandStruct{
     char* help_message;
     CommandType type;
 } commandStruct;
-
-/*
-typedef struct exceptionTestStruct{
-    char* exception;
-    void* thrower;
-} exceptionTestStruct;
-*/
 
 typedef struct testProgramStruct{
     char* name;
@@ -138,13 +130,6 @@ static void divByZeroThrower(){
     return 1/0;
 }
 
-/*
-static exceptionTestStruct exceptions[] = {
-    {"div-by-zero", &divByZeroThrower},
-    {"invalid-opcode", &invalidOpcodeThrower}
-};
-*/
-
 // for testing purposes
 static void testallocHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount < 2){
@@ -184,21 +169,6 @@ static void testallocHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAm
     return;
 }
 
-/*
-static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount == 0){
-        printErr("Missing parameter for command 'test'");
-    }
-    if(paramAmount > 1){
-        printErr("Too many parameters for command 'test'");
-    }
-    for(int i=0 ; i < exceptionAmount ; i++){
-        if(strcmp(params[0], exceptions[i].exception) == 0)
-            ((void(*)())exceptions[i].thrower)();
-    }
-}
-*/
-
 void psHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount > 1){
         printErr("Too many parameters for command 'ps'");
@@ -210,13 +180,7 @@ void psHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
 
 int loop(int argc, char* argv[]) {
     int pid = getpid();
-    /*printf("Recibo ");
-    printf(argv[0]);
-    printf("segundos\n");*/
     size_t seconds = strToNum(argv[0]);
-    /*printf("Mando ");
-    printInt(seconds, 10, 10);
-    printf("segunds\n");*/
     while(1){
         sleep(pid, seconds);
         printf("Hi, process ");
@@ -242,6 +206,118 @@ void loopHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
         return;
     }
     return;
+}
+
+/****           PHYLO PROGRAM           ****/
+
+#define MAX_PHYLOS      5
+#define MAX_NAME_LEN    100
+#define LEFT            (phid + (MAX_PHYLOS-1)) % MAX_PHYLOS
+#define RIGHT           (phid + 1) % MAX_PHYLOS
+
+typedef enum {THINKING, HUNGRY, EATING} PhyloState;
+
+PhyloState state[MAX_PHYLOS] = {0};
+char* tableSem = "table";
+char* idSem = "phylo_id";
+char* chopstickSem[] = {"chopstick1", "chopstick2", "chopstick3", "chopstick4", "chopstick5"};
+int phyloBaseId = 0;
+
+static int left(int id){
+    return (id == 0) ? MAX_PHYLOS-1 : id-1;
+}
+
+static int right(int id){
+    return (id == MAX_PHYLOS-1) ? 0 : id+1;
+}
+
+void printPhylos(){
+    for(int i=0 ; i < MAX_PHYLOS ; i++){
+        if(state[i] == EATING)
+            printf("E");
+        else
+            printf("-");
+        printf(" ");
+    }
+    printf("\n");
+}
+
+void test(int phid)
+{
+    if (state[phid] == HUNGRY && state[left(phid)] != EATING && state[right(phid)] != EATING) {
+
+        // state that eating
+        state[phid] = EATING;
+
+        // sem_post(&S[phnum]) has no effect during takefork
+        // used to wake up hungry philosophers during putfork
+        sem_post(chopstickSem[phid]);
+    }
+}
+
+void take_chopsticks(int phid)
+{
+    sem_wait(tableSem);
+
+    // state that hungry
+    state[phid] = HUNGRY;
+ 
+    // eat if neighbours are not eating
+    test(phid);
+ 
+    sem_post(tableSem);
+    // if unable to eat wait to be signalled
+    sem_wait(chopstickSem[phid]);
+}
+
+void put_chopsticks(int phid)
+{
+    sem_wait(tableSem);
+ 
+    // state that thinking
+    state[phid] = THINKING;
+ 
+    test(left(phid));
+    test(right(phid));
+ 
+    sem_post(tableSem);
+}
+
+static int phylo(int argc, char* argv[]) //void* num
+{
+    sem_wait(idSem);
+    int phyloId = phyloBaseId % 5;
+    phyloBaseId++;
+    sem_post(idSem);
+    while(1){
+        sleep(getpid(), 1);
+        take_chopsticks(phyloId);
+        printPhylos();
+        sleep(getpid(), 1);
+        put_chopsticks(phyloId);
+    }
+    return 0;
+}
+
+void phyloHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
+    if(paramAmount == 1){
+        printErr("Missing parameter for command 'phylo'");
+        return;
+    }
+    sem_open(tableSem, 1);
+    sem_open(idSem, 1);
+    for(int i=0 ; i < MAX_PHYLOS ; i++){
+        sem_open(chopstickSem[i], 0);
+    }
+    for(int i=0 ; i < MAX_PHYLOS ; i++){
+        // char id[10];
+        // numToStr(i, id, 10);
+        // char argv[][MAX_NAME_LEN] = {id};
+        createProcess(phylo, "phylo");
+        // printf("Creo al filosofo #");
+        // printInt(i, 10, 10);
+        // printf("\n");
+    }
 }
 
 void killHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
@@ -326,7 +402,7 @@ void semHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
         printErr("Too many parameters for command 'sem'");
         return;
     }
-    printAllSemaphores();
+    printf("Here comes sem\n");
     return;
 }
 
@@ -350,7 +426,7 @@ void catHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
 }
 
 void wcHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 1){
+    if(paramAmount > 0){
         printErr("Too many parameters for command 'wc'");
         return;
     }
@@ -407,14 +483,6 @@ void pipeHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
         return;
     }
     printPipes();
-    return;
-}
-
-void phyloHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount > 1){
-        printErr("Too many parameters for command 'phylo'");
-        return;
-    }
     return;
 }
 
@@ -483,11 +551,10 @@ void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount)
         return;
     }
     int pipe = createPipe();
-    
     char *id;
     numToStr(pipe,id,10);
     char* argv[] = {id};
-    if(createFullProcess(testProcessA, MEDIUM, 1, argv, "TpipeA") == -1){
+    if(createFullProcess(testProcessA, LOW, 1, argv, "TpipeA") == -1){
         printErr("Cannot create a new process; process limit reached");
         return;
     }
@@ -832,21 +899,94 @@ void test_priority(){
     printf("\nFINISH priority test\n");
 }
 
-static size_t testProgramAmount = 3;
+/****           TEST_SYNC & TEST_NO_SYNC           ****/
+#define TOTAL_PAIR_PROCESSES 2
+#define SEM_ID "sem"
+
+int64_t global;  //shared memory
+
+void slowInc(int64_t *p, int64_t inc){
+  int64_t aux = *p;
+  aux += inc;
+  // yield();
+  *p = aux;
+}
+
+int inc(int argc, char* argv[]){
+    uint64_t sem = strToNum(argv[0]);
+    int64_t value = strToNum(argv[1]);
+    uint64_t N = strToNum(argv[2]);
+    uint64_t i;
+
+    if (sem && sem_open(SEM_ID, 1) == -1){
+        printf("ERROR OPENING SEM\n");
+        return;
+    }
+  
+    for (i = 0; i < N; i++){
+        if (sem) sem_wait(SEM_ID);
+        slowInc(&global, value);
+        if (sem) sem_post(SEM_ID);
+    }
+
+    if (sem){
+        sem_destroy(SEM_ID);
+    }
+  
+    printf("Final value: ");
+    printInt(global, 10, 10);
+    printf("\n");
+}
+
+void test_sync(){
+  uint64_t i;
+
+  global = 0;
+
+  printf("CREATING PROCESSES...(WITH SEM)\n");
+
+  char* argv1[] = {"1", "1", "1000000"}; //1000000
+  char* argv2[] = {"1", "-1", "1000000"}; //1000000
+
+  for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
+    createFullProcess(inc, HIGH, 3, argv1, "inc");
+    createFullProcess(inc, HIGH, 3, argv2, "inc");
+  }
+}
+
+void test_no_sync(){
+  uint64_t i;
+
+  global = 0;
+
+  printf("CREATING PROCESSES...(WITHOUT SEM)\n");
+
+  char* argv1[] = {"0", "1", "1000000"};
+  char* argv2[] = {"0", "-1", "1000000"};
+
+  for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
+    createFullProcess(inc, HIGH, 3, argv1, "inc");
+    createFullProcess(inc, HIGH, 3, argv2, "inc");
+  }
+}
+
+static size_t testProgramAmount = 5;
 
 static testProgramStruct testPrograms[] = {
     {"mm", &test_mm},
     {"processes", &test_processes},
-    {"priority", &test_priority}
+    {"priority", &test_priority},
+    {"sync", &test_sync},
+    {"nosync", &test_no_sync}
 };
 
 static void testHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
-    if(paramAmount == 1){
-        printErr("Missing parameters for command 'sleep'");
+    if(paramAmount == 0){
+        printErr("Missing parameters for command 'test'");
         return;
     }
-    if(paramAmount > 2){
-        printErr("Too many parameters for command 'sleep'");
+    if(paramAmount > 1){
+        printErr("Too many parameters for command 'test'");
         return;
     }
     for(int i=0 ; i < testProgramAmount ; i++){
@@ -1057,14 +1197,10 @@ void executeCommand(char commandName[MAX_COMMAND_LENGTH+1], char params[MAX_PARA
     }
     for(int i=0 ; i < commandAmount ; i++){
         if(strcmp(commands[i].name, commandName) == 0){
-            if (isBackground){
-                createFullProcess(commands[i].handler, LOW, paramAmount, params, "process_test"); //change name and priority
-            } else {
-                setIdle(0);
-                ((void(*)(char[][MAX_PARAMETER_LENGTH], size_t))commands[i].handler)(params, paramAmount);
-                setIdle(1);
-            }
+            setIdle(0);
+            ((void(*)(char[][MAX_PARAMETER_LENGTH], size_t))commands[i].handler)(params, paramAmount);
             printf("> ");
+            setIdle(1);
             return;
         }
     }
@@ -1100,28 +1236,5 @@ void commandHandler(char* string){
         paramsAmount1++;
         executeCommand(commandName1, params1, paramsAmount1);
     }
-    /*
-    printf("Command 1   = ");
-    printf(commandName1);
-    printf("\nargc        = ");
-    printInt(paramsAmount1,2,10);
-    for(int i=0;i<paramsAmount1;i++) {
-        printf("\nargv[");
-        printInt(i,2,10);
-        printf("]     = ");
-        printf(params1[i]);
-    }
-    printf("\nCommand 2   = ");
-    printf(commandName2);
-    printf("\nargc        = ");
-    printInt(paramsAmount2,2,10);
-    for(int i=0;i<paramsAmount2;i++) {
-        printf("\nargv[");
-        printInt(i,2,10);
-        printf("]     = ");
-        printf(params2[i]);
-    }
-    printf("\n");
-    */
     return;
 }

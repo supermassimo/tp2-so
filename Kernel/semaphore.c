@@ -19,10 +19,33 @@ static void decrement_sem_value(sem_t* sem){
     lockAdd(&(sem->value), -1);
 }
 
+static sem_t* get_semaphore(const char* sem_id){
+    sem_t* s = first;
+    for(int i=0;i<semAmount;i++) {
+        if(s == NULL) {
+            return NULL;
+        }
+        if(strcmp(s->id, sem_id) == 0) {       //comparacion de string esta mal
+            break;
+        }
+        s = s->next;
+    }
+    return s;
+}
+
+int sem_open(const char *sem_id, int value){
+    sem_t* s = get_semaphore(sem_id);
+    if(s != NULL)
+        return 0;
+    return sem_init(sem_id, value);
+}
+
 int sem_init(const char *sem_id, int value) {
+    // print("ENTROOO");
     size_t idLen = strlen(sem_id);
     sem_t *sem = memAlloc(sizeof(sem_t), NO_ACTION);
     if(sem == NULL || idLen > MAX_ID_LENGTH) {
+        printInt(idLen, 10);
         return -1;
     }
     // sem->id = sem_id;    //Copia de string esta mal
@@ -102,18 +125,18 @@ static void sleepCurrent(sem_t *s){
     WProcess *aux = s->wp;
     while(aux->next != NULL) {
         aux = aux->next;
-    } 
+    }
     aux->next = wp;
     makeWait(wp->pid); //sleep indefinido, necesita wakeup()
     return;
 }
 
-int sem_wait(const char *sem_id) {
+int sem_wait(char *sem_id) {
     sem_t *s = first;
     for(int i=0;i<semAmount;i++) {
         if(s == NULL) {
             return -1;
-        } 
+        }
         if(strcmp(s->id, sem_id) == 0) {       //comparacion de string esta mal
             break;
         }
@@ -185,61 +208,6 @@ int sem_get_value (const char *sem_id){
         s = s->next;
     }
     return -1;
-}
-
-void printWaitingProcess(const char *sem_id) {
-    sem_t *s = first;
-    for(int i=0;i<semAmount;i++) {
-        if(s == NULL) {
-            return;
-        }
-        if(strcmp(s->id, sem_id) == 0) {
-            break;
-        }
-        s = s->next;
-    }
-    if(s->wp == NULL) {
-        print("-");
-        return;
-    }
-    WProcess *wp = s->wp;
-    while(wp != NULL) {
-        printInt(wp->pid,10);
-        if(wp->next != NULL) {
-            print(", ");
-        }
-    }
-    return;
-}
-
-static void printSemaphore(sem_t* s){
-    print(s->id);
-    int len = strlen(s->id); 
-    for(int i=0;i<15;i++) {
-        if(i>len) {
-            print(" ");
-        }
-    }
-    printInt(s->value, 10);
-    print("     ");
-    printWaitingProcess(s->id);
-    print("\n");
-}
-
-void printAllSemaphores(){
-    if(first == NULL) {
-        print("No sem open\n");
-        return;
-    }
-    sem_t *s = first;
-    print("Name          Value PID-Blocked\n");
-    for(int i=0;i<semAmount;i++) {
-        if(s == NULL) {
-            break;
-        }
-        printSemaphore(s);
-        s = s->next;
-    }
 }
 
 /*#define MAX_SEMAPHORES  1000

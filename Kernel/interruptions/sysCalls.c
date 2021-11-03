@@ -98,7 +98,7 @@ void sysSkip(){
     return skip();
 }
 
-int sysSemInit(char* sem_id, int value){
+int sysSemOpen(char* sem_id, int value){
     return sem_init(sem_id, value);
 }
 
@@ -116,10 +116,6 @@ int sysSemPost(char* sem_id){
 
 int sysSemSetValue(char* sem_id, int value){
     sem_set_value(sem_id, value);
-}
-
-void sysPrintSemaphores() {
-    return printAllSemaphores(); 
 }
 
 int sysCreatePipe() {

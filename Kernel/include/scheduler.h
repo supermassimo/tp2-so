@@ -7,13 +7,14 @@
 #include <lib.h>
 #include <time.h>
 #include <console.h>
+#include <keyboard.h>
 
-#define MAX_PROCESSES  20
+#define MAX_PROCESSES   100
 #define PROCESS_STACK  8176        // (2 * PAGE_SIZE) - MEM_HEADER_SIZE
 
 typedef enum Priority {LOW, MEDIUM, HIGH, SYSTEM} Priority;
 typedef enum ProcessSignal {SIG_KILL} ProcessSignal;
-typedef enum State {TERMINATED, READY, BLOCKED, SLEEP, WAITING} State;
+typedef enum State {TERMINATED, READY, BLOCKED, SLEEP, WAITING, TO_TERMINATE} State;
 typedef enum BlockOption {BLOCK, UNBLOCK} BlockOption;
 
 typedef struct Process {

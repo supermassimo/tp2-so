@@ -64,6 +64,7 @@ int main()
 	initializeConsole();
 
 	// loadUserModuleAdress();
+	createHaltingProcess();
 	createProcess(userCodeModuleAddress, SYSTEM, 0, NULL, "init");
 	enableScheduler();
 
