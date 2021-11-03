@@ -1099,7 +1099,7 @@ static int getCommandAndParams(char* command1, char params1[][MAX_PARAMETER_LENG
                         j=0;
                         state = PARAM1;
                     } 
-                } else if(input[inputIdx] == '+' && j != 0) {
+                } else if(input[inputIdx] == '|' && j != 0) {
                     command1[j] = 0;
                     j=0;
                     state = COMMAND2;
@@ -1120,7 +1120,7 @@ static int getCommandAndParams(char* command1, char params1[][MAX_PARAMETER_LENG
                         params1[param1Idx++][j] = 0;
                         j=0;
                     }
-                } else if (input[inputIdx] == '+') {
+                } else if (input[inputIdx] == '|') {
                     params1[param1Idx][j] = 0;
                     j=0;
                     state = COMMAND2;

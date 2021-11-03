@@ -23,8 +23,8 @@ static int isShiftPressed = 0;
 static const int keyTable[KEYTABLE_SIZE] = {
 	0, 27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\'', 168, '\b',	// 1:ESC, 14:BACKSPACE
 	'\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 0, '+',		        // 
-	'\n', 0, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ñ', '{', '}',		// 29:CTRL
-	0, 0, 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '-', 0, 167, 0, ' ',	    // 42:SHIFT(izq), 54:SHIFT(der), 55:°, 56:ALT/ALTGR, 57:SPACEBAR. 53 tb es '/'
+	'\n', 0, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ñ', '{', 167,		// 29:CTRL
+	0, '}', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '-', 0, 0, 0, ' ',	    // 42:SHIFT(izq), 54:SHIFT(der), 55:°, 56:ALT/ALTGR, 57:SPACEBAR. 53 tb es '/'
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '7',                          		// 58:BLOQ MAYUS, 59-68:F1-F10, 69:BLOQ NUM, 70:BLOQ DESPL, 71:INICIO y 7 (tecl num)
 	0, '9', '-', 0, '5', 0, '+', '1', 0, '3', 0, 0, 0, 0,				        // 8 (tecl num), 73:REPAG, 9 (tecl num), 74:- (tecl num), 4 (tecl num), 76:5 (tecl num), 6 (tecl num), 78:+ (tecl num), 79:FIN, 1 (tecl num), 2 (tecl num), 81:AVPAG, 3 (tecl num), 82:INS, 83:SUPR, 84:?, 85:?
 	0, 0, 0, 0, 0, 0, 0, 0														// 86:?, 87:F11, 88:F12, 89:?, 90:?, 91:TECLA WINDOWS, 92:?, 93:CLICK IZQUIERDO
@@ -33,8 +33,8 @@ static const int keyTable[KEYTABLE_SIZE] = {
 static const int keyTableShift[KEYTABLE_SIZE] = {
 	0, 27, '!', '"', '#', '$', '%', '&', '/', '(', ')', '=', '?', '¡', '\b', 	// 1:ESC
 	'\t', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 0, '*',		        // 14:BACKSPACE
-	'\n', 0, 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ', '[', ']',		// 29:CTRL
-	0, 0, 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ':', ':', '_', 0, '|', 0, ' ',	    // 42:SHIFT(izq), 54:SHIFT(der), 55:*, 56:ALT/ALTGR, 57:SPACEBAR. 53 tb es '/'
+	'\n', 0, 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ', '[', '|',		// 29:CTRL
+	0, ']', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ':', ':', '_', 0, 0, 0, ' ',	    // 42:SHIFT(izq), 54:SHIFT(der), 55:|, 56:ALT/ALTGR, 57:SPACEBAR. 53 tb es '/'
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '7',                          		// 58:BLOQ MAYUS, 59-68:F1-F10, 69:BLOQ NUM, 70:BLOQ DESPL, 71:INICIO y 7 (tecl num)
 	0, '9', '-', 0, '5', 0, '+', '1', 0, '3', 0, 0, 0, 0,				        // 8 (tecl num), 73:REPAG, 9 (tecl num), 74:- (tecl num), 4 (tecl num), 76:5 (tecl num), 6 (tecl num), 78:+ (tecl num), 79:FIN, 1 (tecl num), 2 (tecl num), 81:AVPAG, 3 (tecl num), 82:INS, 83:SUPR, 84:?, 85:?
 	0, 0, 0, 0, 0, 0, 0, 0														// 86:?, 87:F11, 88:F12, 89:?, 90:?, 91:TECLA WINDOWS, 92:?, 93:CLICK IZQUIERDO
@@ -111,7 +111,6 @@ void pushSingleKey(int c){
 }
 
 // 0-31, 126 and 127 are reserved ASCII control characters
-// 170 is the shift key
 static int isControlKey(int c){
 	return c < 32 || c == 126 || c == 127;
 }
@@ -122,8 +121,8 @@ static int isControlKey(int c){
 static int readKey(){
     int key = -1;
     uint8_t keyCode = pollKeyRaw();
-    if (keyCode == 42) { isShiftPressed = true; return key; }
-    if (keyCode == 170) { isShiftPressed = false; return key; }
+    if (keyCode == 42) { isShiftPressed = true; return key; } //42 is shift press code
+    if (keyCode == 170) { isShiftPressed = false; return key; } //170 is shift lift code
     // If it´s a MAKE, a key was pressed
     if(keyCode < KEYTABLE_SIZE){        //if(keyCode < 127) on full table (table only contains 94 keys)
         if (isShiftPressed){
