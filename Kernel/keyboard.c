@@ -21,10 +21,10 @@ static int isEnabled = 1;
 static int isShiftPressed = 0;
 
 static const int keyTable[KEYTABLE_SIZE] = {
-	0, 27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\'', 168, '\b',	// 1:ESC, 14:BACKSPACE
-	'\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 0, '+',		        // 
-	'\n', 0, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ñ', '{', 167,		// 29:CTRL
-	0, '}', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '-', 0, 0, 0, ' ',	    // 42:SHIFT(izq), 54:SHIFT(der), 55:°, 56:ALT/ALTGR, 57:SPACEBAR. 53 tb es '/'
+	0, 27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\'', 168,			// 1:ESC
+	'\b', '\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 0, '+',		// 14:BACKSPACE
+	'\n', 0, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 164, '{', '~',		// 29:CTRL
+	15, '}', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '-', 0, '*', 0, ' ',	// 42:SHIFT(izq), 54:SHIFT(der), 55:*, 56:ALT/ALTGR, 57:SPACEBAR. 53 tb es '/'
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '7',                          		// 58:BLOQ MAYUS, 59-68:F1-F10, 69:BLOQ NUM, 70:BLOQ DESPL, 71:INICIO y 7 (tecl num)
 	0, '9', '-', 0, '5', 0, '+', '1', 0, '3', 0, 0, 0, 0,				        // 8 (tecl num), 73:REPAG, 9 (tecl num), 74:- (tecl num), 4 (tecl num), 76:5 (tecl num), 6 (tecl num), 78:+ (tecl num), 79:FIN, 1 (tecl num), 2 (tecl num), 81:AVPAG, 3 (tecl num), 82:INS, 83:SUPR, 84:?, 85:?
 	0, 0, 0, 0, 0, 0, 0, 0														// 86:?, 87:F11, 88:F12, 89:?, 90:?, 91:TECLA WINDOWS, 92:?, 93:CLICK IZQUIERDO
