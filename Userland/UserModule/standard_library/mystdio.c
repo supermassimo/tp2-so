@@ -8,8 +8,8 @@
 
 typedef unsigned char uint8_t;
 
-extern void write(int output, const char* buffer, size_t buffer_size);
-extern void readInput(char* buffer, size_t buffer_size);
+extern void write(int fd, const char* buffer, size_t buffer_size);
+extern void readInput(int fd, char* buffer, size_t buffer_size);
 extern void swapConsole();
 extern void delKey();
 
@@ -21,6 +21,10 @@ void printf(const char* string){
     write(STD_OUT, string, strlen(string));
 }
 
+void printfd(int fd, const char* string) {
+	write(fd, string, strlen(string));
+}
+
 void printInt (long num, size_t string_size, uint8_t base){
     char array[string_size];
     int final_size = numToStr(num, array, base);
@@ -28,7 +32,7 @@ void printInt (long num, size_t string_size, uint8_t base){
     for (int i=0; i<=final_size; i++){
         final_string[i] = array[i];
     }
-    write (0, final_string, string_size);
+    write (STD_OUT, final_string, string_size);
 }
 
 void printFloat (float num, size_t string_size, size_t precision, uint8_t base){
@@ -199,7 +203,25 @@ void printMemInfo(MemoryInfo meminfo, char* option){
 }
 
 void scanf (char* string, size_t string_size){
-    readInput (string, string_size);
+    readInput (0, string, string_size);
+	return;
+}
+
+void scanfd(int fd, char* string, size_t string_size) {
+	if(fd == 0) {
+		while(1){
+	 	    readInput (0, string, string_size);
+		    if(strlen(string) <= 1){
+			    if(strcmp(string, "\b") == 0)
+				    deleteKey();
+		    } else if(strcmp(string, "") != 0) {
+                break;
+            }
+	    };	
+	} else {
+		readInput(fd,string, string_size);
+	}
+	return;
 }
 
 void consoleSwap(){

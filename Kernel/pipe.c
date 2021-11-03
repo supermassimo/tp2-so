@@ -1,9 +1,11 @@
 #include <pipe.h>
 
+#define BUFFER_SIZE 512
+
 static Pipe *first = NULL;
 static Pipe *last = NULL;
 static int pipeAmount = 0;
-static int id = 1;
+static int id = 2;
 
 int createPipe() {
     char pipeIdStr[10] = {0};

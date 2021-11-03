@@ -2,12 +2,22 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <sysCalls.h>
 
-void sysReadInput(char* buffer, size_t buffer_size){
-    getBufferContent(buffer, buffer_size);
+void sysReadInput(int fd, char* buffer, size_t buffer_size){
+    switch (fd)
+    {
+    case 0:
+        getBufferContent(buffer, buffer_size);
+        break;
+    
+    default:
+        readPipe(fd,buffer,buffer_size);
+        break;
+    }
+    
 }
 
-void sysWrite(int output, const char* buffer, size_t buffer_size){
-    switch (output) {
+void sysWrite(int fd, const char* buffer, size_t buffer_size){
+    switch (fd) {
         case 0:
             print(buffer);
             break;
@@ -15,6 +25,7 @@ void sysWrite(int output, const char* buffer, size_t buffer_size){
             printErr(buffer);
             break;
         default:
+            writePipe(fd,buffer,buffer_size);
             break;
     }
 }
@@ -138,6 +149,6 @@ int sysReadPipe(int index, char* buf, int count) {
     return readPipe(index,buf,count);
 }
 
-int sysPrintPipes() {
+void sysPrintPipes() {
     return printPipes();
 }
