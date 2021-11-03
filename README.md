@@ -1,4 +1,4 @@
-# Kernel based on x64BareBones is a basic setup to develop operating systems for the Intel 64 bits architecture.
+# Kernel based on x64BareBones
 
 The following project is a basic OS based on x64BareBones by RowDaBoat. It implements features such as a memory manager, a scheduler and pipes. It also has an alternative memory manager, which is a buddy system.
 
