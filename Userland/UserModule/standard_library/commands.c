@@ -26,6 +26,7 @@ extern int createPipe();
 extern void closePipe(int id);
 extern int writePipe(int id, const char *buf, int count);
 extern int readPipe(int id, char *buf, int count);
+extern void printAllSemaphores();
 extern void printPipes();
 
 #define PRINTMEM_BYTES 32
@@ -397,7 +398,7 @@ void semHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
         printErr("Too many parameters for command 'sem'");
         return;
     }
-    printf("Here comes sem\n");
+    printAllSemaphores();
     return;
 }
 
@@ -494,24 +495,10 @@ static void clearHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount
     clear();
 }
 
-int testProcess(int argc, char* argv[]){
-    printf("PID: ");
-    printInt(getpid(), 10, 10);
-    printf("\n");
-    printf("(T) RECIBO:\n");
-    printf("- argv[0]: ");
-    printf(argv[0]);
-    printf("\n");
-    printf("- argv[1]: ");
-    printf(argv[1]);
-    printf("\n");
-    return 0;
-}
-
 int testProcessA(int argc, char* argv[]){
-    char test[15] = "Could it be?\n";
+    char test[20] = "Writing ProcessA\n";
     int id = strToNum(argv[0]);
-    if(writePipe(id,test,15) == -1) {
+    if(writePipe(id,test,20) == -1) {
         printf("Error writing in pipe\n");
         return 0;
     }
@@ -519,9 +506,9 @@ int testProcessA(int argc, char* argv[]){
 }
 
 int testProcessB(int argc, char* argv[]){
-    char test[15];
+    char test[20];
     int id = strToNum(argv[0]);
-    if(readPipe(id,test,15) == -1) {
+    if(readPipe(id,test,20) == -1) {
         printf("Error reading in pipe\n");
         return 0;
     }
@@ -1095,7 +1082,7 @@ static int getCommandAndParams(char* command1, char params1[][MAX_PARAMETER_LENG
                         j=0;
                         state = PARAM1;
                     } 
-                } else if(input[inputIdx] == '|' && j != 0) {
+                } else if(input[inputIdx] == '+' && j != 0) {
                     command1[j] = 0;
                     j=0;
                     state = COMMAND2;
@@ -1116,7 +1103,7 @@ static int getCommandAndParams(char* command1, char params1[][MAX_PARAMETER_LENG
                         params1[param1Idx++][j] = 0;
                         j=0;
                     }
-                } else if (input[inputIdx] == '|') {
+                } else if (input[inputIdx] == '+') {
                     params1[param1Idx][j] = 0;
                     j=0;
                     state = COMMAND2;

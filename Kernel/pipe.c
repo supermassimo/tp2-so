@@ -79,13 +79,10 @@ int writePipe(int id, const char* const buf, int count) {
         p = p->next;
     }
     sem_wait(p->semName);
-    print("Writing pipe\n\n");
-    print("     Before: ");
-    print(buf);
     for(int i=0; p->nwrite < PIPE_BUFFER_SIZE && i <= count; i++) {
         p->buffer[p->nwrite++] = buf[i];
     }
-    print("     After: ");
+    print("Writing pipe\nbuffer = ");
     print(p->buffer);
     print("\n");
     sem_post(p->semName);
@@ -107,14 +104,11 @@ int readPipe(int id, char* buf, int count) {
         p = p->next;
     }
     sem_wait(p->semName);
-    print("Reading pipe\n\n");
-    print("     Before: ");
-    print(p->buffer);
     for(int i=0; p->nread < PIPE_BUFFER_SIZE && i <= count; i++) {
         buf[i] = p->buffer[p->nread++];
     }
-    print("     After: ");
-    print(p->buffer);
+    print("Reading pipe\nbuffer = ");
+    print(buf);
     print("\n");
     sem_post(p->semName);
     if(p->nread == PIPE_BUFFER_SIZE) {
@@ -143,15 +137,28 @@ void printPipe(Pipe *pipe) {
 }
 
 void printPipes() {
+    if(first == NULL) {
+        print("No pipes open\n");
+        return;
+    }
     Pipe *p = first;
-    //print("Pipe PID IO State\n");
+    print("Pipe PID-Blocked\n");
+    int aux = 0;
     for(int i=0; i<pipeAmount; i++) {
         if(p == NULL) {
             return;
         } else {
-            /*printInt(p->id,10);
-            print("    \n");*/
-            printPipe(p);
+            printInt(p->id,10);
+            aux = p->id;
+            for(int j=0;j<4;j++) {
+                if(aux/10 == 0) {
+                    print(" ");
+                } else {
+                    aux = aux/10;
+                }
+            }
+            printWaitingProcess(p->semName);
+            print("\n");
             p = p->next;
         }
     }

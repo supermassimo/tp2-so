@@ -28,6 +28,7 @@ int sem_post(const char *sem_id);
 int sem_set_value (const char *sem_id, int value);
 int sem_get_value (const char *sem_id);
 
+void printWaitingProcess(const char *sem_id);
 void printAllSemaphores();
 
 #endif

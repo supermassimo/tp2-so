@@ -132,7 +132,7 @@ int sem_wait(char *sem_id) {
         if(s == NULL) {
             return -1;
         }
-        if(strcmp(s->id, sem_id) == 0) {       //comparacion de string esta mal
+        if(strcmp(s->id, sem_id) == 0) {       
             break;
         }
         s = s->next;
@@ -161,7 +161,7 @@ int sem_post(const char *sem_id) {
         if(s == NULL) {
             return -1;
         } 
-        if(strcmp(s->id, sem_id) == 0) {       //comparacion de string esta mal
+        if(strcmp(s->id, sem_id) == 0) {       
             break;
         }
         s = s->next;
