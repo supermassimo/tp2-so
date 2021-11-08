@@ -28,6 +28,7 @@ extern int writePipe(int id, const char *buf, int count);
 extern int readPipe(int id, char *buf, int count);
 extern void printAllSemaphores();
 extern void printPipes();
+extern void *getSharedMem(int id);
 
 #define PRINTMEM_BYTES 32
 
@@ -515,20 +516,36 @@ int testProcessB(int argc, char* argv[]){
     return 0;
 }
 
+int testProcessC(int argc, char* argv[]){
+    int id = 6;
+    void *mem = getSharedMem(id);
+    int num = 24;
+    *((int*) mem) = num;
+    return 0;
+}
+
+int testProcessD(int argc, char* argv[]){
+    int id = 6;
+    void *mem = getSharedMem(id);
+    printf("El numero es ");
+    printInt(*((int*) mem),10,10);
+    return 0;
+}
+
 void testProcessHandler(char params[][MAX_PARAMETER_LENGTH], size_t paramAmount){
     if(paramAmount > 2){
         printErr("Too many parameters for command 'test'");
         return;
     }
-    int pipe = createPipe();
+    /*int pipe = createPipe();
     char *id;
     numToStr(pipe,id,10);
-    char* argv[] = {id};
-    if(createFullProcess(testProcessA, LOW, 1, argv, "TpipeA") == -1){
+    char* argv[] = {id};*/
+    if(createFullProcess(testProcessC, LOW, 0, NULL, "sharedMemC") == -1){
         printErr("Cannot create a new process; process limit reached");
         return;
     }
-    if(createFullProcess(testProcessB, LOW, 1, argv, "TpipeB") == -1){
+    if(createFullProcess(testProcessD, LOW, 0, NULL, "sharedMemD") == -1){
         printErr("Cannot create a new process; process limit reached");
         return;
     }

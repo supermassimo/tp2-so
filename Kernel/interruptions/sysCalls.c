@@ -153,3 +153,7 @@ int sysReadPipe(int index, char* buf, int count) {
 void sysPrintPipes() {
     return printPipes();
 }
+
+void *sysSharedMemGet(int id) {
+    return get(id);
+}

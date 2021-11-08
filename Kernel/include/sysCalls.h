@@ -12,6 +12,7 @@
 #include <scheduler.h>
 #include <semaphore.h>
 #include <pipe.h>
+#include <sharedMemory.h>
 
 void sysReadInput(int fd, char* buffer, size_t buffer_size);
 void sysWrite(int output, const char* buffer, size_t buffer_size);
@@ -46,5 +47,6 @@ void sysClosePipe(int index);
 int sysWritePipe(int index, const char* buf, int count);
 int sysReadPipe(int index, char* buf, int count);
 void sysPrintPipes();
+void *sysSharedMemGet(int id);
 
 #endif

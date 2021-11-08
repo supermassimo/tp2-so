@@ -32,6 +32,7 @@ GLOBAL closePipe
 GLOBAL writePipe
 GLOBAL readPipe
 GLOBAL printPipes
+GLOBAL getSharedMem
 
 
 section .text
@@ -230,6 +231,12 @@ readPipe:
 
 printPipes:
     mov rax, 74
+    int 80h
+
+    ret
+
+getSharedMem:
+    mov rax, 75
     int 80h
 
     ret

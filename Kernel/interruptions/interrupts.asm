@@ -56,6 +56,7 @@ EXTERN sysClosePipe
 EXTERN sysWritePipe
 EXTERN sysReadPipe
 EXTERN sysPrintPipes
+EXTERN sysSharedMemGet
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
@@ -218,6 +219,8 @@ _sysCallHandler:
 		je syscall_73
 		cmp rax, 74
 		je syscall_74
+		cmp rax, 75
+		je syscall_75
 	syscall_0:
 		call sysReadInput
 		jmp endSysCallHandler
@@ -321,6 +324,9 @@ _sysCallHandler:
 		jmp endSysCallHandler
 	syscall_74:
 		call sysPrintPipes
+		jmp endSysCallHandler
+	syscall_75:
+		call sysSharedMemGet
 		jmp endSysCallHandler
 	endSysCallHandler:
 		mov rbx, [reg_stack_pointer]
